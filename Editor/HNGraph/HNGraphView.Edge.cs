@@ -22,7 +22,7 @@ namespace HN.Graph.Editor
             HNGraphEdge edgeData = edgeView.EdgeData;
             GraphEditorData.AddEdge(edgeData);
 
-            UpdateRefPortView(edgeView);
+            // UpdateRefPortView(edgeView);
             
             AddEdgeView(edgeData, ref edgeView);
 
@@ -59,11 +59,9 @@ namespace HN.Graph.Editor
             {
                 edgeView = new HNGraphEdgeView(this);
                 
-                HNGraphBaseNodeView outputPortNodeView = GetNodeViewFromGuid(edgeData.GetOutputPort(GraphEditorData).OwnerNodeGuid);
-                if(outputPortNodeView == null)
-                    outputPortNodeView = GetRelayNodeViewFromGuid(edgeData.GetOutputPort(GraphEditorData).OwnerNodeGuid);
+                HNGraphNodeView outputPortNodeView = GetNodeViewFromGuid(edgeData.GetOutputPort(GraphEditorData).OwnerNodeGuid);
                 string outputPortGuid = edgeData.GetOutputPort(GraphEditorData).Guid;
-                HNGraphBasePortView outputPortView = null;
+                HNGraphPortView outputPortView = null;
                 foreach(var o in outputPortNodeView.OutputPortViews)
                     if(o.PortData.Guid == outputPortGuid)
                     {
@@ -71,11 +69,9 @@ namespace HN.Graph.Editor
                         break;
                     }
 
-                HNGraphBaseNodeView inputPortNodeView = GetNodeViewFromGuid(edgeData.GetInputPort(GraphEditorData).OwnerNodeGuid);
-                if(inputPortNodeView == null)
-                    inputPortNodeView = GetRelayNodeViewFromGuid(edgeData.GetInputPort(GraphEditorData).OwnerNodeGuid);
+                HNGraphNodeView inputPortNodeView = GetNodeViewFromGuid(edgeData.GetInputPort(GraphEditorData).OwnerNodeGuid);
                 string inputPortGuid = edgeData.GetInputPort(GraphEditorData).Guid;
-                HNGraphBasePortView inputPortView = null;
+                HNGraphPortView inputPortView = null;
                 foreach(var i in inputPortNodeView.InputPortViews)
                 {
                     if(i.PortData.Guid == inputPortGuid)
@@ -90,115 +86,115 @@ namespace HN.Graph.Editor
             AddGraphElement(edgeView);
         }
 
-        private void UpdateRefPortView(HNGraphEdgeView edgeView)
-        {
-            HNGraphNodePortView refPortView = null;
-            refPortView = FindUpstreamRefPortView(edgeView);
-            if(refPortView == null)
-            {
-                refPortView = FindDownstreamRefPortView(edgeView);
-            }
+        // private void UpdateRefPortView(HNGraphEdgeView edgeView)
+        // {
+        //     HNGraphPortView refPortView = null;
+        //     refPortView = FindUpstreamRefPortView(edgeView);
+        //     if(refPortView == null)
+        //     {
+        //         refPortView = FindDownstreamRefPortView(edgeView);
+        //     }
 
-            if(refPortView == null)
-                return;
+        //     if(refPortView == null)
+        //         return;
 
-            UpdateUpstreamRelayNodeRefPort(edgeView, refPortView);
-            UpdateDownstreamRelayNodeRefPort(edgeView, refPortView);
-        }
+        //     UpdateUpstreamRelayNodeRefPort(edgeView, refPortView);
+        //     UpdateDownstreamRelayNodeRefPort(edgeView, refPortView);
+        // }
 
-        private HNGraphNodePortView FindUpstreamRefPortView(HNGraphEdgeView edgeView)
-        {
-            HNGraphBasePortView edgeOutputPortView = edgeView.OutputPortView;
-            HNGraphBaseNodeView edgeOutputPortOwnerNodeView = edgeOutputPortView.OwnerNodeView;
-            if(edgeOutputPortOwnerNodeView is HNGraphRelayNodeView)
-            {
-                HNGraphRelayNodeView upstreamRelayNodeView = edgeOutputPortOwnerNodeView as HNGraphRelayNodeView;
-                var upstreamRelayNodeViewInputEdgeView = upstreamRelayNodeView.InputPortView.EdgeViews;
-                if(upstreamRelayNodeViewInputEdgeView.Count > 0)
-                {
-                    HNGraphEdgeView nextEdgeView = upstreamRelayNodeViewInputEdgeView[0];
-                    return FindUpstreamRefPortView(nextEdgeView);
-                }
-            }
-            else if(edgeOutputPortOwnerNodeView is HNGraphNodeView)
-            {
-                return edgeOutputPortView as HNGraphNodePortView;
-            }
+        // private HNGraphPortView FindUpstreamRefPortView(HNGraphEdgeView edgeView)
+        // {
+        //     HNGraphBasePortView edgeOutputPortView = edgeView.OutputPortView;
+        //     HNGraphBaseNodeView edgeOutputPortOwnerNodeView = edgeOutputPortView.OwnerNodeView;
+        //     if(edgeOutputPortOwnerNodeView is HNGraphRelayNodeView)
+        //     {
+        //         HNGraphRelayNodeView upstreamRelayNodeView = edgeOutputPortOwnerNodeView as HNGraphRelayNodeView;
+        //         var upstreamRelayNodeViewInputEdgeView = upstreamRelayNodeView.InputPortView.EdgeViews;
+        //         if(upstreamRelayNodeViewInputEdgeView.Count > 0)
+        //         {
+        //             HNGraphEdgeView nextEdgeView = upstreamRelayNodeViewInputEdgeView[0];
+        //             return FindUpstreamRefPortView(nextEdgeView);
+        //         }
+        //     }
+        //     else if(edgeOutputPortOwnerNodeView is HNGraphNodeView)
+        //     {
+        //         return edgeOutputPortView as HNGraphPortView;
+        //     }
 
-            return null;
-        }
+        //     return null;
+        // }
 
-        private HNGraphNodePortView FindDownstreamRefPortView(HNGraphEdgeView edgeView)
-        {
-            HNGraphBasePortView edgeInputPortView = edgeView.InputPortView;
-            HNGraphBaseNodeView edgeInputPortOwnerNodeView = edgeInputPortView.OwnerNodeView;
-            if(edgeInputPortOwnerNodeView is HNGraphRelayNodeView)
-            {
-                HNGraphRelayNodeView upstreamRelayNodeView = edgeInputPortOwnerNodeView as HNGraphRelayNodeView;
-                var upstreamRelayNodeViewOutputEdgeView = upstreamRelayNodeView.OutputPortView.EdgeViews;
-                if(upstreamRelayNodeViewOutputEdgeView.Count > 0)
-                {
-                    HNGraphEdgeView nextEdgeView = upstreamRelayNodeViewOutputEdgeView[0];
-                    return FindDownstreamRefPortView(nextEdgeView);
-                }
-            }
-            else if(edgeInputPortOwnerNodeView is HNGraphNodeView)
-            {
-                return edgeInputPortView as HNGraphNodePortView;
-            }
+        // private HNGraphPortView FindDownstreamRefPortView(HNGraphEdgeView edgeView)
+        // {
+        //     HNGraphBasePortView edgeInputPortView = edgeView.InputPortView;
+        //     HNGraphBaseNodeView edgeInputPortOwnerNodeView = edgeInputPortView.OwnerNodeView;
+        //     if(edgeInputPortOwnerNodeView is HNGraphRelayNodeView)
+        //     {
+        //         HNGraphRelayNodeView upstreamRelayNodeView = edgeInputPortOwnerNodeView as HNGraphRelayNodeView;
+        //         var upstreamRelayNodeViewOutputEdgeView = upstreamRelayNodeView.OutputPortView.EdgeViews;
+        //         if(upstreamRelayNodeViewOutputEdgeView.Count > 0)
+        //         {
+        //             HNGraphEdgeView nextEdgeView = upstreamRelayNodeViewOutputEdgeView[0];
+        //             return FindDownstreamRefPortView(nextEdgeView);
+        //         }
+        //     }
+        //     else if(edgeInputPortOwnerNodeView is HNGraphNodeView)
+        //     {
+        //         return edgeInputPortView as HNGraphPortView;
+        //     }
 
-            return null;
-        }
+        //     return null;
+        // }
 
-        private void UpdateUpstreamRelayNodeRefPort(HNGraphEdgeView edgeView, HNGraphNodePortView newRefPortView)
-        {
-            HNGraphBasePortView edgeOutputPortView = edgeView.OutputPortView;
-            HNGraphBaseNodeView edgeOutputPortOwnerNodeView = edgeOutputPortView.OwnerNodeView;
-            if(edgeOutputPortOwnerNodeView is HNGraphRelayNodeView)
-            {
-                HNGraphRelayNodeView upstreamRelayNodeView = edgeOutputPortOwnerNodeView as HNGraphRelayNodeView;
-                if(newRefPortView == null)
-                {
-                    upstreamRelayNodeView.RelayNodeData.SetRefPort(GraphEditorData, null);
-                }
-                else
-                {
-                    upstreamRelayNodeView.RelayNodeData.SetRefPort(GraphEditorData, newRefPortView.PortData);
-                }
-                var upstreamRelayNodeViewInputEdgeView = upstreamRelayNodeView.InputPortView.EdgeViews;
-                foreach(var inputEdgeView in upstreamRelayNodeViewInputEdgeView)
-                {
-                    UpdateUpstreamRelayNodeRefPort(inputEdgeView, newRefPortView);
-                }
-            }
+        // private void UpdateUpstreamRelayNodeRefPort(HNGraphEdgeView edgeView, HNGraphPortView newRefPortView)
+        // {
+        //     HNGraphBasePortView edgeOutputPortView = edgeView.OutputPortView;
+        //     HNGraphBaseNodeView edgeOutputPortOwnerNodeView = edgeOutputPortView.OwnerNodeView;
+        //     if(edgeOutputPortOwnerNodeView is HNGraphRelayNodeView)
+        //     {
+        //         HNGraphRelayNodeView upstreamRelayNodeView = edgeOutputPortOwnerNodeView as HNGraphRelayNodeView;
+        //         if(newRefPortView == null)
+        //         {
+        //             upstreamRelayNodeView.RelayNodeData.SetRefPort(GraphEditorData, null);
+        //         }
+        //         else
+        //         {
+        //             upstreamRelayNodeView.RelayNodeData.SetRefPort(GraphEditorData, newRefPortView.PortData);
+        //         }
+        //         var upstreamRelayNodeViewInputEdgeView = upstreamRelayNodeView.InputPortView.EdgeViews;
+        //         foreach(var inputEdgeView in upstreamRelayNodeViewInputEdgeView)
+        //         {
+        //             UpdateUpstreamRelayNodeRefPort(inputEdgeView, newRefPortView);
+        //         }
+        //     }
 
-            return;
-        }
+        //     return;
+        // }
 
-        private void UpdateDownstreamRelayNodeRefPort(HNGraphEdgeView edgeView, HNGraphNodePortView newRefPortView)
-        {
-            HNGraphBasePortView edgeInputPortView = edgeView.InputPortView;
-            HNGraphBaseNodeView edgeInputPortOwnerNodeView = edgeInputPortView.OwnerNodeView;
-            if(edgeInputPortOwnerNodeView is HNGraphRelayNodeView)
-            {
-                HNGraphRelayNodeView upstreamRelayNodeView = edgeInputPortOwnerNodeView as HNGraphRelayNodeView;
-                if(newRefPortView == null)
-                {
-                    upstreamRelayNodeView.RelayNodeData.SetRefPort(GraphEditorData, null);
-                }
-                else
-                {
-                    upstreamRelayNodeView.RelayNodeData.SetRefPort(GraphEditorData, newRefPortView.PortData);
-                }
-                var upstreamRelayNodeViewOutputEdgeView = upstreamRelayNodeView.OutputPortView.EdgeViews;
-                foreach(var outputEdgeView in upstreamRelayNodeViewOutputEdgeView)
-                {
-                    UpdateDownstreamRelayNodeRefPort(outputEdgeView, newRefPortView);
-                }
-            }
+        // private void UpdateDownstreamRelayNodeRefPort(HNGraphEdgeView edgeView, HNGraphPortView newRefPortView)
+        // {
+        //     HNGraphBasePortView edgeInputPortView = edgeView.InputPortView;
+        //     HNGraphBaseNodeView edgeInputPortOwnerNodeView = edgeInputPortView.OwnerNodeView;
+        //     if(edgeInputPortOwnerNodeView is HNGraphRelayNodeView)
+        //     {
+        //         HNGraphRelayNodeView upstreamRelayNodeView = edgeInputPortOwnerNodeView as HNGraphRelayNodeView;
+        //         if(newRefPortView == null)
+        //         {
+        //             upstreamRelayNodeView.RelayNodeData.SetRefPort(GraphEditorData, null);
+        //         }
+        //         else
+        //         {
+        //             upstreamRelayNodeView.RelayNodeData.SetRefPort(GraphEditorData, newRefPortView.PortData);
+        //         }
+        //         var upstreamRelayNodeViewOutputEdgeView = upstreamRelayNodeView.OutputPortView.EdgeViews;
+        //         foreach(var outputEdgeView in upstreamRelayNodeViewOutputEdgeView)
+        //         {
+        //             UpdateDownstreamRelayNodeRefPort(outputEdgeView, newRefPortView);
+        //         }
+        //     }
 
-            return;
-        }
+        //     return;
+        // }
         
 
         private HNGraphEdgeView GetEdgeViewFromGuid(string guid)

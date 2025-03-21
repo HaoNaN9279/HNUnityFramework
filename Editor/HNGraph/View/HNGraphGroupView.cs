@@ -46,7 +46,7 @@ namespace HN.Graph.Editor
                     continue;
                 }
 
-                groupData.AddNode(nodeView.BaseNodeData.Guid);
+                groupData.AddNode(nodeView.NodeData.Guid);
             }
 
             base.OnElementsAdded(elements);
@@ -63,7 +63,7 @@ namespace HN.Graph.Editor
             {
                 if(element is HNGraphNodeView nodeView)
                 {
-                    groupData.RemoveNode(nodeView.BaseNodeData.Guid);
+                    groupData.RemoveNode(nodeView.NodeData.Guid);
                 }
             }
 
@@ -81,7 +81,7 @@ namespace HN.Graph.Editor
 
                 foreach(var nodeView in graphView.NodeViews)
                 {
-                    if(nodeView.BaseNodeData.Guid == nodeGuid)
+                    if(nodeView.NodeData.Guid == nodeGuid)
                     {
                         AddElement(nodeView);
                     }
@@ -101,7 +101,7 @@ namespace HN.Graph.Editor
                     }
                     HNGraphNodeView selectedNodeView = selectedNode as HNGraphNodeView;
                     AddElement(selectedNodeView);
-                    GroupData.AddNode(selectedNodeView.BaseNodeData.Guid);
+                    GroupData.AddNode(selectedNodeView.NodeData.Guid);
                 }
             }
         }

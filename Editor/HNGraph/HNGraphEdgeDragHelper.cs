@@ -316,15 +316,15 @@ namespace HN.Graph.Editor
             {
                 HNGraphView graphView = m_GraphView as HNGraphView;
 
-                HNGraphBasePortView inputPortView = edgeCandidate.input as HNGraphBasePortView;
-                HNGraphBasePortView outputPortView = edgeCandidate.output as HNGraphBasePortView;
+                HNGraphPortView inputPortView = edgeCandidate.input as HNGraphPortView;
+                HNGraphPortView outputPortView = edgeCandidate.output as HNGraphPortView;
                 if (endPort.direction == Direction.Output)
                 {
-                    outputPortView = endPort as HNGraphBasePortView;
+                    outputPortView = endPort as HNGraphPortView;
                 }
                 else
                 {
-                    inputPortView = endPort as HNGraphBasePortView;
+                    inputPortView = endPort as HNGraphPortView;
                 }
                 HNGraphEdgeView newEdgeView = new HNGraphEdgeView(graphView);
                 HNGraphEdge newEdgeData = new HNGraphEdge(outputPortView.PortData, inputPortView.PortData);

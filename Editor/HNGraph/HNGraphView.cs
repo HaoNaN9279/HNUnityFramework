@@ -23,7 +23,6 @@ namespace HN.Graph.Editor
         public IReadOnlyList<HNGraphEdgeView> EdgeViews => edgeViews;
         public IReadOnlyList<HNGraphGroupView> GroupViews => groupViews;
         public IReadOnlyList<HNGraphStickyNoteView> StickyNoteViews => stickyNoteViews;
-        public IReadOnlyList<HNGraphRelayNodeView> RelayNodeViews => relayNodeViews;
         public IReadOnlyList<HNGraphFloatingPanelView> FloatingPanelViews => floatingPanelViews;
 
         public SelectionChanged OnSelectionChanged;
@@ -34,7 +33,6 @@ namespace HN.Graph.Editor
         private List<HNGraphEdgeView> edgeViews;
         private List<HNGraphGroupView> groupViews;
         private List<HNGraphStickyNoteView> stickyNoteViews;
-        private List<HNGraphRelayNodeView> relayNodeViews;
         private List<HNGraphFloatingPanelView> floatingPanelViews;
         private HNGraphEdgeConnectorListener edgeConnectorListener;
 
@@ -49,7 +47,6 @@ namespace HN.Graph.Editor
             edgeViews = new List<HNGraphEdgeView>();
             groupViews = new List<HNGraphGroupView>();
             stickyNoteViews = new List<HNGraphStickyNoteView>();
-            relayNodeViews = new List<HNGraphRelayNodeView>();
             floatingPanelViews = new List<HNGraphFloatingPanelView>();
 
             serializeGraphElements = SerializeGraphElementsCallback;
@@ -96,13 +93,13 @@ namespace HN.Graph.Editor
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
         {
             List<Port> compatiblePorts = new List<Port>();
-            HNGraphBasePortView startPortView = startPort as HNGraphBasePortView;
+            HNGraphPortView startPortView = startPort as HNGraphPortView;
             if(startPortView == null)
                 return compatiblePorts;
 
             foreach (var nodeView in nodeViews)
             {
-                List<HNGraphBasePortView> nodeViewPortViews = new List<HNGraphBasePortView>();
+                List<HNGraphPortView> nodeViewPortViews = new List<HNGraphPortView>();
                 if (startPortView.direction == Direction.Output)
                 {
                     nodeViewPortViews = nodeView.InputPortViews.ToList();
@@ -117,18 +114,6 @@ namespace HN.Graph.Editor
                     {
                         compatiblePorts.Add(portView);
                     }
-                }
-            }
-
-            foreach (var relayNodeView in relayNodeViews)
-            {
-                if (startPortView.IsComptibleWith(relayNodeView.InputPortView.RefPortView))
-                {
-                    compatiblePorts.Add(relayNodeView.InputPortView);
-                }
-                if (startPortView.IsComptibleWith(relayNodeView.OutputPortView.RefPortView))
-                {
-                    compatiblePorts.Add(relayNodeView.OutputPortView);
                 }
             }
 
@@ -166,8 +151,6 @@ namespace HN.Graph.Editor
                 groupViews.Add(graphElement as HNGraphGroupView);
             else if(graphElement is HNGraphStickyNoteView)
                 stickyNoteViews.Add(graphElement as HNGraphStickyNoteView);
-            else if(graphElement is HNGraphRelayNodeView)
-                relayNodeViews.Add(graphElement as HNGraphRelayNodeView);
             else if(graphElement is HNGraphFloatingPanelView)
                 floatingPanelViews.Add(graphElement as HNGraphFloatingPanelView);
             else
@@ -186,8 +169,6 @@ namespace HN.Graph.Editor
                 groupViews.Remove(graphElement as HNGraphGroupView);
             else if(stickyNoteViews.Contains(graphElement as HNGraphStickyNoteView))
                 stickyNoteViews.Remove(graphElement as HNGraphStickyNoteView);
-            else if(relayNodeViews.Contains(graphElement as HNGraphRelayNodeView))
-                relayNodeViews.Remove(graphElement as HNGraphRelayNodeView);
             else if(floatingPanelViews.Contains(graphElement as HNGraphFloatingPanelView))
                 floatingPanelViews.Remove(graphElement as HNGraphFloatingPanelView);
             else
@@ -206,7 +187,6 @@ namespace HN.Graph.Editor
         private void DrawAllElements()
         {
             DrawNodes();
-            DrawRelayNodes();
             DrawEdges();
             DrawGroups();
             DrawStickyNotes();
@@ -231,12 +211,6 @@ namespace HN.Graph.Editor
                 RemoveElement(edge);
             }
             edgeViews.Clear();
-
-            foreach(var relayNode in relayNodeViews)
-            {
-                RemoveElement(relayNode);
-            }
-            relayNodeViews.Clear();
 
             foreach(var node in nodeViews)
             {
@@ -287,16 +261,6 @@ namespace HN.Graph.Editor
                         stickyNoteViews[i].SavePosition();
                     }
                 }
-
-                List<HNGraphRelayNodeView> relayNodeViews = graphViewChange.movedElements.OfType<HNGraphRelayNodeView>().ToList();
-                if(relayNodeViews.Count > 0)
-                {
-                    GraphEditorData.Owner.RecordObject("Move Relay Node");
-                    for(int i = 0; i < relayNodeViews.Count; i++)
-                    {
-                        relayNodeViews[i].SavePosition();
-                    }
-                }
             }
 
             if (graphViewChange.elementsToRemove != null)
@@ -338,16 +302,6 @@ namespace HN.Graph.Editor
                     for(int i = stickyNoteViews.Count - 1; i >= 0; i--)
                     {
                         RemoveStickyNote(stickyNoteViews[i]);
-                    }
-                }
-
-                List<HNGraphRelayNodeView> relayNodeViews = graphViewChange.elementsToRemove.OfType<HNGraphRelayNodeView>().ToList();
-                if(relayNodeViews.Count > 0)
-                {
-                    GraphEditorData.Owner.RecordObject("Remove Relay Node");
-                    for(int i = relayNodeViews.Count - 1; i >= 0; i--)
-                    {
-                        RemoveRelayNode(relayNodeViews[i]);
                     }
                 }
             }

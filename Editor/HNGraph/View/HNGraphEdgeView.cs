@@ -12,9 +12,9 @@ namespace HN.Graph.Editor
     {
         public HNGraphEdge EdgeData => edgeData;
 
-        public HNGraphBasePortView OutputPortView => output as HNGraphBasePortView;
+        public HNGraphPortView OutputPortView => output as HNGraphPortView;
 
-        public HNGraphBasePortView InputPortView => input as HNGraphBasePortView;
+        public HNGraphPortView InputPortView => input as HNGraphPortView;
 
 
         private HNGraphEdge edgeData;
@@ -25,10 +25,9 @@ namespace HN.Graph.Editor
         {
             this.graphView = graphView;
 
-            RegisterCallback<MouseDownEvent>(OnMouseDown);
         }
 
-        public void Initialize(HNGraphEdge edgeData, HNGraphBasePortView output, HNGraphBasePortView input)
+        public void Initialize(HNGraphEdge edgeData, HNGraphPortView output, HNGraphPortView input)
         {
             this.edgeData = edgeData;
             ConnectOutput(output);
@@ -59,7 +58,7 @@ namespace HN.Graph.Editor
             DisconnectInput();
         }
 
-        public HNGraphBasePortView GetAnotherPort(HNGraphBasePortView port)
+        public HNGraphPortView GetAnotherPort(HNGraphPortView port)
         {
             if(OutputPortView == port)
             {
@@ -76,25 +75,18 @@ namespace HN.Graph.Editor
         }
         
 
-        protected void ConnectOutput(HNGraphBasePortView outputPortView)
+        protected void ConnectOutput(HNGraphPortView outputPortView)
         {
             this.output = outputPortView;
             OutputPortView.ConnectToEdge(this);
         }
 
-        protected void ConnectInput(HNGraphBasePortView inputPortView)
+        protected void ConnectInput(HNGraphPortView inputPortView)
         {
             this.input = inputPortView;
             inputPortView.ConnectToEdge(this);
         }    
 
 
-        private void OnMouseDown(MouseDownEvent e)
-        {
-            if(e.altKey)
-            {
-                graphView.AddRelayNode(this, e.localMousePosition);
-            }
-        }
     }
 }

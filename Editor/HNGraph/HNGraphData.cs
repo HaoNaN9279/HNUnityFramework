@@ -25,29 +25,16 @@ namespace HN.Graph.Editor
             set { owner = value; }
         }
 
-        // public IReadOnlyDictionary<string, HNGraphNode> Nodes => nodes;
-        // public IReadOnlyDictionary<string, HNGraphNodePort> NodePorts => nodePorts;
-        // public IReadOnlyDictionary<string, HNGraphEdge> Edges => edges;
-        // public IReadOnlyDictionary<string, HNGraphGroup> Groups => groups;
-        // public IReadOnlyDictionary<string, HNGraphStickyNote> StickyNotes => stickyNotes;
-        // public IReadOnlyDictionary<string, HNGraphRelayNode> RelayNodes => relayNodes;
-        // public IReadOnlyDictionary<string, HNGraphRelayNodePort> RelayNodePorts => relayNodePorts;
-
-
         public Action<HNGraphNode> onNodeAdded;
-        public Action<HNGraphNodePort> onNodePortAdded;
+        public Action<HNGraphPort> onPortAdded;
         public Action<HNGraphEdge> onEdgeAdded;
         public Action<HNGraphGroup> onGroupAdded;
         public Action<HNGraphStickyNote> onStickyNoteAdded;
-        public Action<HNGraphRelayNode> onRelayNodeAdded;
-        public Action<HNGraphRelayNodePort> onRelayNodePortAdded;
         public Action<HNGraphNode> onNodeRemoved;
-        public Action<HNGraphNodePort> onNodePortRemoved;
+        public Action<HNGraphPort> onPortRemoved;
         public Action<HNGraphEdge> onEdgeRemoved;
         public Action<HNGraphGroup> onGroupRemoved;
         public Action<HNGraphStickyNote> onStickyNoteRemoved;
-        public Action<HNGraphRelayNode> onRelayNodeRemoved;
-        public Action<HNGraphRelayNodePort> onRelayNodePortRemoved;
 
 
         [SerializeReference]
@@ -57,7 +44,7 @@ namespace HN.Graph.Editor
         private SerializableNodes nodes;
 
         [SerializeField]
-        private SerializableNodePorts nodePorts;
+        private SerializablePorts ports;
 
         [SerializeField]
         private SerializableEdges edges;
@@ -68,12 +55,6 @@ namespace HN.Graph.Editor
         [SerializeField]
         private SerializableStickyNotes stickyNotes;
 
-        [SerializeField]
-        private SerializableRelayNodes relayNodes;
-
-        [SerializeField]
-        private SerializableRelayNodePorts relayNodePorts;
-
 
         private string assetPath;
         private HNGraphDataWrapper owner;
@@ -82,12 +63,10 @@ namespace HN.Graph.Editor
         public HNGraphData()
         {
             nodes = new SerializableNodes();
-            nodePorts = new SerializableNodePorts();
+            ports = new SerializablePorts();
             edges = new SerializableEdges();
             groups = new SerializableGroups();
             stickyNotes = new SerializableStickyNotes();
-            relayNodes = new SerializableRelayNodes();
-            relayNodePorts = new SerializableRelayNodePorts();
         }
 
         public virtual void SaveAsset()
@@ -149,12 +128,12 @@ namespace HN.Graph.Editor
             return nodes[guid];
         }
 
-        public HNGraphNodePort GetNodePort(string guid)
+        public HNGraphPort GetPort(string guid)
         {
-            if(!nodePorts.ContainsKey(guid))
+            if(!ports.ContainsKey(guid))
                 return null;
 
-            return nodePorts[guid];
+            return ports[guid];
         }
 
         public int GetNodeIndex(HNGraphNode node)
@@ -189,52 +168,14 @@ namespace HN.Graph.Editor
             return stickyNotes[guid];
         }
 
-        public HNGraphRelayNode GetRelayNode(string guid)
-        {
-            if(!relayNodes.ContainsKey(guid))
-                return null;
-
-            return relayNodes[guid];
-        }
-
-        public HNGraphRelayNodePort GetRelayNodePort(string guid)
-        {
-            if(!relayNodePorts.ContainsKey(guid))
-                return null;
-
-            return relayNodePorts[guid];
-        }
-
-        public HNGraphBaseNode GetBaseNode(string guid)
-        {
-            if(nodes.ContainsKey(guid))
-                return nodes[guid];
-            
-            if(relayNodes.ContainsKey(guid))
-                return relayNodes[guid];
-            
-            return null;
-        }
-
-        public HNGraphBasePort GetBasePort(string guid)
-        {
-            if(nodePorts.ContainsKey(guid))
-                return nodePorts[guid];
-            
-            if(relayNodePorts.ContainsKey(guid))
-                return relayNodePorts[guid];
-            
-            return null;
-        }
-
         public List<string> GetAllNodeGuids()
         {
             return nodes.Keys.ToList();
         }
 
-        public List<string> GetAllNodePortGuids()
+        public List<string> GetAllPortGuids()
         {
-            return nodePorts.Keys.ToList();
+            return ports.Keys.ToList();
         }
 
         public List<string> GetAllEdgeGuids()
@@ -252,16 +193,6 @@ namespace HN.Graph.Editor
             return stickyNotes.Keys.ToList();
         }
 
-        public List<string> GetAllRelayNodeGuids()
-        {
-            return relayNodes.Keys.ToList();
-        }
-
-        public List<string> GetAllRelayNodePortGuids()
-        {
-            return relayNodePorts.Keys.ToList();
-        }
-
         public void AddNode(HNGraphNode node)
         {
             if(nodes.ContainsValue(node))
@@ -271,13 +202,13 @@ namespace HN.Graph.Editor
             nodes.Add(node.Guid, node);
         }
 
-        public void AddNodePort(HNGraphNodePort nodePort)
+        public void AddPort(HNGraphPort port)
         {
-            if(nodePorts.ContainsValue(nodePort))
+            if(ports.ContainsValue(port))
                 return;
 
-            onNodePortAdded?.Invoke(nodePort);
-            nodePorts.Add(nodePort.Guid, nodePort);
+            onPortAdded?.Invoke(port);
+            ports.Add(port.Guid, port);
         }
 
         public void AddEdge(HNGraphEdge edge)
@@ -307,24 +238,6 @@ namespace HN.Graph.Editor
             stickyNotes.Add(stickyNote.Guid, stickyNote);
         }
 
-        public void AddRelayNode(HNGraphRelayNode relayNode)
-        {
-            if(relayNodes.ContainsValue(relayNode))
-                return;
-            
-            onRelayNodeAdded?.Invoke(relayNode);
-            relayNodes.Add(relayNode.Guid, relayNode);
-        }
-
-        public void AddRelayNodePort(HNGraphRelayNodePort relayNodePort)
-        {
-            if(relayNodePorts.ContainsValue(relayNodePort))
-                return;
-
-            onRelayNodePortAdded?.Invoke(relayNodePort);
-            relayNodePorts.Add(relayNodePort.Guid, relayNodePort);
-        }
-
         public void RemoveNode(HNGraphNode node)
         {
             if(!nodes.ContainsValue(node))
@@ -335,14 +248,14 @@ namespace HN.Graph.Editor
             node.Dispose();
         }
 
-        public void RemoveNodePort(HNGraphNodePort nodePort)
+        public void RemovePort(HNGraphPort port)
         {
-            if(!nodePorts.ContainsValue(nodePort))
+            if(!ports.ContainsValue(port))
                 return;
             
-            onNodePortRemoved?.Invoke(nodePort);
-            nodePorts.Remove(nodePort.Guid);
-            nodePort.Dispose();
+            onPortRemoved?.Invoke(port);
+            ports.Remove(port.Guid);
+            port.Dispose();
         }
 
         public void RemoveEdge(HNGraphEdge edge)
@@ -381,26 +294,6 @@ namespace HN.Graph.Editor
             onStickyNoteRemoved?.Invoke(stickyNote);
             stickyNotes.Remove(stickyNote.Guid);
             stickyNote.Dispose();
-        }
-
-        public void RemoveRelayNode(HNGraphRelayNode relayNode)
-        {
-            if(!relayNodes.ContainsValue(relayNode))
-                return;
-            
-            onRelayNodeRemoved?.Invoke(relayNode);
-            relayNodes.Remove(relayNode.Guid);
-            relayNode.Dispose();
-        }
-
-        public void RemoveRelayNodePort(HNGraphRelayNodePort relayNodePort)
-        {
-            if(!relayNodePorts.ContainsValue(relayNodePort))
-                return;
-            
-            onRelayNodePortRemoved?.Invoke(relayNodePort);
-            relayNodePorts.Remove(relayNodePort.Guid);
-            relayNodePort.Dispose();
         }
 
         public List<HNGraphNode> PackNodesFromOutput(HNGraphNode outputNode)
@@ -453,7 +346,7 @@ namespace HN.Graph.Editor
             for(int i = node.InputPortGuids.Count - 1; i >= 0; i--)
             {
                 string portGuid = node.InputPortGuids[i];
-                List<HNGraphNode> connectedNodes = nodePorts[portGuid].GetConnectedNodes(true, this);
+                List<HNGraphNode> connectedNodes = ports[portGuid].GetConnectedNodes(true, this);
                 if(connectedNodes.Count == 0)
                     continue;
                 for(int j = connectedNodes.Count - 1; j >= 0; j--)
@@ -472,7 +365,7 @@ namespace HN.Graph.Editor
             for(int i = node.OutputPortGuids.Count - 1; i >= 0; i--)
             {
                 string portGuid = node.OutputPortGuids[i];
-                List<HNGraphNode> connectedNodes = nodePorts[portGuid].GetConnectedNodes(false, this);
+                List<HNGraphNode> connectedNodes = ports[portGuid].GetConnectedNodes(false, this);
                 if(connectedNodes.Count == 0)
                     continue;
                 for(int j = connectedNodes.Count - 1; j >= 0; j--)

@@ -8,23 +8,23 @@ using UnityEngine;
 namespace HN.Graph.Editor
 {
     [Serializable]
-    public class HNGraphNode : HNGraphBaseNode
+    public class HNGraphNode : IDisposable, IPositionable
     {
+        public string Guid => guid;
         public JsonData NodeData => nodeData;
 
         public string NodeDataTypeName => nodeDataTypeName;
-
-        // public Type NodeDataType => nodeDataType;
 
         public IReadOnlyList<string> InputPortGuids => inputPortGuids;
 
         public IReadOnlyList<string> OutputPortGuids => outputPortGuids;
 
-        // public HNGraphData EditorData
-        // {
-        //     set { editorData = value; }
-        // }
 
+        [SerializeField]
+        protected string guid;
+
+        [SerializeField]
+        protected Rect layout;
 
         [SerializeField]
         protected List<string> inputPortGuids;
@@ -38,10 +38,6 @@ namespace HN.Graph.Editor
         [SerializeField]
         private string nodeDataTypeName;
 
-        // private Type nodeDataType;
-
-        // private HNGraphData editorData;
-
 
         public HNGraphNode(string nodeDataTypeName)
         {
@@ -53,7 +49,8 @@ namespace HN.Graph.Editor
 
         public void Initialize(Vector2 position, HNGraphData editorData)
         {
-            base.Initialize(position);
+            guid = HNGraphUtils.NewGuid();
+            SetLayout(new Rect(position, Vector2.zero));
 
             Assembly assembly = Assembly.Load(editorData.GraphRuntimeAssemblyName);
             if(assembly != null)
@@ -81,64 +78,64 @@ namespace HN.Graph.Editor
             return null;
         }
 
-        public override void AddInputPort(HNGraphData editorData, HNGraphBasePort port)
+        public void AddInputPort(HNGraphData editorData, HNGraphPort port)
         {
-            if(port == null || port is not HNGraphNodePort)
+            if(port == null || port is not HNGraphPort)
                 return;
 
             if(inputPortGuids.Contains(port.Guid))
                 return;
 
-            editorData.AddNodePort(port as HNGraphNodePort);
+            editorData.AddPort(port as HNGraphPort);
             inputPortGuids.Add(port.Guid);
         }
 
-        public override void AddOutputPort(HNGraphData editorData, HNGraphBasePort port)
+        public void AddOutputPort(HNGraphData editorData, HNGraphPort port)
         {
-            if(port == null || port is not HNGraphNodePort)
+            if(port == null || port is not HNGraphPort)
                 return;
 
             if(outputPortGuids.Contains(port.Guid))
                 return;
 
-            editorData.AddNodePort(port as HNGraphNodePort);
+            editorData.AddPort(port as HNGraphPort);
             outputPortGuids.Add(port.Guid);
         }
 
-        public override void RemoveInputPort(HNGraphData editorData, HNGraphBasePort port)
+        public void RemoveInputPort(HNGraphData editorData, HNGraphPort port)
         {
-            editorData.RemoveNodePort(port as HNGraphNodePort);
+            editorData.RemovePort(port as HNGraphPort);
             inputPortGuids.Remove(port.Guid);
         }
 
-        public override void RemoveOutputPort(HNGraphData editorData, HNGraphBasePort port)
+        public void RemoveOutputPort(HNGraphData editorData, HNGraphPort port)
         {
-            editorData.RemoveNodePort(port as HNGraphNodePort);
+            editorData.RemovePort(port as HNGraphPort);
             outputPortGuids.Remove(port.Guid);
         }
 
-        public HNGraphBasePort GetInputPort(HNGraphData editorData, string guid)
+        public HNGraphPort GetInputPort(HNGraphData editorData, string guid)
         {
-            return editorData.GetNodePort(guid);
+            return editorData.GetPort(guid);
         }
 
-        public HNGraphBasePort GetOutputPort(HNGraphData editorData, string guid)
+        public HNGraphPort GetOutputPort(HNGraphData editorData, string guid)
         {
-            return editorData.GetNodePort(guid);
+            return editorData.GetPort(guid);
         }
 
-        public override void Dispose()
+        public Rect GetLayout()
         {
-            // base.Dispose();
+            return this.layout;
+        }
 
-            // foreach(var portGuid in inputPortGuids)
-            // {
-            //     editorData.GetNodePort(portGuid).Dispose();
-            // }
-            // foreach(var portGuid in outputPortGuids)
-            // {
-            //     editorData.GetNodePort(portGuid).Dispose();
-            // }
+        public void SetLayout(Rect layout)
+        {
+            this.layout = layout;
+        }
+
+        public void Dispose()
+        {
         }
 
     }

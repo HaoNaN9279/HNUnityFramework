@@ -1,77 +1,77 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.UIElements;
-using UnityEngine;
-using UnityEngine.UIElements;
+// using System;
+// using System.Collections;
+// using System.Collections.Generic;
+// using UnityEditor.Experimental.GraphView;
+// using UnityEditor.UIElements;
+// using UnityEngine;
+// using UnityEngine.UIElements;
 
-namespace HN.Graph.Editor
-{
-    public abstract class HNGraphBaseNodeView : Node
-    {
-        public HNGraphBaseNode BaseNodeData => baseNodeData;
+// namespace HN.Graph.Editor
+// {
+//     public abstract class HNGraphBaseNodeView : Node
+//     {
+//         public HNGraphBaseNode BaseNodeData => baseNodeData;
         
-        public HNGraphEdgeConnectorListener EdgeConnectorListener => edgeConnectorListener;
+//         public HNGraphEdgeConnectorListener EdgeConnectorListener => edgeConnectorListener;
 
 
-        public VisualElement TopPortContainer => topPortContainer;
-        public VisualElement BottomPortContainer => bottomPortContainer;
+//         public VisualElement TopPortContainer => topPortContainer;
+//         public VisualElement BottomPortContainer => bottomPortContainer;
 
-        public IReadOnlyList<HNGraphBasePortView> InputPortViews => inputPortViews;
-        public IReadOnlyList<HNGraphBasePortView> OutputPortViews => outputPortViews;
+//         public IReadOnlyList<HNGraphBasePortView> InputPortViews => inputPortViews;
+//         public IReadOnlyList<HNGraphBasePortView> OutputPortViews => outputPortViews;
 
-        public HNGraphView GraphView => graphView;
-
-
-        protected HNGraphBaseNode baseNodeData;
-
-        protected HNGraphEdgeConnectorListener edgeConnectorListener;
-
-        protected VisualElement topPortContainer;
-        protected VisualElement bottomPortContainer;
-
-        protected List<HNGraphBasePortView> inputPortViews;
-        protected List<HNGraphBasePortView> outputPortViews;
-
-        protected HNGraphView graphView;
+//         public HNGraphView GraphView => graphView;
 
 
-        public HNGraphBaseNodeView(HNGraphView graphView, HNGraphBaseNode nodeData, HNGraphEdgeConnectorListener edgeConnectorListener)
-        {
-            this.graphView = graphView;
-            this.edgeConnectorListener = edgeConnectorListener;
-            this.baseNodeData = nodeData;
+//         protected HNGraphBaseNode baseNodeData;
 
-            topPortContainer = new VisualElement();
-            topPortContainer.name = "TopPortContainer";
-            this.Insert(0, topPortContainer);
-            bottomPortContainer = new VisualElement();
-            bottomPortContainer.name = "BottomPortContainer";
-            this.Add(bottomPortContainer);
+//         protected HNGraphEdgeConnectorListener edgeConnectorListener;
 
-            inputPortViews = new List<HNGraphBasePortView>();
-            outputPortViews = new List<HNGraphBasePortView>();
-        }
+//         protected VisualElement topPortContainer;
+//         protected VisualElement bottomPortContainer;
 
-        public virtual void Initialize(HNGraphData editorData)
-        {
-            DrawNode(editorData);
-            DrawPorts(editorData);
-            SetPosition(baseNodeData.GetLayout());
-        }
+//         protected List<HNGraphBasePortView> inputPortViews;
+//         protected List<HNGraphBasePortView> outputPortViews;
 
-        public abstract void AddPortView(HNGraphData editorData, HNGraphBasePortView portView);
+//         protected HNGraphView graphView;
 
-        public abstract void RemovePortView(HNGraphData editorData, HNGraphBasePortView portView);
 
-        protected abstract void DrawNode(HNGraphData editorData);
+//         public HNGraphBaseNodeView(HNGraphView graphView, HNGraphBaseNode nodeData, HNGraphEdgeConnectorListener edgeConnectorListener)
+//         {
+//             this.graphView = graphView;
+//             this.edgeConnectorListener = edgeConnectorListener;
+//             this.baseNodeData = nodeData;
 
-        protected abstract void DrawPorts(HNGraphData editorData);
+//             topPortContainer = new VisualElement();
+//             topPortContainer.name = "TopPortContainer";
+//             this.Insert(0, topPortContainer);
+//             bottomPortContainer = new VisualElement();
+//             bottomPortContainer.name = "BottomPortContainer";
+//             this.Add(bottomPortContainer);
 
-        public void SavePosition()
-        {
-            baseNodeData.SetLayout(GetPosition());
-        }
-    }
-}
+//             inputPortViews = new List<HNGraphBasePortView>();
+//             outputPortViews = new List<HNGraphBasePortView>();
+//         }
+
+//         public virtual void Initialize(HNGraphData editorData)
+//         {
+//             DrawNode(editorData);
+//             DrawPorts(editorData);
+//             SetPosition(baseNodeData.GetLayout());
+//         }
+
+//         public abstract void AddPortView(HNGraphData editorData, HNGraphBasePortView portView);
+
+//         public abstract void RemovePortView(HNGraphData editorData, HNGraphBasePortView portView);
+
+//         protected abstract void DrawNode(HNGraphData editorData);
+
+//         protected abstract void DrawPorts(HNGraphData editorData);
+
+//         public void SavePosition()
+//         {
+//             baseNodeData.SetLayout(GetPosition());
+//         }
+//     }
+// }

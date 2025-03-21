@@ -11,15 +11,8 @@ namespace HN.Graph.Editor
     {
         public string Guid => guid;
 
-        // public HNGraphBasePort OutputPort => editorData.GetBasePort(outputPortGuid);
-        // public HNGraphBasePort InputPort => editorData.GetBasePort(inputPortGuid);
         public string OutputPortGuid => outputPortGuid;
         public string InputPortGuid => inputPortGuid;
-
-        // public HNGraphData EditorData
-        // {
-        //     set { editorData = value; }
-        // }
 
 
         [SerializeField]
@@ -31,10 +24,8 @@ namespace HN.Graph.Editor
         [SerializeField]
         private string inputPortGuid;
         
-        // private HNGraphData editorData;
 
-
-        public HNGraphEdge(HNGraphBasePort outputPort, HNGraphBasePort inputPort)
+        public HNGraphEdge(HNGraphPort outputPort, HNGraphPort inputPort)
         {
             this.outputPortGuid = outputPort.Guid;
             this.inputPortGuid = inputPort.Guid;
@@ -53,14 +44,14 @@ namespace HN.Graph.Editor
             inputPortGuid = null;
         }
 
-        public HNGraphBasePort GetOutputPort(HNGraphData editorData)
+        public HNGraphPort GetOutputPort(HNGraphData editorData)
         {
-            return editorData.GetBasePort(outputPortGuid);
+            return editorData.GetPort(outputPortGuid);
         }
 
-        public HNGraphBasePort GetInputPort(HNGraphData editorData)
+        public HNGraphPort GetInputPort(HNGraphData editorData)
         {
-            return editorData.GetBasePort(inputPortGuid);
+            return editorData.GetPort(inputPortGuid);
         }
 
     }
