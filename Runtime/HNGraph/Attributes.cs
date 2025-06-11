@@ -75,6 +75,6 @@ namespace HN.Graph
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public abstract class HNGraphInspectableInfo : Attribute
     {
-        public abstract VisualElement Inspect(JsonObject jsonObject, PropertyInfo propertyInfo);
+        public abstract VisualElement Inspect(JsonData jsonData, PropertyInfo propertyInfo);
     }
 }

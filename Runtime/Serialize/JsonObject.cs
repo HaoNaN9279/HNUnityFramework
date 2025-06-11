@@ -9,7 +9,7 @@ namespace HN.Serialize
 {
     [Serializable]
     public class JsonObject
-    {        
-
+    {
+        
     }
 }

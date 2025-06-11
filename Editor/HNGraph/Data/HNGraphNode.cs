@@ -58,12 +58,8 @@ namespace HN.Graph.Editor
                 Type nodeDataType = assembly.GetType($"{editorData.GraphNodeDataNamespace}.{nodeDataTypeName}");
                 if(nodeDataType == null)
                     return;
-
-                JsonObject jsonObject = Activator.CreateInstance(nodeDataType) as JsonObject;
-                if(jsonObject == null)
-                    return;
                 
-                nodeData = new JsonData(jsonObject);
+                nodeData = new JsonData(nodeDataType);
             }
         }
 

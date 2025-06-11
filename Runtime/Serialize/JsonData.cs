@@ -36,11 +36,13 @@ namespace HN.Serialize
         private JsonObject obj;
 
 
-        public JsonData(JsonObject jsonObject)
+        public JsonData(Type nodeDataType)
         {
-            obj = jsonObject;
+            obj = Activator.CreateInstance(nodeDataType) as JsonObject;
+            if(obj == null)
+                return;
 
-            Type objType = jsonObject.GetType();
+            Type objType = obj.GetType();
             objTypeName = objType.FullName;
             objAssemblyName = objType.Assembly.FullName;
         }
@@ -49,22 +51,28 @@ namespace HN.Serialize
         {
             jsonText = SerializeToJson();
         }
-
-        public string SerializeToJson()
+        
+        public void Deserialize()
         {
-            if(obj == null)
-                return "";
-
-            if(string.IsNullOrEmpty(objTypeName))
-                return "";
-            
-            Assembly assembly = Assembly.Load(objAssemblyName);
-            Type type = assembly.GetType(objTypeName);
-            var o = Convert.ChangeType(obj, type);
-            return Json.Serialize(o);
+            DeserializeFromString(jsonText);
         }
 
-        public void DeserializeFromString(string jsonString)
+
+        private string SerializeToJson()
+        {
+            if (obj == null)
+                return "";
+
+            if (string.IsNullOrEmpty(objTypeName))
+                return "";
+
+            Assembly assembly = Assembly.Load(objAssemblyName);
+            Type type = assembly.GetType(objTypeName);
+            // var o = Convert.ChangeType(obj, type);
+            return Json.Serialize(obj);
+        }
+
+        private void DeserializeFromString(string jsonString)
         {
             if(string.IsNullOrEmpty(jsonString))
                 return;
@@ -74,7 +82,10 @@ namespace HN.Serialize
             
             Assembly assembly = Assembly.Load(objAssemblyName);
             Type type = assembly.GetType(objTypeName);
-            obj = Activator.CreateInstance(type) as JsonObject;
+            if (obj == null)
+            {
+                obj = Activator.CreateInstance(type) as JsonObject;
+            }
             Json.DeserializeFromString(obj, jsonString);
         }
 

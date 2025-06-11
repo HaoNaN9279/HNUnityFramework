@@ -41,6 +41,9 @@ namespace HN.Graph.Editor
         protected HNGraphObject graphObject;
 
         [SerializeField]
+        protected string assetPath;
+
+        [SerializeField]
         private SerializableNodes nodes;
 
         [SerializeField]
@@ -56,7 +59,6 @@ namespace HN.Graph.Editor
         private SerializableStickyNotes stickyNotes;
 
 
-        private string assetPath;
         private HNGraphDataWrapper owner;
 
 
