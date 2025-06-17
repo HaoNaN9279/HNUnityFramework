@@ -10,23 +10,23 @@ namespace HN.Graph.Editor
 {
     public class HNGraphUtilsEditor
     {
-        public static VisualElement DrawProperty(HNGraphInspectableInfo attribute, JsonData jsonData, PropertyInfo propertyInfo)
+        public static VisualElement DrawField(HNGraphInspectableInfo attribute, JsonData jsonData, FieldInfo fieldInfo)
         {
-            return attribute.Inspect(jsonData, propertyInfo);
+            return attribute.Inspect(jsonData, fieldInfo);
         }
 
-        public static VisualElement DrawProperties(HNGraphNode nodeData, BindingFlags bindingFlags)
+        public static VisualElement DrawFields(HNGraphNode nodeData, BindingFlags bindingFlags)
         {
             VisualElement root = new VisualElement();
 
             JsonData jsonData = nodeData?.NodeData;
             JsonObject jsonObject = jsonData.Obj;
             Type objType = jsonObject.GetType();
-            foreach(var propertyInfo in objType.GetProperties(bindingFlags))
+            foreach(var fieldInfo in objType.GetFields(bindingFlags))
             {
-                foreach(HNGraphInspectableInfo attribute in propertyInfo.GetCustomAttributes(typeof(HNGraphInspectableInfo), false))
+                foreach(HNGraphInspectableInfo attribute in fieldInfo.GetCustomAttributes(typeof(HNGraphInspectableInfo), false))
                 {
-                    var propertyField = DrawProperty(attribute, jsonData, propertyInfo);
+                    var propertyField = DrawField(attribute, jsonData, fieldInfo);
                     root.Add(propertyField);
                 }
             }

@@ -80,43 +80,43 @@ namespace HN.Graph.Editor
         protected void DrawPorts(HNGraphData editorData)
         {
             Type nodeDataType = NodeData.GetNodeDataType(editorData);
-            PropertyInfo[] propertiesInfo = nodeDataType.GetProperties();
-            foreach (var propertyInfo in propertiesInfo)
+            FieldInfo[] fieldsInfo = nodeDataType.GetFields();
+            foreach (var fieldInfo in fieldsInfo)
             {
-                HNGraphPortInfo slotInfo = propertyInfo.GetCustomAttribute<HNGraphPortInfo>();
+                HNGraphPortInfo slotInfo = fieldInfo.GetCustomAttribute<HNGraphPortInfo>();
                 if (slotInfo != null)
                 {
                     HNGraphPort port = null;
 
-                    foreach(string inputPortGuid in NodeData.InputPortGuids)
+                    foreach (string inputPortGuid in NodeData.InputPortGuids)
                     {
                         var inputPort = graphView.GraphEditorData.GetPort(inputPortGuid);
-                        if(inputPort.IsMatchWithAttribute(propertyInfo.PropertyType, slotInfo))
+                        if (inputPort.IsMatchWithAttribute(fieldInfo.FieldType, slotInfo))
                         {
                             port = inputPort;
                         }
                     }
 
-                    foreach(string outputPortGuid in NodeData.OutputPortGuids)
+                    foreach (string outputPortGuid in NodeData.OutputPortGuids)
                     {
                         var outputPort = graphView.GraphEditorData.GetPort(outputPortGuid);
-                        if(outputPort.IsMatchWithAttribute(propertyInfo.PropertyType, slotInfo))
+                        if (outputPort.IsMatchWithAttribute(fieldInfo.FieldType, slotInfo))
                         {
                             port = outputPort;
                         }
                     }
 
-                    if(port == null)
+                    if (port == null)
                     {
                         port = new HNGraphPort(
                             NodeData.Guid,
-                            propertyInfo.PropertyType.FullName,
-                            slotInfo.PortName, 
-                            propertyInfo.Name,
-                            slotInfo.PortDirection == HNGraphPortInfo.Direction.Input ? HNGraphPort.Direction.Input : HNGraphPort.Direction.Output, 
+                            fieldInfo.FieldType.FullName,
+                            slotInfo.PortName,
+                            fieldInfo.Name,
+                            slotInfo.PortDirection == HNGraphPortInfo.Direction.Input ? HNGraphPort.Direction.Input : HNGraphPort.Direction.Output,
                             slotInfo.PortCapacity == HNGraphPortInfo.Capacity.Single ? HNGraphPort.Capacity.Single : HNGraphPort.Capacity.Multi
                             );
-                        
+
                         // if(port.PortDirection == HNGraphBasePort.Direction.Input)
                         //     BaseNodeData.AddInputPort(port);
                         // else if(port.PortDirection == HNGraphBasePort.Direction.Output)

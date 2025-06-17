@@ -53,12 +53,12 @@ namespace HN.Graph.Editor
         protected List<string> edgeGuids;
         
 
-        public string PropertyName => propertyName;
+        public string FieldName => fieldName;
         
         [SerializeField]
-        private string propertyName;
+        private string fieldName;
 
-        public HNGraphPort(string ownerNodeGuid, string typeName, string name, string propertyName, Direction direction, Capacity capacity)
+        public HNGraphPort(string ownerNodeGuid, string typeName, string name, string fieldName, Direction direction, Capacity capacity)
         {
             guid = HNGraphUtils.NewGuid();
             
@@ -69,7 +69,7 @@ namespace HN.Graph.Editor
             this.portCapacity = capacity;
             
             edgeGuids = new List<string>();
-            this.propertyName = propertyName;
+            this.fieldName = fieldName;
         }
 
         public bool IsMatchWithAttribute(Type type, HNGraphPortInfo portInfo)

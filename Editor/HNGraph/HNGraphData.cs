@@ -37,7 +37,7 @@ namespace HN.Graph.Editor
         public Action<HNGraphStickyNote> onStickyNoteRemoved;
 
 
-        [SerializeReference]
+        [SerializeField]
         protected HNGraphObject graphObject;
 
         [SerializeField]
@@ -73,9 +73,6 @@ namespace HN.Graph.Editor
 
         public virtual void SaveAsset()
         {
-            EditorUtility.SetDirty(graphObject);
-            AssetDatabase.SaveAssetIfDirty(graphObject);
-
             Serialize();
         }
 

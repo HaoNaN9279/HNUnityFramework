@@ -6,6 +6,7 @@ using HN.Serialize;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.AssetImporters;
+using UnityEditor.VersionControl;
 
 namespace HN.Graph.Editor
 {
@@ -31,15 +32,15 @@ namespace HN.Graph.Editor
 
         public virtual void SetObject(AssetImportContext ctx)
         {
-            if(graphObject == null)
+            if (graphObject == null)
                 return;
-            
-            if(string.IsNullOrEmpty(iconPath))
+
+            if (string.IsNullOrEmpty(iconPath))
                 ctx.AddObjectToAsset("MainAsset", graphObject);
             else
             {
                 Texture2D texture = Resources.Load<Texture2D>(iconPath);
-                if(texture == null)
+                if (texture == null)
                     ctx.AddObjectToAsset("MainAsset", graphObject);
                 else
                     ctx.AddObjectToAsset("MainAsset", graphObject, texture);
