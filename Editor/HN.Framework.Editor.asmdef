@@ -1,8 +1,8 @@
 {
-    "name": "HN.Serialize",
-    "rootNamespace": "HN.Serialize",
+    "name": "HN.Framework.Editor",
+    "rootNamespace": "HN.Framework.Editor",
     "references": [
-        "HN"
+        "GUID:1a5bce3b468aa464482ce8c8c66bb914"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

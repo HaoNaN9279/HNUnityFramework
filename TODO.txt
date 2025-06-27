@@ -3,7 +3,7 @@
 只读数据表管理 excel json bin
 运行时调试器
 文本本地化 资源本地化
-资源管理器 AssetBundle 同步异步加载 https://blog.csdn.net/u014528558/article/details/105796076
+资源管理器 AssetBundle 同步异步加载 https://blog.csdn.net/u014528558/article/details/105796076 https://www.jianshu.com/p/80f432eda30d Addressables https://blog.csdn.net/linxinfa/article/details/122390621
 可读写配置数据
 xLua
 输入系统
