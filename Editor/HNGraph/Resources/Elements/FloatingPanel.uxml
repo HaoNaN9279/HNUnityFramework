@@ -1,4 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Assets/HNUnityFramework/Editor/HNGraph/Resources/Styles/FloatingPanel.uss?fileID=7433441132597879392&amp;guid=44293a49e95a7e94cabb102a77d2846a&amp;type=3#FloatingPanel" />
-    <ui:VisualElement name="Root" style="flex-grow: 1;" />
-</ui:UXML>
