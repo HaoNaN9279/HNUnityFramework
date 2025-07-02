@@ -1,60 +1,49 @@
 using System.Collections;
 using System.Collections.Generic;
-using HN.Framework;
 using UnityEngine;
 
-namespace HN
+namespace HN.Framework
 {
-    public class HNUnityFramework : MonoBehaviour
+    public abstract class HNUnityFramework : MonoBehaviour
     {
-        public static HNUnityFramework Instance = null;
+        public float logicRate = 30f;
 
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        internal static void RuntimeInit()
-        {
-            Instance = FindObjectOfType<HNUnityFramework>();
-            GameObject go;
-            if (Instance == null)
-            {
-                go = new GameObject { name = "[HNUnityFramework]" };
-                Instance = go.AddComponent<HNUnityFramework>();
-            }
-            go = Instance.gameObject;
-
-            Debug.Log("HNUnityFramework Runtime Init.");
-        }
-
-
-        [SerializeField]
-        public HNGameManager gameManager;
-
-
-        public AssetManager assetManager;
+        private float logicDeltaTime = 0f;
 
 
         void Awake()
         {
-            assetManager = AssetManager.Instance;
-
-            if (gameManager == null)
-            {
-                Debug.LogWarning("Game Manager is Null.");
-            }
-            else
-            {
-                gameManager.Initialize(this);
-            }
         }
 
         void Start()
         {
+            StartLogicTick();
 
+            logicDeltaTime = 0f;
         }
 
         void Update()
         {
+            logicDeltaTime += Time.deltaTime;
+            float expectDeltaTime = 1.0f / logicRate;
+            if (logicDeltaTime < expectDeltaTime)
+            {
+                return;
+            }
+            else
+            {
+                FSMManager.UpdateFSM();
+                ProcedureManager.UpdateProcedure();
 
+                LogicTick(logicDeltaTime);
+
+                logicDeltaTime -= expectDeltaTime;
+            }
         }
+
+        public abstract void StartLogicTick();
+
+        public abstract void LogicTick(float deltaTime);
     }
 }
