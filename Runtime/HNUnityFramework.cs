@@ -4,46 +4,92 @@ using UnityEngine;
 
 namespace HN.Framework
 {
-    public abstract class HNUnityFramework : MonoBehaviour
+    /// <summary>
+    /// 游戏框架类
+    /// </summary>
+    public abstract class HNUnityFramework : MonoBehaviour, ITickable
     {
-        public float logicRate = 30f;
-
-
-        private float logicDeltaTime = 0f;
-
-
+        #region Unity生命周期
         void Awake()
         {
+            // AssetManager初始化
+            AssetManager.Initialize();
+
+            // FSMManager初始化
+            FSMManager.Initialize();
+
+            // ProcedureManager初始化
+            ProcedureManager.Initialize();
+
+            // ControllerManager初始化
+            ControllerManager.Initialize();
         }
 
         void Start()
         {
-            StartLogicTick();
-
-            logicDeltaTime = 0f;
+            
         }
 
         void Update()
         {
-            logicDeltaTime += Time.deltaTime;
-            float expectDeltaTime = 1.0f / logicRate;
-            if (logicDeltaTime < expectDeltaTime)
-            {
-                return;
-            }
-            else
-            {
-                FSMManager.UpdateFSM();
-                ProcedureManager.UpdateProcedure();
-
-                LogicTick(logicDeltaTime);
-
-                logicDeltaTime -= expectDeltaTime;
-            }
+            Tick();
         }
 
-        public abstract void StartLogicTick();
+        void LateUpdate()
+        {
+            LateTick();
+        }
 
-        public abstract void LogicTick(float deltaTime);
+        void OnDestroy()
+        {
+            // ControllerManager销毁
+            ControllerManager.Uninitialize();
+
+            // 关闭ProcedureManager
+            ProcedureManager.ShutdownProcedure();
+
+            // ProcedureManager销毁
+            ProcedureManager.Uninitialize();
+
+            // FSMManager销毁
+            FSMManager.Uninitialize();
+
+            // AssetManager销毁
+            AssetManager.Uninitialize();
+        }
+        #endregion
+
+        public void Tick()
+        {
+            // AssetManager更新
+            AssetManager.TickAssetManager();
+
+            // FSMManager更新
+            FSMManager.TickFSMManager();
+
+            // ProcedureManager更新
+            ProcedureManager.TickProcedureManager();
+
+            // ControllerManager更新
+            ControllerManager.TickControllerManager();
+        }
+
+        public void LateTick()
+        {
+            // AssetManager更新
+            AssetManager.LateTickAssetManager();
+
+            // FSMManager更新
+            FSMManager.LateTickFSMManager();
+
+            // ProcedureManager更新
+            ProcedureManager.LateTickProcedureManager();
+
+            // ControllerManager更新
+            ControllerManager.LateTickControllerManager();
+        }
+
+
+
     }
 }

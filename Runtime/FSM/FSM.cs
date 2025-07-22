@@ -5,32 +5,127 @@ using UnityEngine;
 
 namespace HN.Framework
 {
-    public class FSM : IReference
+    #region 状态机接口
+    public interface IFSM : IReference, ITickable
     {
-        public int StateCount => states.Count;
-        public FSMState CurrentState => currentState;
-        public string Name => name;
+        /// <summary>
+        /// 状态机名称
+        /// </summary>
+        public string Name { get; }
 
-        protected Dictionary<string, FSMState> states = new Dictionary<string, FSMState>();
-        protected FSMState currentState;
-        protected string name;
+        /// <summary>
+        /// 状态机状态数量
+        /// </summary>
+        public int StateCount { get; }
 
+        /// <summary>
+        /// 是否暂停状态机
+        /// </summary>
+        public bool Paused { get; set; }
 
+        /// <summary>
+        /// 状态机当前状态
+        /// </summary>
+        public IFSMState CurrentState { get; }
+
+        /// <summary>
+        /// 初始化状态机
+        /// </summary>
+        /// <param name="name">状态机名称</param>
+        public void Initialize(string name);
+
+        /// <summary>
+        /// 启动状态机
+        /// </summary>
+        /// <param name="stateName"></param>
+        public void Start(string stateName);
+
+        /// <summary>
+        /// 启动状态机
+        /// </summary>
+        /// <param name="startState"></param>
+        public void Start(FSMState startState);
+
+        /// <summary>
+        /// 关闭状态机
+        /// </summary>
+        public void Shutdown();
+
+        /// <summary>
+        /// 添加状态
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="stateName"></param>
+        /// <returns></returns>
+        public T AddState<T>(string stateName) where T : FSMState, new();
+
+        /// <summary>
+        /// 添加状态转换
+        /// </summary>
+        /// <param name="fromState"></param>
+        /// <param name="targetState"></param>
+        /// <param name="condition"></param>
+        public void AddTransition(FSMState fromState, FSMState targetState, Func<bool> condition);
+
+        /// <summary>
+        /// 移除状态
+        /// </summary>
+        /// <param name="stateName"></param>
+        public void RemoveState(string stateName);
+
+        /// <summary>
+        /// 移除状态
+        /// </summary>
+        /// <param name="state"></param>
+        public void RemoveState(FSMState state);
+
+        /// <summary>
+        /// 移除状态转换
+        /// </summary>
+        /// <param name="fromState"></param>
+        /// <param name="targetState"></param>
+        public void RemoveTransition(FSMState fromState, FSMState targetState);
+
+        /// <summary>
+        /// 改变状态机状态
+        /// </summary>
+        /// <param name="targetStateName"></param>
+        public void ChangeState(string targetStateName);
+
+        /// <summary>
+        /// 改变状态机状态
+        /// </summary>
+        /// <param name="targetState"></param>
+        public void ChangeState(FSMState targetState);
+    }
+    #endregion
+
+    public class FSM : IFSM
+    {
+        #region 对外函数
         public FSM()
         {
         }
 
+        /// <summary>
+        /// 初始化状态机
+        /// </summary>
+        /// <param name="name"></param>
         public virtual void Initialize(string name)
         {
             this.name = name;
         }
 
-        public virtual void Start(string stateName)
+        /// <summary>
+        /// 启动状态机
+        /// </summary>
+        /// <param name="stateName"></param>
+        public void Start(string stateName)
         {
             if (states.ContainsKey(stateName))
             {
                 currentState = states[stateName];
-                currentState.OnEnter?.Invoke();
+                currentState.EnterEvent?.Invoke();
             }
             else
             {
@@ -38,12 +133,16 @@ namespace HN.Framework
             }
         }
 
-        public virtual void Start(FSMState startState)
+        /// <summary>
+        /// 启动状态机
+        /// </summary>
+        /// <param name="startState"></param>
+        public void Start(FSMState startState)
         {
             if (states.ContainsValue(startState))
             {
                 currentState = startState;
-                currentState.OnEnter?.Invoke();
+                currentState.EnterEvent?.Invoke();
             }
             else
             {
@@ -51,16 +150,25 @@ namespace HN.Framework
             }
         }
 
-        public virtual void Shutdown()
+        /// <summary>
+        /// 关闭状态机
+        /// </summary>
+        public void Shutdown()
         {
             if (currentState != null)
             {
-                currentState.OnExit?.Invoke();
+                currentState.ExitEvent?.Invoke();
             }
             currentState = null;
         }
 
-        public virtual T AddState<T>(string stateName) where T : FSMState, new()
+        /// <summary>
+        /// 添加状态
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="stateName"></param>
+        /// <returns></returns>
+        public T AddState<T>(string stateName) where T : FSMState, new()
         {
             if (states.ContainsKey(stateName))
             {
@@ -71,10 +179,16 @@ namespace HN.Framework
             T newState = ReferencePool.Acquire<T>();
             newState.Initialize(stateName);
             states.Add(stateName, newState);
-            newState.OnCreate?.Invoke();
+            newState.CreateEvent?.Invoke();
             return newState;
         }
 
+        /// <summary>
+        /// 添加状态转换
+        /// </summary>
+        /// <param name="fromState"></param>
+        /// <param name="targetState"></param>
+        /// <param name="condition"></param>
         public virtual void AddTransition(FSMState fromState, FSMState targetState, Func<bool> condition)
         {
             if (!states.ContainsValue(fromState))
@@ -90,7 +204,11 @@ namespace HN.Framework
             fromState.AddTransition(targetState, condition);
         }
 
-        public virtual void RemoveState(string stateName)
+        /// <summary>
+        /// 移除状态
+        /// </summary>
+        /// <param name="stateName"></param>
+        public void RemoveState(string stateName)
         {
             if (!states.ContainsKey(stateName))
             {
@@ -99,12 +217,16 @@ namespace HN.Framework
             }
 
             FSMState state = states[stateName];
-            state.OnDestroy?.Invoke();
+            state.DestroyEvent?.Invoke();
             states.Remove(stateName);
             ReferencePool.Release(state);
         }
 
-        public virtual void RemoveState(FSMState state)
+        /// <summary>
+        /// 移除状态
+        /// </summary>
+        /// <param name="state"></param>
+        public void RemoveState(FSMState state)
         {
             if (!states.ContainsValue(state))
             {
@@ -112,12 +234,17 @@ namespace HN.Framework
                 return;
             }
 
-            state.OnDestroy?.Invoke();
+            state.DestroyEvent?.Invoke();
             states.Remove(state.Name);
             ReferencePool.Release(state);
         }
 
-        public virtual void RemoveTransition(FSMState fromState, FSMState targetState)
+        /// <summary>
+        /// 移除状态转换
+        /// </summary>
+        /// <param name="fromState"></param>
+        /// <param name="targetState"></param>
+        public void RemoveTransition(FSMState fromState, FSMState targetState)
         {
             if (!states.ContainsValue(fromState))
             {
@@ -129,7 +256,7 @@ namespace HN.Framework
                 Debug.LogError($"FSM {this} does not exist state {targetState}.");
             }
 
-            if (fromState.Contains(targetState))
+            if (fromState.CanTransTo(targetState))
             {
                 Debug.LogError($"FSM {this} state {fromState} can not trans to state {targetState}.");
             }
@@ -137,7 +264,46 @@ namespace HN.Framework
             fromState.RemoveTransition(targetState);
         }
 
-        public virtual void Update()
+        /// <summary>
+        /// 改变状态机状态
+        /// </summary>
+        /// <param name="targetStateName"></param>
+        public void ChangeState(string targetStateName)
+        {
+            if (states.ContainsKey(targetStateName))
+            {
+                currentState.ExitEvent?.Invoke();
+                currentState = states[targetStateName];
+                currentState.EnterEvent?.Invoke();
+            }
+            else
+            {
+                Debug.LogError($"Current FSM {this} does not contains state {targetStateName}.");
+            }
+        }
+
+        /// <summary>
+        /// 改变状态机状态
+        /// </summary>
+        /// <param name="targetState"></param>
+        public void ChangeState(FSMState targetState)
+        {
+            if (states.ContainsValue(targetState))
+            {
+                currentState.ExitEvent?.Invoke();
+                currentState = targetState;
+                currentState.EnterEvent?.Invoke();
+            }
+            else
+            {
+                Debug.LogError($"Current FSM {this} does not contains state {targetState.Name}.");
+            }
+        }
+
+        /// <summary>
+        /// 每帧更新
+        /// </summary>
+        public void Tick()
         {
             if (currentState != null)
             {
@@ -151,39 +317,22 @@ namespace HN.Framework
                     }
                 }
 
-                currentState.OnUpdate?.Invoke();
+                currentState.UpdateEvent?.Invoke();
             }
         }
 
-        protected virtual void ChangeState(string targetStateName)
+        /// <summary>
+        /// 每帧后更新
+        /// </summary>
+        public void LateTick()
         {
-            if (states.ContainsKey(targetStateName))
-            {
-                currentState.OnExit?.Invoke();
-                currentState = states[targetStateName];
-                currentState.OnEnter?.Invoke();
-            }
-            else
-            {
-                Debug.LogError($"Current FSM {this} does not contains state {targetStateName}.");
-            }
+
         }
 
-        protected virtual void ChangeState(FSMState targetState)
-        {
-            if (states.ContainsValue(targetState))
-            {
-                currentState.OnExit?.Invoke();
-                currentState = targetState;
-                currentState.OnEnter?.Invoke();
-            }
-            else
-            {
-                Debug.LogError($"Current FSM {this} does not contains state {targetState.Name}.");
-            }
-        }
-
-        public virtual void Clear()
+        /// <summary>
+        /// 清理状态机
+        /// </summary>
+        public void Clear()
         {
             currentState = null;
             foreach (var state in states.Values)
@@ -193,5 +342,54 @@ namespace HN.Framework
             states.Clear();
             name = null;
         }
+        #endregion
+
+        #region 对外属性
+        /// <summary>
+        /// 状态机名称
+        /// </summary>
+        public string Name => name;
+
+        /// <summary>
+        /// 状态机状态数量
+        /// </summary>
+        public int StateCount => states.Count;
+
+        /// <summary>
+        /// 是否暂停状态机
+        /// </summary>
+        public bool Paused
+        {
+            get { return paused; }
+            set { paused = value; }
+        }
+
+        /// <summary>
+        /// 状态机当前状态
+        /// </summary>
+        public IFSMState CurrentState => currentState;
+        #endregion
+
+        #region 内部变量
+        /// <summary>
+        /// 状态机名称
+        /// </summary>
+        protected string name;
+
+        /// <summary>
+        /// 状态机当前状态
+        /// </summary>
+        protected FSMState currentState;
+
+        /// <summary>
+        /// 是否暂停状态机
+        /// </summary>
+        protected bool paused = false;
+        
+        /// <summary>
+        /// 状态机状态字典
+        /// </summary>
+        protected Dictionary<string, FSMState> states = new Dictionary<string, FSMState>();
+        #endregion
     }
 }

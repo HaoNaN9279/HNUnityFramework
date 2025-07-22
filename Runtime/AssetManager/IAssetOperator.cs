@@ -1,0 +1,33 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+using Object = UnityEngine.Object;
+
+namespace HN.Framework
+{
+    public interface IAssetOperator : IReference
+    {
+        /// <summary>
+        /// 同步加载资源
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public Object LoadAsset(string name);
+
+        /// <summary>
+        /// 异步加载资源
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public AsyncLoadHandle LoadAssetAsync<T>(string name) where T : Object;
+
+        /// <summary>
+        /// 释放资源
+        /// </summary>
+        /// <param name="asset"></param>
+        public void ReleaseAsset(Object asset);
+    }
+}

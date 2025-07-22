@@ -4,35 +4,29 @@ using UnityEngine;
 
 namespace HN.Framework
 {
-    public partial class ReferencePool
+    public sealed partial class ReferencePool
     {
+        /// <summary>
+        /// 引用池的引用集合类
+        /// </summary>
         private sealed class ReferenceCollection
         {
-            private readonly Queue<IReference> references;
-            private readonly Type referenceType;
-
+            #region 对外函数
+            /// <summary>
+            /// 构造函数
+            /// </summary>
+            /// <param name="referenceType"></param>
             public ReferenceCollection(Type referenceType)
             {
                 references = new Queue<IReference>();
                 this.referenceType = referenceType;
             }
 
-            public Type ReferenceType
-            {
-                get
-                {
-                    return referenceType;
-                }
-            }
-
-            public int UnusedReferenceCount
-            {
-                get
-                {
-                    return references.Count;
-                }
-            }
-
+            /// <summary>
+            /// 从引用集合中请求一个对象
+            /// </summary>
+            /// <typeparam name="T"></typeparam>
+            /// <returns></returns>
             public T Acquire<T>() where T : class, IReference, new()
             {
                 if (typeof(T) != referenceType)
@@ -51,6 +45,10 @@ namespace HN.Framework
                 return new T();
             }
 
+            /// <summary>
+            /// 从引用集合中请求一个对象
+            /// </summary>
+            /// <returns></returns>
             public IReference Acquire()
             {
                 lock (references)
@@ -64,6 +62,10 @@ namespace HN.Framework
                 return (IReference)Activator.CreateInstance(referenceType);
             }
 
+            /// <summary>
+            /// 回收对象到引用集合
+            /// </summary>
+            /// <param name="reference"></param>
             public void Release(IReference reference)
             {
                 reference.Clear();
@@ -78,6 +80,11 @@ namespace HN.Framework
                 }
             }
 
+            /// <summary>
+            /// 添加指定数量的对象到引用集合
+            /// </summary>
+            /// <typeparam name="T"></typeparam>
+            /// <param name="count"></param>
             public void Add<T>(int count) where T : class, IReference, new()
             {
                 if (typeof(T) != referenceType)
@@ -94,6 +101,10 @@ namespace HN.Framework
                 }
             }
 
+            /// <summary>
+            /// 添加指定数量的对象到引用集合
+            /// </summary>
+            /// <param name="count"></param>
             public void Add(int count)
             {
                 lock (references)
@@ -105,6 +116,10 @@ namespace HN.Framework
                 }
             }
 
+            /// <summary>
+            /// 从引用集合中移除指定数量的对象
+            /// </summary>
+            /// <param name="count"></param>
             public void Remove(int count)
             {
                 lock (references)
@@ -114,13 +129,16 @@ namespace HN.Framework
                         count = references.Count;
                     }
 
-                   while (count-- > 0)
+                    while (count-- > 0)
                     {
                         references.Dequeue();
                     }
                 }
             }
 
+            /// <summary>
+            /// 清空引用集合
+            /// </summary>
             public void RemoveAll()
             {
                 lock (references)
@@ -128,6 +146,35 @@ namespace HN.Framework
                     references.Clear();
                 }
             }
+            #endregion
+
+            #region 对外属性
+            /// <summary>
+            /// 引用集合的类型
+            /// </summary>
+            public Type ReferenceType
+            {
+                get
+                {
+                    return referenceType;
+                }
+            }
+
+            /// <summary>
+            /// 引用集合中的对象数量
+            /// </summary>
+            public int UnusedReferenceCount
+            {
+                get
+                {
+                    return references.Count;
+                }
+            }
+
+            private readonly Queue<IReference> references;
+            private readonly Type referenceType;
+            #endregion
+
         }
     }
 }
