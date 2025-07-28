@@ -18,8 +18,8 @@ namespace HN.Framework
             /// <param name="referenceType"></param>
             public ReferenceCollection(Type referenceType)
             {
-                references = new Queue<IReference>();
-                this.referenceType = referenceType;
+                m_references = new Queue<IReference>();
+                this.m_referenceType = referenceType;
             }
 
             /// <summary>
@@ -29,16 +29,16 @@ namespace HN.Framework
             /// <returns></returns>
             public T Acquire<T>() where T : class, IReference, new()
             {
-                if (typeof(T) != referenceType)
+                if (typeof(T) != m_referenceType)
                 {
                     Debug.LogError("Type is invalid.");
                 }
 
-                lock (references)
+                lock (m_references)
                 {
-                    if (references.Count > 0)
+                    if (m_references.Count > 0)
                     {
-                        return (T)references.Dequeue();
+                        return (T)m_references.Dequeue();
                     }
                 }
 
@@ -51,15 +51,15 @@ namespace HN.Framework
             /// <returns></returns>
             public IReference Acquire()
             {
-                lock (references)
+                lock (m_references)
                 {
-                    if (references.Count > 0)
+                    if (m_references.Count > 0)
                     {
-                        return references.Dequeue();
+                        return m_references.Dequeue();
                     }
                 }
 
-                return (IReference)Activator.CreateInstance(referenceType);
+                return (IReference)Activator.CreateInstance(m_referenceType);
             }
 
             /// <summary>
@@ -69,14 +69,14 @@ namespace HN.Framework
             public void Release(IReference reference)
             {
                 reference.Clear();
-                lock (references)
+                lock (m_references)
                 {
-                    if (references.Contains(reference))
+                    if (m_references.Contains(reference))
                     {
                         Debug.LogError("The reference has been released.");
                     }
 
-                    references.Enqueue(reference);
+                    m_references.Enqueue(reference);
                 }
             }
 
@@ -87,16 +87,16 @@ namespace HN.Framework
             /// <param name="count"></param>
             public void Add<T>(int count) where T : class, IReference, new()
             {
-                if (typeof(T) != referenceType)
+                if (typeof(T) != m_referenceType)
                 {
                     Debug.LogError("Type is invalid.");
                 }
 
-                lock (references)
+                lock (m_references)
                 {
                     while (count-- > 0)
                     {
-                        references.Enqueue(new T());
+                        m_references.Enqueue(new T());
                     }
                 }
             }
@@ -107,11 +107,11 @@ namespace HN.Framework
             /// <param name="count"></param>
             public void Add(int count)
             {
-                lock (references)
+                lock (m_references)
                 {
                     while (count-- > 0)
                     {
-                        references.Enqueue((IReference)Activator.CreateInstance(referenceType));
+                        m_references.Enqueue((IReference)Activator.CreateInstance(m_referenceType));
                     }
                 }
             }
@@ -122,16 +122,16 @@ namespace HN.Framework
             /// <param name="count"></param>
             public void Remove(int count)
             {
-                lock (references)
+                lock (m_references)
                 {
-                    if (count > references.Count)
+                    if (count > m_references.Count)
                     {
-                        count = references.Count;
+                        count = m_references.Count;
                     }
 
                     while (count-- > 0)
                     {
-                        references.Dequeue();
+                        m_references.Dequeue();
                     }
                 }
             }
@@ -141,9 +141,9 @@ namespace HN.Framework
             /// </summary>
             public void RemoveAll()
             {
-                lock (references)
+                lock (m_references)
                 {
-                    references.Clear();
+                    m_references.Clear();
                 }
             }
             #endregion
@@ -156,7 +156,7 @@ namespace HN.Framework
             {
                 get
                 {
-                    return referenceType;
+                    return m_referenceType;
                 }
             }
 
@@ -167,12 +167,12 @@ namespace HN.Framework
             {
                 get
                 {
-                    return references.Count;
+                    return m_references.Count;
                 }
             }
 
-            private readonly Queue<IReference> references;
-            private readonly Type referenceType;
+            private readonly Queue<IReference> m_references;
+            private readonly Type m_referenceType;
             #endregion
 
         }

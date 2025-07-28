@@ -326,16 +326,16 @@ namespace HN.Framework
         {
             get
             {
-                if (m_instance == null)
+                if (s_instance == null)
                 {
-                    m_instance = new ProcedureManager();
-                    return m_instance;
+                    s_instance = new ProcedureManager();
+                    return s_instance;
                 }
 
-                return m_instance;
+                return s_instance;
             }
         }
-        private static ProcedureManager m_instance;
+        private static ProcedureManager s_instance;
         private Dictionary<string, ProcedureState> m_states = new Dictionary<string, ProcedureState>();
         private ProcedureState m_currentState;
         #endregion

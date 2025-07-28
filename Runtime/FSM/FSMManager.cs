@@ -226,14 +226,14 @@ namespace HN.Framework
         {
             get
             {
-                if (m_instance == null)
+                if (s_instance == null)
                 {
-                    m_instance = new FSMManager();
+                    s_instance = new FSMManager();
                 }
-                return m_instance;
+                return s_instance;
             }
         }
-        private static FSMManager m_instance;
+        private static FSMManager s_instance;
         private static Dictionary<string, IFSM> m_fsmDict = new Dictionary<string, IFSM>();
         #endregion
     }

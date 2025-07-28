@@ -44,10 +44,10 @@ namespace HN.Framework
             else
             {
                 Instance.m_resourcesOperator = ReferencePool.Acquire<ResourcesOperator>();
-#if UNITY_EDITOR
-                Instance.m_assetDatabaseOperator = ReferencePool.Acquire<AssetDatabaseOperator>();
-#endif
             }
+#if UNITY_EDITOR
+            Instance.m_assetDatabaseOperator = ReferencePool.Acquire<AssetDatabaseOperator>();
+#endif
         }
 
         public static void Uninitialize()
@@ -65,10 +65,10 @@ namespace HN.Framework
             else
             {
                 ReferencePool.Release(Instance.m_resourcesOperator);
-#if UNITY_EDITOR
-                ReferencePool.Release(Instance.m_assetDatabaseOperator);
-#endif
             }
+#if UNITY_EDITOR
+            ReferencePool.Release(Instance.m_assetDatabaseOperator);
+#endif
         }
 
         /// <summary>
@@ -92,6 +92,12 @@ namespace HN.Framework
         /// <typeparam name="T"></typeparam>
         /// <param name="asset"></param>
         public static void Release<T>(T asset) where T : Object => Instance.ReleaseAsset(asset);
+
+        /// <summary>
+        /// 释放资源
+        /// </summary>
+        /// <param name="asset"></param>
+        public static void Release(Object asset) => Instance.ReleaseAsset(asset);
 
         /// <summary>
         /// 每帧更新AssetManager
@@ -202,11 +208,15 @@ namespace HN.Framework
         {
             if (UseAddressables)
             {
-                m_instance.m_addressablesOperator.ReleaseAsset(asset);
+#if UNITY_EDITOR
+                asset = null;
+                return;
+#endif
+                s_instance.m_addressablesOperator.ReleaseAsset(asset);
             }
             else
             {
-                m_instance.m_resourcesOperator.ReleaseAsset(asset);
+                s_instance.m_resourcesOperator.ReleaseAsset(asset);
             }
         }
 
@@ -242,7 +252,7 @@ namespace HN.Framework
         /// 获取当前加载的资源列表
         /// 资源列表是一个字典，键为资源名称，值为弱引用
         /// </summary>
-        public static IReadOnlyDictionary<string, AssetCacheItem> LoadedAssets => m_instance.m_loadedAssets;
+        public static IReadOnlyDictionary<string, AssetCacheItem> LoadedAssets => s_instance.m_loadedAssets;
         #endregion
 
         #region 私有成员
@@ -250,14 +260,14 @@ namespace HN.Framework
         {
             get
             {
-                if (m_instance == null)
+                if (s_instance == null)
                 {
-                    m_instance = new AssetManager();
+                    s_instance = new AssetManager();
                 }
-                return m_instance;
+                return s_instance;
             }
         }
-        private static AssetManager m_instance;
+        private static AssetManager s_instance;
 
         private AddressablesOperator m_addressablesOperator;
         private ResourcesOperator m_resourcesOperator;

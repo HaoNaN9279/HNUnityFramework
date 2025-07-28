@@ -118,14 +118,14 @@ namespace HN.Framework
         {
             get
             {
-                if (m_instance == null)
+                if (s_instance == null)
                 {
-                    m_instance = new ControllerManager();
+                    s_instance = new ControllerManager();
                 }
-                return m_instance;
+                return s_instance;
             }
         }
-        private static ControllerManager m_instance;
+        private static ControllerManager s_instance;
 
         private List<Controller> m_controllers = new List<Controller>();
     }
