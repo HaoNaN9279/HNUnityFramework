@@ -204,7 +204,7 @@ namespace HN.Framework
         public override void Tick()
         {
             // 每隔tickFrequency帧执行一次
-            if (Time.frameCount % tickFrequency != 0)
+            if (tickFrequency != 0 && HNLogicTime.LogicFrameCount % (ulong)tickFrequency != 0)
             {
                 return;
             }
