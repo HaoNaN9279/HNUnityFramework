@@ -15,9 +15,6 @@ namespace HN.Framework
             // 资源管理器初始化
             AssetManager.Initialize();
 
-            // FSMManager初始化
-            FSMManager.Initialize();
-
             // 对象池管理器初始化
             ObjectPoolManager.Initialize();
 
@@ -57,9 +54,6 @@ namespace HN.Framework
             // 对象池管理器销毁
             ObjectPoolManager.Uninitialize();
 
-            // FSMManager销毁
-            FSMManager.Uninitialize();
-
             // 资源管理器销毁
             AssetManager.Uninitialize();
         }
@@ -69,9 +63,6 @@ namespace HN.Framework
         {
             // 资源管理器更新
             AssetManager.TickAssetManager();
-
-            // FSMManager更新
-            FSMManager.TickFSMManager();
 
             // 对象池管理器更新
             ObjectPoolManager.TickObjectPoolManager();
@@ -87,9 +78,6 @@ namespace HN.Framework
         {
             // 资源管理器更新
             AssetManager.LateTickAssetManager();
-
-            // FSMManager更新
-            FSMManager.LateTickFSMManager();
 
             ObjectPoolManager.LateTickObjectPoolManager();
 

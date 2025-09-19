@@ -19,5 +19,15 @@ framework
         Addressables 
             https://blog.csdn.net/linxinfa/article/details/122390621
     可读写配置数据
+    编辑器UI扩展（Odin）
+    曲线工具
     xLua
     输入系统
+    HFSM
+    动画系统（Playable）
+        依赖HFSM的分层状态机
+        动画混合
+        混合空间
+        骨架控制
+        
+

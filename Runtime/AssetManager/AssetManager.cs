@@ -73,6 +73,7 @@ namespace HN.Framework
 
         /// <summary>
         /// 同步加载资源
+        /// 在Editor下使用 或者加载Resources内的资源时使用
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
