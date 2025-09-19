@@ -149,6 +149,7 @@ namespace HN.Framework
             states = ReferencePool.Acquire<PooledDictionary<string, IHFSMState>>();
             entryState = AddState<HFSMEntryState>(HFSMEntryState.EntryStateName);
             exitState = AddState<HFSMExitState>(HFSMExitState.ExitStateName);
+            m_TempStates = ReferencePool.Acquire<PooledList<HFSMState>>();
         }
 
         /// <summary>
@@ -225,6 +226,7 @@ namespace HN.Framework
         {
             if (states.ContainsKey(stateName))
             {
+                Debug.LogWarning($"State machine {this} already contains state: {stateName}.");
                 return states[stateName] as T;
             }
 
@@ -243,6 +245,7 @@ namespace HN.Framework
         {
             if (!states.ContainsKey(stateName))
             {
+                Debug.LogWarning($"State machine {this} does not contain state: {stateName}.");
                 return;
             }
 
@@ -280,6 +283,7 @@ namespace HN.Framework
         {
             if (!states.ContainsValue(state))
             {
+                Debug.LogWarning($"State machine {this} does not contain state: {state.Name}.");
                 return;
             }
 
@@ -343,6 +347,7 @@ namespace HN.Framework
             var key = new KeyValuePair<IHFSMState, IHFSMState>(fromState, targetState);
             if (!transitions.ContainsKey(key))
             {
+                Debug.LogWarning($"State machine {this} does not contain transition: {fromState.Name} -> {targetState.Name}.");
                 return;
             }
 
@@ -362,6 +367,7 @@ namespace HN.Framework
             var key = new KeyValuePair<IHFSMState, IHFSMState>(transition.FromState, transition.TargetState);
             if (!transitions.ContainsKey(key))
             {
+                Debug.LogWarning($"State machine {this} does not contain transition: {transition.FromState.Name} -> {transition.TargetState.Name}.");
                 return;
             }
 
@@ -377,6 +383,7 @@ namespace HN.Framework
         {
             if (!states.ContainsKey(targetStateName))
             {
+                Debug.LogWarning($"State machine {this} does not contain state {targetStateName}.");
                 return;
             }
 
@@ -396,6 +403,7 @@ namespace HN.Framework
         {
             if (!states.ContainsKey(targetState.Name))
             {
+                Debug.LogWarning($"State machine {this} does not contain state {targetState.Name}.");
                 return;
             }
 
@@ -414,21 +422,20 @@ namespace HN.Framework
         {
             if (!isAlive)
             {
+                Debug.LogWarning($"State machine {this} is not alive.");
                 return;
             }
 
             if (paused)
             {
+                Debug.LogWarning($"State machine {this} is paused.");
                 return;
             }
 
-            if (currentState == null)
+            m_TempStates.Clear();
+            while (currentState != null && currentState.IsAllowedTrans)
             {
-                return;
-            }
-
-            while (currentState.IsAllowedTrans)
-            {
+                m_TempStates.Add(currentState as HFSMState);
                 foreach (var transition in currentState.OutputTransitions.Values)
                 {
                     if (transition.Active && transition.Eval())
@@ -437,6 +444,11 @@ namespace HN.Framework
                         currentState.Update();
                         break;
                     }
+                }
+                if (m_TempStates.Contains(currentState))
+                {
+                    Debug.LogError($"State machine {this} has death loop.");
+                    break;
                 }
             }
 
@@ -551,5 +563,10 @@ namespace HN.Framework
         /// 状态机转换列表
         /// </summary>
         protected PooledDictionary<KeyValuePair<IHFSMState, IHFSMState>, IHFSMTransition> transitions;
+
+        /// <summary>
+        /// 存储本次更新执行过的状态，用于检测死循环
+        /// </summary>
+        private PooledList<HFSMState> m_TempStates;
     }
 }
