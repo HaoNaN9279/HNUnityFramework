@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace HN.Framework
 {
@@ -18,8 +19,6 @@ namespace HN.Framework
 
         protected virtual void OnAwake()
         {
-            globalSettings = HNUnityFrameworkGlobalSettings.GetOrCreateSettings();
-
             HNLogicTime.Initialize();
             AssetManager.Initialize();
             ObjectPoolManager.Initialize();
@@ -29,6 +28,7 @@ namespace HN.Framework
 
         void Start()
         {
+            LoadGlobalSetting();
             OnStart();
         }
 
@@ -90,6 +90,12 @@ namespace HN.Framework
             ObjectPoolManager.LateTickObjectPoolManager();
             ProcedureManager.LateTickProcedureManager();
             ControllerManager.LateTickControllerManager();
+        }
+
+        private void LoadGlobalSetting()
+        {
+            var handle = Addressables.LoadAssetAsync<HNUnityFrameworkGlobalSettings>(HNUnityFrameworkGlobalSettings.GetGlobalSettingsLoadPath());
+            globalSettings = handle.WaitForCompletion();
         }
 
         protected void LogicTimeUpdate(Action tickFunc)

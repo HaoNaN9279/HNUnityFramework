@@ -2,9 +2,13 @@
     "name": "HN.Framework.Editor",
     "rootNamespace": "HN.Framework.Editor",
     "references": [
-        "GUID:1a5bce3b468aa464482ce8c8c66bb914"
+        "GUID:1a5bce3b468aa464482ce8c8c66bb914",
+        "GUID:9e24947de15b9834991c9d8411ea37cf",
+        "GUID:69448af7b92c7f342b298e06a37122aa"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

@@ -13,11 +13,10 @@ framework
         文本
         资源
     资源管理器 
-        AssetBundle 
-            https://blog.csdn.net/u014528558/article/details/105796076 
-            https://www.jianshu.com/p/80f432eda30d 
         Addressables 
             https://blog.csdn.net/linxinfa/article/details/122390621
+            通过识别文件夹后缀自动group
+            监听文件移动和改名 自动更新address
     可读写配置数据
     编辑器UI扩展（Odin）
     曲线工具

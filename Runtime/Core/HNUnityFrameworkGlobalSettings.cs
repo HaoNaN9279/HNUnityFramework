@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.AddressableAssets;
+using System.IO;
+
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -31,6 +35,11 @@ namespace HN.Framework
         }
 #endif
 
+        public static string GetGlobalSettingsLoadPath()
+        {
+            return GlobalSettingsPath.Substring("Assets/Project/RuntimeAssets".Length);
+        }
+
 
         public LogicRateMode LogicRateMode => m_LogicRateMode;
 
@@ -54,7 +63,7 @@ namespace HN.Framework
         private float m_MaxFrameTime = 0.1f;
 
 
-        public static readonly string GlobalSettingsPath = "Assets/HNUnityFramework/HNUnityFrameworkGlobalSettings.asset";
+        public static readonly string GlobalSettingsPath = "Assets/Project/RuntimeAssets/Core/HNUnityFrameworkGlobalSettings.asset";
 
     }
 
