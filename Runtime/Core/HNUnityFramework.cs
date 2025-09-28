@@ -20,7 +20,6 @@ namespace HN.Framework
         protected virtual void OnAwake()
         {
             HNLogicTime.Initialize();
-            AssetManager.Initialize();
             ObjectPoolManager.Initialize();
             ProcedureManager.Initialize();
             ControllerManager.Initialize();
@@ -72,13 +71,11 @@ namespace HN.Framework
             ProcedureManager.ShutdownProcedure();
             ProcedureManager.Uninitialize();
             ObjectPoolManager.Uninitialize();
-            AssetManager.Uninitialize();
         }
         #endregion
 
         public void Tick()
         {
-            AssetManager.TickAssetManager();
             ObjectPoolManager.TickObjectPoolManager();
             ProcedureManager.TickProcedureManager();
             ControllerManager.TickControllerManager();
@@ -86,7 +83,6 @@ namespace HN.Framework
 
         public void LateTick()
         {
-            AssetManager.LateTickAssetManager();
             ObjectPoolManager.LateTickObjectPoolManager();
             ProcedureManager.LateTickProcedureManager();
             ControllerManager.LateTickControllerManager();

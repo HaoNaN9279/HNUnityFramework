@@ -338,7 +338,7 @@ namespace HN.Framework
                 Despawn();
             }
 
-            AssetManager.Release(prototype);
+            GameObject.Destroy(prototype);
             GameObject.Destroy(root);
             prototype = null;
             root = null;
