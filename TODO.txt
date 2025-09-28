@@ -5,14 +5,14 @@ framework
         bin
         scriptable sheets 
             编辑器内配置表 编辑器内编译生成运行时数据
-    对象池 
-    引用池 
+    -对象池 
+    -引用池 
         https://www.zhihu.com/column/c_1436501161410596864
     运行时调试器
     本地化
         文本
         资源
-    资源管理器 
+    -资源管理器 
         Addressables 
             https://blog.csdn.net/linxinfa/article/details/122390621
             通过识别文件夹后缀自动group
@@ -22,7 +22,7 @@ framework
     曲线工具
     xLua
     输入系统
-    HFSM
+    -HFSM
     动画系统（Playable）
         依赖HFSM的分层状态机
         动画混合
@@ -30,5 +30,15 @@ framework
         骨架控制
     MVC
     UI系统
+
+
+UI系统
+    界面嵌套 栈
+    界面分层：
+        背景层 场景层 界面层 弹窗层 提示层 引导层 系统层
+    统一动画流程
+    界面跳转
+    红点
+    
         
 
