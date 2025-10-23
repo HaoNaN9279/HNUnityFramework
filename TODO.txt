@@ -6,6 +6,7 @@ framework
         scriptable sheets 
             编辑器内配置表 编辑器内编译生成运行时数据
     -对象池 
+        GameObjectPool组件化
     -引用池 
         https://www.zhihu.com/column/c_1436501161410596864
     运行时调试器
@@ -30,6 +31,9 @@ framework
         骨架控制
     MVC
     UI系统
+    DOTween动画
+    TextMeshPro
+    
 
 
 UI系统
@@ -39,6 +43,34 @@ UI系统
     统一动画流程
     界面跳转
     红点
-    
-        
+MVC
+    M:
+        数据管理
+        核心业务逻辑
+        数据存储与加载
+        数据变更通知
+        被C查询数据
+    V：
+        数据可视化
+        交互后的反馈
+        绑定并控制Unity.GameObject
+        显示层逻辑
+        被C驱动刷新显示
+    C：
+        协调M与V
+        处理用户输入
+        加载管理资源
 
+五层架构
+    更新收集世界信息
+        Knowledge Pool  Scensor
+    决策层
+        生成request 处理决策时机 接收并处理玩家输入
+    请求层
+        过滤request 双缓冲 处理请求优先级
+    行为层
+        行为树 处理动画、寻路 生成运动信息
+    运动层
+        计算物理 生成最终空间信息和动画结果
+
+https://blog.codingnow.com/2024/08/gameplay_framework.html
