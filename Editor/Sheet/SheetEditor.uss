@@ -1,0 +1,122 @@
+rootVisualElement
+{
+    width: 100%;
+    height: 100%;
+}
+
+#sheetRoot 
+{
+    flex-grow: 1;
+    flex-direction: row;
+}
+
+#scrollView
+{
+    flex-grow: 1;
+}
+
+#titlesRoot
+{
+    position: absolute;
+    flex-direction: row;
+    background-color: rgba(100, 100, 100, 1.0);
+}
+
+#idHeaderField
+{
+    width: 30px;
+    height: 20px;
+}
+
+#idField
+{
+    width: 30px;
+    height: 20px;
+    -unity-text-align: middle-right
+}
+
+#dataRoot
+{
+    top: 63px;
+}
+
+#typesRoot
+{
+    height: 21px;
+    flex-direction: row;
+}
+
+#headersRoot
+{
+    height: 21px;
+    flex-direction: row;
+}
+
+#descriptionsRoot
+{
+    height: 21px;
+    flex-direction: row;
+}
+
+#dataLineRoot
+{
+    height: 21px;
+    flex-shrink: 0;
+    flex-direction: row;
+}
+
+#dataFieldRoot
+{
+    flex-shrink: 0;
+    width: 100px;
+    height: 20px;
+}
+
+#typeRoot
+{
+    flex-shrink: 0;
+    width: 100px;
+    height: 20px;
+}
+
+#headerRoot
+{
+    flex-shrink: 0;
+    width: 100px;
+    height: 20px;
+}
+
+#descriptionRoot
+{
+    flex-shrink: 0;
+    width: 100px;
+    height: 20px;
+}
+
+#dataField
+{
+    flex-grow: 1;
+}
+
+#headerField
+{
+    flex-grow: 1;
+}
+
+#descriptionField
+{
+    flex-grow: 1;
+}
+
+#horizontalSpace
+{
+    flex-shrink: 0;
+    width: 2px;
+    height: 1px;
+}
+
+#verticalSpace
+{
+    flex-grow: 1;
+    height: 1px;
+}
