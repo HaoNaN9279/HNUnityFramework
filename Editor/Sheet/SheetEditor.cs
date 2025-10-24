@@ -73,9 +73,11 @@ namespace HN.Framework.Editor
 
             for (int i = 0; i < sheet.typeCount; i++)
             {
-                var sheetColumn = DrawSheetColumn(i, out VisualElement columnHeader);
+                // columnTitle需要在scrollView垂直滚动时保持垂直位置不变，所以position被标记为absolute，
+                // 所以无法跟随parent flex grow，这里传出来被Seperator手动修改其width。
+                var sheetColumn = DrawSheetColumn(i, out VisualElement columnTitle);
                 scrollView.Add(sheetColumn);
-                var columnSeperator = DrawColumnSeperator(new[] { sheetColumn, columnHeader });
+                var columnSeperator = DrawColumnSeperator(new[] { sheetColumn, columnTitle });
                 columnSeperators.Add(columnSeperator);
                 scrollView.Add(columnSeperator);
             }
@@ -113,15 +115,15 @@ namespace HN.Framework.Editor
             return leftColumn;
         }
 
-        private VisualElement DrawSheetColumn(int columnId, out VisualElement columnHeader)
+        private VisualElement DrawSheetColumn(int columnId, out VisualElement columnTitle)
         {
             var sheetColumn = new VisualElement();
             sheetColumn.name = "sheetColumn";
             if (columnId == 0)
                 sheetColumn.style.marginLeft = 32;
 
-            columnHeader = DrawColumnHeader(columnId);
-            sheetColumn.Add(columnHeader);
+            columnTitle = DrawColumnTitle(columnId);
+            sheetColumn.Add(columnTitle);
 
             for (int i = 0; i < sheet.lineCount; i++)
             {
@@ -129,7 +131,7 @@ namespace HN.Framework.Editor
                 sheetColumn.Add(dataField);
             }
 
-            columnHeader.BringToFront();
+            columnTitle.BringToFront();
             return sheetColumn;
         }
 
@@ -150,7 +152,7 @@ namespace HN.Framework.Editor
                 idField.style.left = value;
             };
             if(lineId == 0)
-                idField.style.marginTop = 42;
+                idField.style.marginTop = titleHeight;
             if (lineId % 2 == 0)
                 idField.AddToClassList("id-row-even");
             else
@@ -158,23 +160,22 @@ namespace HN.Framework.Editor
             return idField;
         }
 
-        private VisualElement DrawColumnHeader(int columnId)
+        private VisualElement DrawColumnTitle(int columnId)
         {
-            var columnHeader = new VisualElement();
-            columnHeader.name = "columnHeader";
+            var columnTitle = new VisualElement();
+            columnTitle.name = "columnTitle";
             scrollView.verticalScroller.valueChanged += (value) =>
             {
-                columnHeader.style.top = value;
+                columnTitle.style.top = value;
             };
 
-            var titleFieldContainer = DrawTitleFieldContainer(columnId);
+            var typeField = DrawTypeField(columnId);
+            columnTitle.Add(typeField);
 
-            var reorderButton = new VisualElement();
-            reorderButton.name = "reorderButton";
+            var headerField = DrawHeaderField(columnId);
+            columnTitle.Add(headerField);
 
-            columnHeader.Add(titleFieldContainer);
-            columnHeader.Add(reorderButton);
-            return columnHeader;
+            return columnTitle;
         }
 
         private VisualElement DrawDataField(int columnId, int lineId)
@@ -182,7 +183,7 @@ namespace HN.Framework.Editor
             var dataRoot = new VisualElement();
             dataRoot.name = "dataRoot";
             if(lineId == 0)
-                dataRoot.style.marginTop = 42;
+                dataRoot.style.marginTop = titleHeight;
             string typeName = sheet.types[columnId];
             string value = sheet.elements[lineId * sheet.typeCount + columnId];
             var dataField = sheetFieldTypeDrawer.DrawField(typeName, value);
@@ -192,20 +193,6 @@ namespace HN.Framework.Editor
                 dataRoot.AddToClassList("data-row-odd");
             dataRoot.Add(dataField);
             return dataRoot;
-        }
-
-        private VisualElement DrawTitleFieldContainer(int columnId)
-        {
-            var titleFieldContainer = new VisualElement();
-            titleFieldContainer.name = "headerFieldContainer";
-
-            var typeField = DrawTypeField(columnId);
-            titleFieldContainer.Add(typeField);
-
-            var headerField = DrawHeaderField(columnId);
-            titleFieldContainer.Add(headerField);
-
-            return titleFieldContainer;
         }
 
         private VisualElement DrawTypeField(int columnId)
@@ -232,22 +219,14 @@ namespace HN.Framework.Editor
         private ObjectField objField;
         private VisualElement sheetRoot;
         private ScrollView scrollView;
-        private List<VisualElement> boxesSeperator = new List<VisualElement>();
         private List<VisualElement> columnSeperators = new List<VisualElement>();
 
-        private const string typesPropertyName = "types";
-        private const string typeCountPropertyName = "typeCount";
-        private const string headersPropertyName = "headers";
-        private const string elementsPropertyName = "elements";
-
-        private const int defaultBoxWidth = 100;
-        private const int defaultBoxHeight = 20;
-        private const int defaultBoxHorizontalSpace = 2;
-        private const int defaultBoxVerticalSpace = 1;
+        private const int titleHeight = 42;
 
         private const string styleSheetPath = "Assets/HNUnityFramework/Editor/Sheet/SheetEditor.uss";
     
     
+
         public class ColumnSeperator : VisualElement
         {
             public ColumnSeperator(VisualElement[] targets)

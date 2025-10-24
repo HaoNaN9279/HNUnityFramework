@@ -76,19 +76,12 @@ rootVisualElement
     background-color: rgb(90, 90, 90);
 }
 
-#columnHeader
+#columnTitle
 {
     flex-grow: 1;
-    flex-direction: row;
     position: absolute;
+    width: 100px;
     background-color: rgb(40, 40, 40);
-}
-
-#reorderButton
-{
-    width: 10px;
-    height: 42px;
-    background-color: rgb(97, 97, 97);
 }
 
 #dataRoot
@@ -104,12 +97,6 @@ rootVisualElement
 .data-row-odd
 {
     background-color: rgb(50, 50, 50);
-}
-
-#headerFieldContainer
-{
-    flex-grow: 1;
-    width: 100px;
 }
 
 #typeField
