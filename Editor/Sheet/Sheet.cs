@@ -18,6 +18,7 @@ namespace HN.Framework
             if (data.Count == 0)
                 return;
 
+            lineCount = 0;
             for (int dataLineId = 0; dataLineId < data.Count; dataLineId++)
             {
                 if (dataLineId == 0)
@@ -105,13 +106,15 @@ namespace HN.Framework
             if (typeCount == 0)
                 return;
 
-            for(int i = 0; i < sheetLine.Length; i++)
+            for (int i = 0; i < sheetLine.Length; i++)
             {
-                if(sheetLine.Length > i)
+                if (sheetLine.Length > i)
                 {
                     elements.Add(sheetLine[i]);
                 }
             }
+
+            lineCount++;
         }
 
         // private Type ReflectionFindType(string typeName)
@@ -167,9 +170,12 @@ namespace HN.Framework
 
         [SerializeField]
         public List<string> descriptions = new List<string>();
-        
+
         [SerializeField]
         public List<string> elements = new List<string>();
+
+        [SerializeField]
+        public int lineCount;
 
         public const string defaultHeaderName = "[Undefined]";
     }

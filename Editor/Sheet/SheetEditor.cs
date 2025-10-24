@@ -53,6 +53,7 @@ namespace HN.Framework.Editor
             {
                 sheetRoot.Clear();
                 titleContent = new GUIContent($"[SheetEditor]");
+                columnSeperators.Clear();
             }
         }
 
@@ -63,184 +64,165 @@ namespace HN.Framework.Editor
             serializedObject = new SerializedObject(sheet);
             sheetFieldTypeDrawer = new SheetFieldTypeDrawer();
 
-            var scrollView = new ScrollView();
+            scrollView = new ScrollView(ScrollViewMode.VerticalAndHorizontal);
             scrollView.name = "scrollView";
+            scrollView.contentContainer.name = "scrollViewContentContainer";
 
-            var titlesField = DrawTitles();
+            var leftColumn = DrawLeftColumn();
+            scrollView.Add(leftColumn);
 
-            var dataField = DrawData();
+            for (int i = 0; i < sheet.typeCount; i++)
+            {
+                var sheetColumn = DrawSheetColumn(i, out VisualElement columnHeader);
+                scrollView.Add(sheetColumn);
+                var columnSeperator = DrawColumnSeperator(new[] { sheetColumn, columnHeader });
+                columnSeperators.Add(columnSeperator);
+                scrollView.Add(columnSeperator);
+            }
 
-            scrollView.Add(titlesField);
-            scrollView.Add(dataField);
-            dataField.PlaceBehind(titlesField);
             sheetRoot.Add(scrollView);
 
+            leftColumn.BringToFront();
+        }
+
+        private VisualElement DrawLeftColumn()
+        {
+            var leftColumn = new VisualElement();
+            leftColumn.name = "leftColumn";
+
+            var topLeftCorner = new VisualElement();
+            topLeftCorner.name = "topLeftCorner";
             scrollView.verticalScroller.valueChanged += (value) =>
             {
-                titlesField.style.top = value;
+                topLeftCorner.style.top = value;
             };
-        }
 
-        private VisualElement DrawTitles()
-        {
-            var titlesRoot = new VisualElement();
-            titlesRoot.name = "titlesRoot";
-            var box = new VisualElement();
-            var idHeaderField = new VisualElement();
-            idHeaderField.name = "idHeaderField";
-            var typesField = DrawTypes();
-            var headersField = DrawHeaders();
-            var descriptionsField = DrawDescriptions();
-            box.Add(typesField);
-            box.Add(headersField);
-            box.Add(descriptionsField);
-            titlesRoot.Add(idHeaderField);
-            titlesRoot.Add(box);
-            return titlesRoot;
-        }
+            var leftDataColumn = new VisualElement();
+            leftDataColumn.name = "leftDataColumn";
 
-        private VisualElement DrawData()
-        {
-            var dataRoot = new VisualElement();
-            dataRoot.name = "dataRoot";
-            for (int i = 0; i < sheet.elements.Count / sheet.typeCount; i++)
+            leftColumn.Add(topLeftCorner);
+            leftColumn.Add(leftDataColumn);
+
+            for (int i = 0; i < sheet.lineCount; i++)
             {
-                var dataLineField = DrawDataLine(i);
-                dataRoot.Add(dataLineField);
-                if (i == sheet.elements.Count / sheet.typeCount - 1)
-                {
-                    var boxVerticalSpace = DrawBoxVerticalSpace();
-                    dataRoot.Add(boxVerticalSpace);
-                }
+                var dataLeft = DrawDataLeft(i);
+                leftDataColumn.Add(dataLeft);
             }
-            return dataRoot;
+
+            topLeftCorner.BringToFront();
+            return leftColumn;
         }
 
-        private VisualElement DrawTypes()
+        private VisualElement DrawSheetColumn(int columnId, out VisualElement columnHeader)
         {
-            var typesRoot = new VisualElement();
-            typesRoot.name = "typesRoot";
-            for (int i = 0; i < sheet.typeCount; i++)
+            var sheetColumn = new VisualElement();
+            sheetColumn.name = "sheetColumn";
+            if (columnId == 0)
+                sheetColumn.style.marginLeft = 32;
+
+            columnHeader = DrawColumnHeader(columnId);
+            sheetColumn.Add(columnHeader);
+
+            for (int i = 0; i < sheet.lineCount; i++)
             {
-                var typeField = DrawTypeField(sheet.types[i]);
-                typesRoot.Add(typeField);
-                if (i != sheet.typeCount - 1)
-                {
-                    var boxHorizontalSpace = DrawBoxHorizontalSpace();
-                    typesRoot.Add(boxHorizontalSpace);
-                }
+                var dataField = DrawDataField(columnId, i);
+                sheetColumn.Add(dataField);
             }
-            return typesRoot;
+
+            columnHeader.BringToFront();
+            return sheetColumn;
         }
 
-        private VisualElement DrawHeaders()
+        private VisualElement DrawColumnSeperator(VisualElement[] targets)
         {
-            var headersRoot = new VisualElement();
-            headersRoot.name = "headersRoot";
-            for (int i = 0; i < sheet.typeCount; i++)
-            {
-                var headerField = DrawHeaderField(sheet.headers[i]);
-                headersRoot.Add(headerField);
-                if (i != sheet.typeCount - 1)
-                {
-                    var boxHorizontalSpace = DrawBoxHorizontalSpace();
-                    headersRoot.Add(boxHorizontalSpace);
-                }
-            }
-            return headersRoot;
+            var columnSeperator = new ColumnSeperator(targets);
+            columnSeperator.name = "columnSeperator";
+            return columnSeperator;
         }
 
-        private VisualElement DrawDescriptions()
+        private VisualElement DrawDataLeft(int lineId)
         {
-            var descriptionsRoot = new VisualElement();
-            descriptionsRoot.name = "descriptionsRoot";
-            for (int i = 0; i < sheet.typeCount; i++)
-            {
-                var descriptionField = DrawDescriptionField(sheet.descriptions[i]);
-                descriptionsRoot.Add(descriptionField);
-                if (i != sheet.typeCount - 1)
-                {
-                    var boxHorizontalSpace = DrawBoxHorizontalSpace();
-                    descriptionsRoot.Add(boxHorizontalSpace);
-                }
-            }
-            return descriptionsRoot;
-        }
-        
-        private VisualElement DrawDataLine(int lineId)
-        {
-            var dataLineRoot = new VisualElement();
-            dataLineRoot.name = "dataLineRoot";
             var idField = new Label();
             idField.name = "idField";
             idField.text = lineId.ToString();
-            dataLineRoot.Add(idField);
-            for (int i = 0; i < sheet.typeCount; i++)
+            scrollView.horizontalScroller.valueChanged += (value) =>
             {
-                var dataFieldRoot = new VisualElement();
-                dataFieldRoot.name = "dataFieldRoot";
-                int dataId = lineId * sheet.typeCount + i;
-                var dataField = sheetFieldTypeDrawer.DrawField(sheet.types[i], sheet.elements[dataId]);
-                dataField.name = "dataField";
-                dataFieldRoot.Add(dataField);
-                dataLineRoot.Add(dataFieldRoot);
-                if (i != sheet.typeCount - 1)
-                {
-                    var boxHorizontalSpace = DrawBoxHorizontalSpace();
-                    dataLineRoot.Add(boxHorizontalSpace);
-                }
-            }
-            return dataLineRoot;
+                idField.style.left = value;
+            };
+            if(lineId == 0)
+                idField.style.marginTop = 42;
+            if (lineId % 2 == 0)
+                idField.AddToClassList("id-row-even");
+            else
+                idField.AddToClassList("id-row-odd");
+            return idField;
         }
 
-        private VisualElement DrawTypeField(string typeName)
+        private VisualElement DrawColumnHeader(int columnId)
         {
-            var typeRoot = new VisualElement();
-            typeRoot.name = "typeRoot";
-            var typeList = sheetFieldTypeDrawer.DrawerDict.Keys.ToList();
-            var typeField = new DropdownField(typeList, 0);
+            var columnHeader = new VisualElement();
+            columnHeader.name = "columnHeader";
+            scrollView.verticalScroller.valueChanged += (value) =>
+            {
+                columnHeader.style.top = value;
+            };
+
+            var titleFieldContainer = DrawTitleFieldContainer(columnId);
+
+            var reorderButton = new VisualElement();
+            reorderButton.name = "reorderButton";
+
+            columnHeader.Add(titleFieldContainer);
+            columnHeader.Add(reorderButton);
+            return columnHeader;
+        }
+
+        private VisualElement DrawDataField(int columnId, int lineId)
+        {
+            var dataRoot = new VisualElement();
+            dataRoot.name = "dataRoot";
+            if(lineId == 0)
+                dataRoot.style.marginTop = 42;
+            string typeName = sheet.types[columnId];
+            string value = sheet.elements[lineId * sheet.typeCount + columnId];
+            var dataField = sheetFieldTypeDrawer.DrawField(typeName, value);
+            if (lineId % 2 == 0)
+                dataRoot.AddToClassList("data-row-even");
+            else
+                dataRoot.AddToClassList("data-row-odd");
+            dataRoot.Add(dataField);
+            return dataRoot;
+        }
+
+        private VisualElement DrawTitleFieldContainer(int columnId)
+        {
+            var titleFieldContainer = new VisualElement();
+            titleFieldContainer.name = "headerFieldContainer";
+
+            var typeField = DrawTypeField(columnId);
+            titleFieldContainer.Add(typeField);
+
+            var headerField = DrawHeaderField(columnId);
+            titleFieldContainer.Add(headerField);
+
+            return titleFieldContainer;
+        }
+
+        private VisualElement DrawTypeField(int columnId)
+        {
+            var typeField = new DropdownField(sheetFieldTypeDrawer.TypeNameList, 0);
             typeField.name = "typeField";
-            typeField.value = typeName;
-            typeRoot.Add(typeField);
-            return typeRoot;
+            typeField.value = sheet.types[columnId];
+            return typeField;
         }
-
-        private VisualElement DrawHeaderField(string header)
+        
+        private VisualElement DrawHeaderField(int columnId)
         {
-            var headerRoot = new VisualElement();
-            headerRoot.name = "headerRoot";
             var headerField = new TextField();
             headerField.name = "headerField";
-            headerField.value = header;
-            headerRoot.Add(headerField);
-            return headerRoot;
-        }
-        
-        private VisualElement DrawDescriptionField(string description)
-        {
-            var descriptionRoot = new VisualElement();
-            descriptionRoot.name = "descriptionRoot";
-            var descriptionField = new TextField();
-            descriptionField.name = "descriptionField";
-            descriptionField.value = description;
-            descriptionRoot.Add(descriptionField);
-            return descriptionRoot;
-        }
-
-        private VisualElement DrawBoxHorizontalSpace()
-        {
-            var horizontalSpace = new VisualElement();
-            horizontalSpace.name = "horizontalSpace";
-            return horizontalSpace;
-        }
-        
-        private VisualElement DrawBoxVerticalSpace()
-        {
-            var verticalSpace = new VisualElement();
-            verticalSpace.name = "verticalSpace";
-            return verticalSpace;
-        }
-
+            headerField.value = sheet.headers[columnId];
+            return headerField;
+        }        
 
 
         private Sheet sheet;
@@ -249,7 +231,9 @@ namespace HN.Framework.Editor
         private VisualElement root;
         private ObjectField objField;
         private VisualElement sheetRoot;
-        private List<int> boxesWidth = new List<int>();
+        private ScrollView scrollView;
+        private List<VisualElement> boxesSeperator = new List<VisualElement>();
+        private List<VisualElement> columnSeperators = new List<VisualElement>();
 
         private const string typesPropertyName = "types";
         private const string typeCountPropertyName = "typeCount";
@@ -262,5 +246,67 @@ namespace HN.Framework.Editor
         private const int defaultBoxVerticalSpace = 1;
 
         private const string styleSheetPath = "Assets/HNUnityFramework/Editor/Sheet/SheetEditor.uss";
+    
+    
+        public class ColumnSeperator : VisualElement
+        {
+            public ColumnSeperator(VisualElement[] targets)
+            {
+                targetElements = targets;
+                startWidths = new float[targets.Length];
+
+                RegisterCallback<MouseDownEvent>(OnMouseDown);
+                RegisterCallback<MouseUpEvent>(OnMouseUp);
+                RegisterCallback<MouseMoveEvent>(OnMouseMove);
+            }
+
+
+            private void OnMouseDown(MouseDownEvent evt)
+            {
+                if (evt.button == 0)
+                {
+                    isResizing = true;
+                    for(int i = 0; i < targetElements.Length; i++)
+                    {
+                        startWidths[i] = targetElements[i].resolvedStyle.width;
+                    }
+                    startMousePosition = evt.mousePosition;
+
+                    this.CaptureMouse();
+                    evt.StopPropagation();
+                }
+            }
+
+            private void OnMouseUp(MouseUpEvent evt)
+            {
+                if (isResizing && evt.button == 0)
+                {
+                    isResizing = false;
+                    this.ReleaseMouse();
+                    evt.StopPropagation();
+                }
+            }
+            
+            private void OnMouseMove(MouseMoveEvent evt)
+            {
+                if (!isResizing)
+                    return;
+
+                float deltaX = evt.mousePosition.x - startMousePosition.x;
+                for(int i = 0; i < targetElements.Length; i++)
+                {
+                    float newWidth = Mathf.Max(startWidths[i] + deltaX, 50f);
+                    targetElements[i].style.width = newWidth;
+                }
+
+                evt.StopPropagation();
+            }
+
+
+            private bool isResizing;
+            private VisualElement[] targetElements;
+            private float[] startWidths;
+            private Vector2 startMousePosition;
+        }
     }
 }

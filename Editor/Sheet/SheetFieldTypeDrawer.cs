@@ -20,8 +20,9 @@ namespace HN.Framework.Editor
             {
                 drawerDict[item.Attr.typeName] = item.Type;
             }
+            typeNameList = drawerDict.Keys.ToList();
         }
-        
+
         public VisualElement DrawField(string typeName, string value)
         {
             if (drawerDict.TryGetValue(typeName, out var type))
@@ -34,7 +35,9 @@ namespace HN.Framework.Editor
 
 
         public IReadOnlyDictionary<string, Type> DrawerDict => drawerDict;
+        public List<string> TypeNameList => typeNameList;
+        
         private Dictionary<string, Type> drawerDict = new();
-
+        private List<string> typeNameList;
     }
 }
