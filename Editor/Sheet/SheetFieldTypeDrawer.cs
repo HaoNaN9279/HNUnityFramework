@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -10,7 +11,7 @@ namespace HN.Framework.Editor
 {
     public class SheetFieldTypeDrawer
     {
-        public SheetFieldTypeDrawer()
+        public SheetFieldTypeDrawer(SerializedProperty elementsProperty)
         {
             var types = Assembly.GetExecutingAssembly().GetTypes()
                         .Where(t => typeof(ISheetFieldTypeEditor).IsAssignableFrom(t) && !t.IsInterface)
@@ -21,14 +22,15 @@ namespace HN.Framework.Editor
                 drawerDict[item.Attr.typeName] = item.Type;
             }
             typeNameList = drawerDict.Keys.ToList();
+            this.elementsProperty = elementsProperty;
         }
 
-        public VisualElement DrawField(string typeName, string value)
+        public VisualElement DrawField(string typeName, int elementId, string value)
         {
             if (drawerDict.TryGetValue(typeName, out var type))
             {
                 var editor = (ISheetFieldTypeEditor)Activator.CreateInstance(type);
-                return editor.DrawField(value);
+                return editor.DrawField(elementsProperty, elementId, value);
             }
             return null;
         }
@@ -39,5 +41,6 @@ namespace HN.Framework.Editor
         
         private Dictionary<string, Type> drawerDict = new();
         private List<string> typeNameList;
+        private SerializedProperty elementsProperty;
     }
 }

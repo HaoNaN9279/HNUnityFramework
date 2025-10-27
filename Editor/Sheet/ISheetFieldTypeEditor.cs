@@ -5,8 +5,4 @@ using UnityEngine.UIElements;
 
 namespace HN.Framework.Editor
 {
-    public interface ISheetFieldTypeEditor
-    {
-        public VisualElement DrawField(string value);
-    }
 }

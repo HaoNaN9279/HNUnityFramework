@@ -1,14 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace HN.Framework.Editor
 {
+    public interface ISheetFieldTypeEditor
+    {
+        public VisualElement DrawField(SerializedProperty elementsProperty, int elementId, string value);
+    }
+
+
     public abstract class SheetFieldTypeEditor : ISheetFieldTypeEditor
     {
-        public abstract VisualElement DrawField(string value);
+        public abstract VisualElement DrawField(SerializedProperty elementsProperty, int elementId, string value);
 
 
         public static TypeConverter intConverter = TypeDescriptor.GetConverter(typeof(int));
@@ -21,11 +28,16 @@ namespace HN.Framework.Editor
     [SheetFieldType("INT")]
     public class SheetFieldTypeIntDrawer : SheetFieldTypeEditor
     {
-        public override VisualElement DrawField(string value)
+        public override VisualElement DrawField(SerializedProperty elementsProperty, int elementId, string value)
         {
             var intField = new IntegerField();
             var valueObj = intConverter.ConvertFromString(value);
             intField.value = valueObj == null ? defaultValue : (int)valueObj;
+            intField.RegisterValueChangedCallback((e) =>
+            {
+                elementsProperty.GetArrayElementAtIndex(elementId).stringValue = e.newValue.ToString();
+                elementsProperty.serializedObject.ApplyModifiedProperties();
+            });
             return intField;
         }
 
@@ -37,11 +49,16 @@ namespace HN.Framework.Editor
     [SheetFieldType("FLOAT")]
     public class SheetFieldTypeFloatDrawer : SheetFieldTypeEditor
     {
-        public override VisualElement DrawField(string value)
+        public override VisualElement DrawField(SerializedProperty elementsProperty, int elementId, string value)
         {
             var floatField = new FloatField();
             var valueObj = floatConverter.ConvertFromString(value);
             floatField.value = valueObj == null ? defaultValue : (float)valueObj;
+            floatField.RegisterValueChangedCallback((e) =>
+            {
+                elementsProperty.GetArrayElementAtIndex(elementId).stringValue = e.newValue.ToString();
+                elementsProperty.serializedObject.ApplyModifiedProperties();
+            });
             return floatField;
         }
 
@@ -53,10 +70,15 @@ namespace HN.Framework.Editor
     [SheetFieldType("STRING")]
     public class SheetFieldTypeStringDrawer : SheetFieldTypeEditor
     {
-        public override VisualElement DrawField(string value)
+        public override VisualElement DrawField(SerializedProperty elementsProperty, int elementId, string value)
         {
             var stringField = new TextField();
             stringField.value = value;
+            stringField.RegisterValueChangedCallback((e) =>
+            {
+                elementsProperty.GetArrayElementAtIndex(elementId).stringValue = e.newValue.ToString();
+                elementsProperty.serializedObject.ApplyModifiedProperties();
+            });
             return stringField;
         }
     }

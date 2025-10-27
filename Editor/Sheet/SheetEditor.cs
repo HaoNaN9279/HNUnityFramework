@@ -62,7 +62,10 @@ namespace HN.Framework.Editor
             this.sheet = sheet;
             titleContent = new GUIContent($"{sheet.name}[SheetEditor]");
             serializedObject = new SerializedObject(sheet);
-            sheetFieldTypeDrawer = new SheetFieldTypeDrawer();
+            typesProperty = serializedObject.FindProperty("types");
+            headersProperty = serializedObject.FindProperty("headers");
+            elementsProperty = serializedObject.FindProperty("elements");
+            sheetFieldTypeDrawer = new SheetFieldTypeDrawer(elementsProperty);
 
             scrollView = new ScrollView(ScrollViewMode.VerticalAndHorizontal);
             scrollView.name = "scrollView";
@@ -185,8 +188,9 @@ namespace HN.Framework.Editor
             if(lineId == 0)
                 dataRoot.style.marginTop = titleHeight;
             string typeName = sheet.types[columnId];
-            string value = sheet.elements[lineId * sheet.typeCount + columnId];
-            var dataField = sheetFieldTypeDrawer.DrawField(typeName, value);
+            int elementId = lineId * sheet.typeCount + columnId;
+            string value = sheet.elements[elementId];
+            var dataField = sheetFieldTypeDrawer.DrawField(typeName, elementId, value);
             if (lineId % 2 == 0)
                 dataRoot.AddToClassList("data-row-even");
             else
@@ -200,6 +204,11 @@ namespace HN.Framework.Editor
             var typeField = new DropdownField(sheetFieldTypeDrawer.TypeNameList, 0);
             typeField.name = "typeField";
             typeField.value = sheet.types[columnId];
+            typeField.RegisterValueChangedCallback((e) =>
+            {
+                typesProperty.GetArrayElementAtIndex(columnId).stringValue = e.newValue.ToString();
+                serializedObject.ApplyModifiedProperties();
+            });
             return typeField;
         }
         
@@ -208,12 +217,20 @@ namespace HN.Framework.Editor
             var headerField = new TextField();
             headerField.name = "headerField";
             headerField.value = sheet.headers[columnId];
+            headerField.RegisterValueChangedCallback((e) =>
+            {
+                headersProperty.GetArrayElementAtIndex(columnId).stringValue = e.newValue.ToString();
+                serializedObject.ApplyModifiedProperties();
+            });
             return headerField;
         }        
 
 
         private Sheet sheet;
         private SerializedObject serializedObject;
+        private SerializedProperty typesProperty;
+        private SerializedProperty headersProperty;
+        private SerializedProperty elementsProperty;
         private SheetFieldTypeDrawer sheetFieldTypeDrawer;
         private VisualElement root;
         private ObjectField objField;
