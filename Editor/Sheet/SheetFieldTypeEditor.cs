@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -31,8 +32,15 @@ namespace HN.Framework.Editor
         public override VisualElement DrawField(SerializedProperty elementsProperty, int elementId, string value)
         {
             var intField = new IntegerField();
-            var valueObj = intConverter.ConvertFromString(value);
-            intField.value = valueObj == null ? defaultValue : (int)valueObj;
+            if (int.TryParse(value, out int result))
+            {
+                intField.value = result;
+            }
+            else
+            {
+                intField.value = defaultValue;
+            }
+            intField.tooltip = value;
             intField.RegisterValueChangedCallback((e) =>
             {
                 elementsProperty.GetArrayElementAtIndex(elementId).stringValue = e.newValue.ToString();
@@ -52,15 +60,22 @@ namespace HN.Framework.Editor
         public override VisualElement DrawField(SerializedProperty elementsProperty, int elementId, string value)
         {
             var floatField = new FloatField();
-            var valueObj = floatConverter.ConvertFromString(value);
-            floatField.value = valueObj == null ? defaultValue : (float)valueObj;
+            if (float.TryParse(value, out float result))
+            {
+                floatField.value = result;
+            }
+            else
+            {
+                floatField.value = defaultValue;
+            }
+            floatField.tooltip = value;
             floatField.RegisterValueChangedCallback((e) =>
             {
                 elementsProperty.GetArrayElementAtIndex(elementId).stringValue = e.newValue.ToString();
                 elementsProperty.serializedObject.ApplyModifiedProperties();
             });
             return floatField;
-        }
+            }
 
 
         private const float defaultValue = 0.0f;
@@ -74,6 +89,7 @@ namespace HN.Framework.Editor
         {
             var stringField = new TextField();
             stringField.value = value;
+            stringField.tooltip = value;
             stringField.RegisterValueChangedCallback((e) =>
             {
                 elementsProperty.GetArrayElementAtIndex(elementId).stringValue = e.newValue.ToString();

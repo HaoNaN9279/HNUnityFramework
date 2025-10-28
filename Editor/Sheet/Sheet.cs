@@ -18,7 +18,7 @@ namespace HN.Framework
             if (data.Count == 0)
                 return;
 
-            lineCount = 0;
+            rowCount = 0;
             for (int dataLineId = 0; dataLineId < data.Count; dataLineId++)
             {
                 if (dataLineId == 0)
@@ -39,6 +39,58 @@ namespace HN.Framework
                 }
 
             }
+        }
+
+        public void AddColumn(int columnId)
+        {
+            types.Insert(columnId, defaultTypeName);
+            headers.Insert(columnId, defaultHeaderName);
+            for (int i = rowCount - 1; i >= 0; i--)
+            {
+                int index = i * columnCount + columnId;
+                elements.Insert(index, defaultElement);
+            }
+            columnCount++;
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
+        public void DeleteColumn(int columnId)
+        {
+            types.RemoveAt(columnId);
+            headers.RemoveAt(columnId);
+            for (int i = rowCount - 1; i >= 0; i--)
+            {
+                int index = i * columnCount + columnId;
+                elements.RemoveAt(index);
+            }
+            columnCount--;
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
+        public void AddRow(int rowId)
+        {
+            int index = rowId * columnCount;
+            for (int i = 0; i < columnCount; i++)
+            {
+                elements.Insert(index, defaultElement);
+            }
+            rowCount++;
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+        
+        public void DeleteRow(int rowId)
+        {
+            int index = rowId * columnCount;
+            for (int i = 0; i < columnCount; i++)
+            {
+                elements.RemoveAt(index);
+            }
+            rowCount--;
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
 
         public void SaveAsset()
@@ -70,15 +122,15 @@ namespace HN.Framework
             {
                 types.Add(typeNames[i]);
             }
-            typeCount = typeNames.Length;
+            columnCount = typeNames.Length;
         }
 
         private void ReadHeaders(string[] headers)
         {
-            if (typeCount == 0)
+            if (columnCount == 0)
                 return;
             
-            for (int i = 0; i < typeCount; i++)
+            for (int i = 0; i < columnCount; i++)
             {
                 if (headers.Length > i)
                 {
@@ -89,10 +141,10 @@ namespace HN.Framework
 
         private void ReadDescriptions(string[] descriptions)
         {
-            if (typeCount == 0)
+            if (columnCount == 0)
                 return;
             
-            for(int i = 0; i < typeCount; i++)
+            for(int i = 0; i < columnCount; i++)
             {
                 if(descriptions.Length > i)
                 {
@@ -103,7 +155,7 @@ namespace HN.Framework
 
         private void ReadSheetLine(string[] sheetLine)
         {
-            if (typeCount == 0)
+            if (columnCount == 0)
                 return;
 
             for (int i = 0; i < sheetLine.Length; i++)
@@ -114,7 +166,7 @@ namespace HN.Framework
                 }
             }
 
-            lineCount++;
+            rowCount++;
         }
 
         // private Type ReflectionFindType(string typeName)
@@ -163,7 +215,7 @@ namespace HN.Framework
         public List<string> types = new List<string>();
 
         [SerializeField]
-        public int typeCount;
+        public int columnCount;
 
         [SerializeField]
         public List<string> headers = new List<string>();
@@ -175,9 +227,11 @@ namespace HN.Framework
         public List<string> elements = new List<string>();
 
         [SerializeField]
-        public int lineCount;
+        public int rowCount;
 
+        public const string defaultTypeName = "STRING";
         public const string defaultHeaderName = "[Undefined]";
+        public string defaultElement = "";
     }
 
 

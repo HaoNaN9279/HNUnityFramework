@@ -16,6 +16,61 @@ rootVisualElement
     background-color: rgb(40, 40, 40);
 }
 
+#menuContainer
+{
+    height: 20px;
+    flex-direction: row;
+    margin-bottom: 4px;
+}
+
+#addColumnBeforeButton
+{
+    margin: 0px;
+    width: 20px;
+    height: 20px;
+    background-image: url("../Resource/AddColumnBeforeButton.png");
+}
+
+#addColumnAfterButton
+{
+    margin: 0px;
+    width: 20px;
+    height: 20px;
+    background-image: url("../Resource/AddColumnAfterButton.png");
+}
+
+#deleteColumnButton
+{
+    margin: 0px;
+    width: 20px;
+    height: 20px;
+    background-image: url("../Resource/DeleteColumnButton.png");
+}
+
+#addRowBeforeButton
+{
+    margin: 0px;
+    width: 20px;
+    height: 20px;
+    background-image: url("../Resource/AddRowBeforeButton.png");
+}
+
+#addRowAfterButton
+{
+    margin: 0px;
+    width: 20px;
+    height: 20px;
+    background-image: url("../Resource/AddRowAfterButton.png");
+}
+
+#deleteRowButton
+{
+    margin: 0px;
+    width: 20px;
+    height: 20px;
+    background-image: url("../Resource/DeleteRowButton.png");
+}
+
 #scrollView
 {
     flex-grow: 1;
@@ -35,7 +90,7 @@ rootVisualElement
 {
     position: absolute;
     width: 30px;
-    height: 42px;
+    height: 60px;
     background-color: rgb(40, 40, 40);
 }
 
@@ -52,16 +107,15 @@ rootVisualElement
 #columnSeperator
 {
     width: 8px;
-    background-color: rgb(66, 66, 66);
+    background-color: rgb(70, 70, 70);
     cursor: resize-horizontal;
 }
 
-#idField
+#rowIdField
 {
     width: 30px;
     height: 20px;
-    top: 2px;
-    border-right-width: 2px;
+    border-width: 2px;
     -unity-text-align: middle-right;
     flex-shrink: 0;
 }
@@ -97,6 +151,15 @@ rootVisualElement
 .data-row-odd
 {
     background-color: rgb(50, 50, 50);
+}
+
+#columnIdField
+{
+    flex-grow: 1;
+    height: 20px;
+    border-width: 2px;
+    -unity-text-align: middle-center;
+    background-color: rgb(65, 65, 65);
 }
 
 #typeField
