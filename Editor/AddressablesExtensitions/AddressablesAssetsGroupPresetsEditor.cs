@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
 using System.Text.RegularExpressions;
-using PlasticGui;
 
 namespace HN.Framework.Editor
 {
@@ -43,8 +42,8 @@ namespace HN.Framework.Editor
         private SerializedProperty m_GroupPresetsProperty;
         private ReorderableList m_List;
 
-        private const string GroupPresetsPropertyName = "GroupPresets";
-        private const string GroupNamePropertyName = "GroupName";
-        private const string PathKeywordsPropertyName = "PathKeywords";
+        private const string GroupPresetsPropertyName = "m_GroupPresets";
+        private const string GroupNamePropertyName = "m_GroupName";
+        private const string PathKeywordsPropertyName = "m_PathKeywords";
     }
 }

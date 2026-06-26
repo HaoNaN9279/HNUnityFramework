@@ -1,21 +1,37 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEditor;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace HN.Framework.Editor
 {
+    /// <summary>
+    /// Sheet 字段类型编辑器的接口。
+    /// </summary>
     public interface ISheetFieldTypeEditor
     {
+        /// <summary>
+        /// 绘制字段编辑器 UI。
+        /// </summary>
+        /// <param name="elementsProperty">元素数组的 SerializedProperty。</param>
+        /// <param name="elementId">当前元素的索引。</param>
+        /// <param name="value">当前字段的字符串值。</param>
+        /// <returns>绘制的 VisualElement。</returns>
         public VisualElement DrawField(SerializedProperty elementsProperty, int elementId, string value);
     }
 
 
+    /// <summary>
+    /// Sheet 字段类型编辑器的抽象基类，提供基础类型转换器。
+    /// </summary>
     public abstract class SheetFieldTypeEditor : ISheetFieldTypeEditor
     {
+        /// <summary>
+        /// 绘制字段编辑器 UI。
+        /// </summary>
+        /// <param name="elementsProperty">元素数组的 SerializedProperty。</param>
+        /// <param name="elementId">当前元素的索引。</param>
+        /// <param name="value">当前字段的字符串值。</param>
+        /// <returns>绘制的 VisualElement。</returns>
         public abstract VisualElement DrawField(SerializedProperty elementsProperty, int elementId, string value);
 
 
@@ -26,9 +42,19 @@ namespace HN.Framework.Editor
     }
 
 
+    /// <summary>
+    /// INT 类型的 Sheet 字段编辑器绘制器。
+    /// </summary>
     [SheetFieldType("INT")]
     public class SheetFieldTypeIntDrawer : SheetFieldTypeEditor
     {
+        /// <summary>
+        /// 绘制整数字段编辑器 UI。
+        /// </summary>
+        /// <param name="elementsProperty">元素数组的 SerializedProperty。</param>
+        /// <param name="elementId">当前元素的索引。</param>
+        /// <param name="value">当前字段的字符串值。</param>
+        /// <returns>绘制的 IntegerField。</returns>
         public override VisualElement DrawField(SerializedProperty elementsProperty, int elementId, string value)
         {
             var intField = new IntegerField();
@@ -44,7 +70,8 @@ namespace HN.Framework.Editor
             intField.RegisterValueChangedCallback((e) =>
             {
                 elementsProperty.GetArrayElementAtIndex(elementId).stringValue = e.newValue.ToString();
-                elementsProperty.serializedObject.ApplyModifiedProperties();
+                if (elementsProperty.serializedObject.ApplyModifiedProperties())
+                    EditorUtility.SetDirty(elementsProperty.serializedObject.targetObject);
             });
             return intField;
         }
@@ -54,9 +81,19 @@ namespace HN.Framework.Editor
     }
 
 
+    /// <summary>
+    /// FLOAT 类型的 Sheet 字段编辑器绘制器。
+    /// </summary>
     [SheetFieldType("FLOAT")]
     public class SheetFieldTypeFloatDrawer : SheetFieldTypeEditor
     {
+        /// <summary>
+        /// 绘制浮点数字段编辑器 UI。
+        /// </summary>
+        /// <param name="elementsProperty">元素数组的 SerializedProperty。</param>
+        /// <param name="elementId">当前元素的索引。</param>
+        /// <param name="value">当前字段的字符串值。</param>
+        /// <returns>绘制的 FloatField。</returns>
         public override VisualElement DrawField(SerializedProperty elementsProperty, int elementId, string value)
         {
             var floatField = new FloatField();
@@ -72,7 +109,8 @@ namespace HN.Framework.Editor
             floatField.RegisterValueChangedCallback((e) =>
             {
                 elementsProperty.GetArrayElementAtIndex(elementId).stringValue = e.newValue.ToString();
-                elementsProperty.serializedObject.ApplyModifiedProperties();
+                if (elementsProperty.serializedObject.ApplyModifiedProperties())
+                    EditorUtility.SetDirty(elementsProperty.serializedObject.targetObject);
             });
             return floatField;
             }
@@ -82,9 +120,19 @@ namespace HN.Framework.Editor
     }
 
 
+    /// <summary>
+    /// STRING 类型的 Sheet 字段编辑器绘制器。
+    /// </summary>
     [SheetFieldType("STRING")]
     public class SheetFieldTypeStringDrawer : SheetFieldTypeEditor
     {
+        /// <summary>
+        /// 绘制文本字段编辑器 UI。
+        /// </summary>
+        /// <param name="elementsProperty">元素数组的 SerializedProperty。</param>
+        /// <param name="elementId">当前元素的索引。</param>
+        /// <param name="value">当前字段的字符串值。</param>
+        /// <returns>绘制的 TextField。</returns>
         public override VisualElement DrawField(SerializedProperty elementsProperty, int elementId, string value)
         {
             var stringField = new TextField();
@@ -93,7 +141,8 @@ namespace HN.Framework.Editor
             stringField.RegisterValueChangedCallback((e) =>
             {
                 elementsProperty.GetArrayElementAtIndex(elementId).stringValue = e.newValue.ToString();
-                elementsProperty.serializedObject.ApplyModifiedProperties();
+                if (elementsProperty.serializedObject.ApplyModifiedProperties())
+                    EditorUtility.SetDirty(elementsProperty.serializedObject.targetObject);
             });
             return stringField;
         }

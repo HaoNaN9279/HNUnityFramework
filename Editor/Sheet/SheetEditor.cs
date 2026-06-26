@@ -1,16 +1,17 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEditor;
-using UnityEditorInternal;
-using UnityEngine.UI;
 using UnityEditor.UIElements;
 
 namespace HN.Framework.Editor
 {
     public class SheetEditor : EditorWindow
     {
+        /// <summary>
+        /// Opens the Sheet editor window.
+        /// </summary>
+        /// <param name="sheet">The Sheet asset to edit in the window.</param>
         public static void OpenWindow(Sheet sheet)
         {
             SheetEditor w = GetWindow<SheetEditor>();
@@ -69,13 +70,15 @@ namespace HN.Framework.Editor
             serializedObject = null;
             typesProperty = null;
             headersProperty = null;
+            summariesProperty = null;
             elementsProperty = null;
             sheetFieldTypeDrawer = null;
             objField = null;
             scrollView = null;
+            logField = null;
             selectedColumnIdField = null;
             selectedRowIdField = null;
-            columnSeperators.Clear();
+            columnSeparators.Clear();
             columnIdFields.Clear();
             rowIdFields.Clear();
             sheetRoot.Clear();
@@ -93,12 +96,16 @@ namespace HN.Framework.Editor
             serializedObject = new SerializedObject(sheet);
             typesProperty = serializedObject.FindProperty("types");
             headersProperty = serializedObject.FindProperty("headers");
+            summariesProperty = serializedObject.FindProperty("summaries");
             elementsProperty = serializedObject.FindProperty("elements");
             sheetFieldTypeDrawer = new SheetFieldTypeDrawer(elementsProperty);
 
             var menuContainer = DrawMenuContainer();
             menuContainer.name = "menuContainer";
             sheetRoot.Add(menuContainer);
+
+            var sheetInfoField = DrawSheetInfoField();
+            sheetRoot.Add(sheetInfoField);
 
             scrollView = new ScrollView(ScrollViewMode.VerticalAndHorizontal);
             scrollView.name = "scrollView";
@@ -107,18 +114,23 @@ namespace HN.Framework.Editor
             var leftColumn = DrawLeftColumn();
             scrollView.Add(leftColumn);
 
-            for (int i = 0; i < sheet.columnCount; i++)
+            for (int i = 0; i < sheet.ColumnCount; i++)
             {
                 // columnTitle需要在scrollView垂直滚动时保持垂直位置不变，所以position被标记为absolute，
-                // 所以无法跟随parent flex grow，这里传出来被Seperator手动修改其width。
+                // 所以无法跟随parent flex grow，这里传出来被Separator手动修改其width。
                 var sheetColumn = DrawSheetColumn(i, out VisualElement columnTitle);
                 scrollView.Add(sheetColumn);
-                var columnSeperator = DrawColumnSeperator(new[] { sheetColumn, columnTitle });
-                columnSeperators.Add(columnSeperator);
-                scrollView.Add(columnSeperator);
+                var columnSeparator = DrawColumnSeparator(new[] { sheetColumn, columnTitle });
+                columnSeparators.Add(columnSeparator);
+                scrollView.Add(columnSeparator);
             }
 
             sheetRoot.Add(scrollView);
+
+            logField = new Label();
+            logField.name = "logField";
+            logField.text = "";
+            sheetRoot.Add(logField);
 
             leftColumn.BringToFront();
         }
@@ -126,34 +138,66 @@ namespace HN.Framework.Editor
         private VisualElement DrawMenuContainer()
         {
             var menuContainer = new VisualElement();
-            
+
+            var saveButton = new UnityEngine.UIElements.Button(sheet.SaveAsset);
+            saveButton.name = "saveButton";
+            saveButton.tooltip = "Save";
+            menuContainer.Add(saveButton);
+
+            var exportButton = new UnityEngine.UIElements.Button(sheet.Export);
+            exportButton.name = "exportButton";
+            exportButton.tooltip = "Export";
+            menuContainer.Add(exportButton);
+
+            var buttonSeparator0 = new Label();
+            buttonSeparator0.name = "buttonSeparator";
+            buttonSeparator0.text = "|";
+            menuContainer.Add(buttonSeparator0);
+
             var addColumnBeforeButton = new UnityEngine.UIElements.Button(AddColumnBefore);
             addColumnBeforeButton.name = "addColumnBeforeButton";
-            addColumnBeforeButton.tooltip = "当前选择列前添加列";
+            addColumnBeforeButton.tooltip = "Add column before selected column";
             menuContainer.Add(addColumnBeforeButton);
             var addColumnAfterButton = new UnityEngine.UIElements.Button(AddColumnAfter);
             addColumnAfterButton.name = "addColumnAfterButton";
-            addColumnAfterButton.tooltip = "当前选择列后添加列";
+            addColumnAfterButton.tooltip = "Add column after selected column";
             menuContainer.Add(addColumnAfterButton);
             var deleteColumnButton = new UnityEngine.UIElements.Button(DeleteColumn);
             deleteColumnButton.name = "deleteColumnButton";
-            deleteColumnButton.tooltip = "删除当前选择列";
+            deleteColumnButton.tooltip = "Delete selected column";
             menuContainer.Add(deleteColumnButton);
-            
+
+            var buttonSeparator1 = new Label();
+            buttonSeparator1.name = "buttonSeparator";
+            buttonSeparator1.text = "|";
+            menuContainer.Add(buttonSeparator1);
+
             var addRowBeforeButton = new UnityEngine.UIElements.Button(AddRowBefore);
             addRowBeforeButton.name = "addRowBeforeButton";
-            addRowBeforeButton.tooltip = "当前选择行前添加行";
+            addRowBeforeButton.tooltip = "Add row before selected row";
             menuContainer.Add(addRowBeforeButton);
             var addRowAfterButton = new UnityEngine.UIElements.Button(AddRowAfter);
             addRowAfterButton.name = "addRowAfterButton";
-            addRowAfterButton.tooltip = "当前选择行后添加行";
+            addRowAfterButton.tooltip = "Add row after selected row";
             menuContainer.Add(addRowAfterButton);
             var deleteRowButton = new UnityEngine.UIElements.Button(DeleteRow);
             deleteRowButton.name = "deleteRowButton";
-            deleteRowButton.tooltip = "删除当前选择行";
+            deleteRowButton.tooltip = "Delete selected row";
             menuContainer.Add(deleteRowButton);
-            
+
             return menuContainer;
+        }
+        
+        private VisualElement DrawSheetInfoField()
+        {
+            var sheetInfoField = new VisualElement();
+            sheetInfoField.name = "sheetInfoField";
+
+            var sheetNameField = new TextField();
+            sheetNameField.name = "sheetNameField";
+            sheetNameField.value = sheet.SheetName;
+
+            return null;
         }
 
         private VisualElement DrawLeftColumn()
@@ -174,7 +218,7 @@ namespace HN.Framework.Editor
             leftColumn.Add(topLeftCorner);
             leftColumn.Add(leftDataColumn);
 
-            for (int i = 0; i < sheet.rowCount; i++)
+            for (int i = 0; i < sheet.RowCount; i++)
             {
                 var dataLeft = DrawDataLeft(i);
                 leftDataColumn.Add(dataLeft);
@@ -189,12 +233,12 @@ namespace HN.Framework.Editor
             var sheetColumn = new VisualElement();
             sheetColumn.name = "sheetColumn";
             if (columnId == 0)
-                sheetColumn.style.marginLeft = 32;
+                sheetColumn.style.marginLeft = rowIdFieldWidth;
 
             columnTitle = DrawColumnTitle(columnId);
             sheetColumn.Add(columnTitle);
 
-            for (int i = 0; i < sheet.rowCount; i++)
+            for (int i = 0; i < sheet.RowCount; i++)
             {
                 var dataField = DrawDataField(columnId, i);
                 sheetColumn.Add(dataField);
@@ -204,11 +248,11 @@ namespace HN.Framework.Editor
             return sheetColumn;
         }
 
-        private VisualElement DrawColumnSeperator(VisualElement[] targets)
+        private VisualElement DrawColumnSeparator(VisualElement[] targets)
         {
-            var columnSeperator = new ColumnSeperator(targets);
-            columnSeperator.name = "columnSeperator";
-            return columnSeperator;
+            var columnSeparator = new ColumnSeparator(targets);
+            columnSeparator.name = "columnSeparator";
+            return columnSeparator;
         }
 
         private VisualElement DrawDataLeft(int rowId)
@@ -261,6 +305,9 @@ namespace HN.Framework.Editor
             var headerField = DrawHeaderField(columnId);
             columnTitle.Add(headerField);
 
+            var summaryField = DrawSummaryField(columnId);
+            columnTitle.Add(summaryField);
+
             return columnTitle;
         }
 
@@ -270,9 +317,9 @@ namespace HN.Framework.Editor
             dataRoot.name = "dataRoot";
             if(rowId == 0)
                 dataRoot.style.marginTop = titleHeight;
-            string typeName = sheet.types[columnId];
-            int elementId = rowId * sheet.columnCount + columnId;
-            string value = sheet.elements[elementId];
+            string typeName = sheet.Types[columnId];
+            int elementId = rowId * sheet.ColumnCount + columnId;
+            string value = sheet.Elements[elementId];
             var dataField = sheetFieldTypeDrawer.DrawField(typeName, elementId, value);
             if (rowId % 2 == 0)
                 dataRoot.AddToClassList("data-row-even");
@@ -282,6 +329,7 @@ namespace HN.Framework.Editor
             {
                 SelectRow(rowIdFields[rowId], rowId);
                 SelectColumn(columnIdFields[columnId], columnId);
+                logField.text = $"{GetColumnId(columnId)}{rowId}:{value}";
             });
             dataRoot.Add(dataField);
             return dataRoot;
@@ -291,11 +339,12 @@ namespace HN.Framework.Editor
         {
             var typeField = new DropdownField(sheetFieldTypeDrawer.TypeNameList, 0);
             typeField.name = "typeField";
-            typeField.value = sheet.types[columnId];
+            typeField.value = sheet.Types[columnId];
             typeField.RegisterValueChangedCallback((e) =>
             {
                 typesProperty.GetArrayElementAtIndex(columnId).stringValue = e.newValue.ToString();
-                serializedObject.ApplyModifiedProperties();
+                if (serializedObject.ApplyModifiedProperties())
+                    EditorUtility.SetDirty(serializedObject.targetObject);
             });
             return typeField;
         }
@@ -304,13 +353,28 @@ namespace HN.Framework.Editor
         {
             var headerField = new TextField();
             headerField.name = "headerField";
-            headerField.value = sheet.headers[columnId];
+            headerField.value = sheet.Headers[columnId];
             headerField.RegisterValueChangedCallback((e) =>
             {
                 headersProperty.GetArrayElementAtIndex(columnId).stringValue = e.newValue.ToString();
-                serializedObject.ApplyModifiedProperties();
+                if (serializedObject.ApplyModifiedProperties())
+                    EditorUtility.SetDirty(serializedObject.targetObject);
             });
             return headerField;
+        }
+
+        private VisualElement DrawSummaryField(int columnId)
+        {
+            var summaryField = new TextField();
+            summaryField.name = "summaryField";
+            summaryField.value = sheet.Summaries[columnId];
+            summaryField.RegisterValueChangedCallback((e) =>
+            {
+                summariesProperty.GetArrayElementAtIndex(columnId).stringValue = e.newValue.ToString();
+                if (serializedObject.ApplyModifiedProperties())
+                    EditorUtility.SetDirty(serializedObject.targetObject);
+            });
+            return summaryField;
         }
 
         private string GetColumnId(int columnId)
@@ -375,7 +439,7 @@ namespace HN.Framework.Editor
 
         private void DeleteColumn()
         {
-            if(EditorUtility.DisplayDialog("删除", $"表 {sheet.name} 确认删除列 {GetColumnId(selectedColumnId)} ？", "确认", "取消"))
+            if(EditorUtility.DisplayDialog("Delete", $"Confirm sheet {sheet.name} deleting column {GetColumnId(selectedColumnId)} ?", "Confirm", "Cancel"))
             {
                 sheet.DeleteColumn(selectedColumnId);
                 RepaintSheet();
@@ -396,7 +460,7 @@ namespace HN.Framework.Editor
         
         private void DeleteRow()
         {
-            if(EditorUtility.DisplayDialog("删除", $"表 {sheet.name} 确认删除行 {selectedRowId} ？", "确认", "取消"))
+            if(EditorUtility.DisplayDialog("Delete", $"Confirm sheet {sheet.name} deleting row {selectedRowId} ?", "Confirm", "Cancel"))
             {
                 sheet.DeleteRow(selectedRowId);
                 RepaintSheet();
@@ -409,12 +473,14 @@ namespace HN.Framework.Editor
         private SerializedObject serializedObject;
         private SerializedProperty typesProperty;
         private SerializedProperty headersProperty;
+        private SerializedProperty summariesProperty;
         private SerializedProperty elementsProperty;
         private SheetFieldTypeDrawer sheetFieldTypeDrawer;
         private ObjectField objField;
         private VisualElement sheetRoot;
         private ScrollView scrollView;
-        private List<VisualElement> columnSeperators = new List<VisualElement>();
+        private Label logField;
+        private List<VisualElement> columnSeparators = new List<VisualElement>();
         private List<Label> columnIdFields = new List<Label>();
         private List<Label> rowIdFields = new List<Label>();
         private int selectedColumnId;
@@ -422,16 +488,17 @@ namespace HN.Framework.Editor
         private int selectedRowId;
         private Label selectedRowIdField;
 
-        private const int titleHeight = 60;
+        private const int rowIdFieldWidth = 32;
+        private const int titleHeight = 80;
         private Color selectedColor = new Color(0.188f, 0.365f, 0.604f);
         private Color unselectedColor = new Color(0.0f, 0.0f, 0.0f, 0.0f);
         private const string styleSheetPath = "Assets/HNUnityFramework/Editor/Sheet/Resource/SheetEditor.uss";
     
     
 
-        public class ColumnSeperator : VisualElement
+        public class ColumnSeparator : VisualElement
         {
-            public ColumnSeperator(VisualElement[] targets)
+            public ColumnSeparator(VisualElement[] targets)
             {
                 targetElements = targets;
                 startWidths = new float[targets.Length];

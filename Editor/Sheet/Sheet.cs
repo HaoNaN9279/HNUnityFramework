@@ -1,16 +1,15 @@
-using System;
-using System.Linq;
-using System.Reflection;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
+using System.Text;
 
 namespace HN.Framework
 {
     public class Sheet : ScriptableObject
     {
+        /// <summary>从CSV文件路径初始化Sheet数据</summary>
+        /// <param name="path">CSV文件路径</param>
         public void Initialize(string path)
         {
             this.assetPath = Path.GetFullPath(path);
@@ -23,15 +22,15 @@ namespace HN.Framework
             {
                 if (dataLineId == 0)
                 {
-                    ReadType(data[dataLineId]);
+                    ReadTypes(data[dataLineId]);
                 }
                 else if (dataLineId == 1)
                 {
                     ReadHeaders(data[dataLineId]);
                 }
-                else if (dataLineId == 2)
+                else if(dataLineId == 2)
                 {
-                    ReadDescriptions(data[dataLineId]);
+                    ReadSummarys(data[dataLineId]);
                 }
                 else
                 {
@@ -41,10 +40,13 @@ namespace HN.Framework
             }
         }
 
+        /// <summary>在指定列索引处添加新列</summary>
+        /// <param name="columnId">列索引</param>
         public void AddColumn(int columnId)
         {
             types.Insert(columnId, defaultTypeName);
             headers.Insert(columnId, defaultHeaderName);
+            summaries.Insert(columnId, defaultSummary);
             for (int i = rowCount - 1; i >= 0; i--)
             {
                 int index = i * columnCount + columnId;
@@ -55,10 +57,13 @@ namespace HN.Framework
             AssetDatabase.Refresh();
         }
 
+        /// <summary>删除指定列索引处的列</summary>
+        /// <param name="columnId">列索引</param>
         public void DeleteColumn(int columnId)
         {
             types.RemoveAt(columnId);
             headers.RemoveAt(columnId);
+            summaries.RemoveAt(columnId);
             for (int i = rowCount - 1; i >= 0; i--)
             {
                 int index = i * columnCount + columnId;
@@ -69,6 +74,8 @@ namespace HN.Framework
             AssetDatabase.Refresh();
         }
 
+        /// <summary>在指定行索引处添加新行</summary>
+        /// <param name="rowId">行索引</param>
         public void AddRow(int rowId)
         {
             int index = rowId * columnCount;
@@ -81,6 +88,8 @@ namespace HN.Framework
             AssetDatabase.Refresh();
         }
         
+        /// <summary>删除指定行索引处的行</summary>
+        /// <param name="rowId">行索引</param>
         public void DeleteRow(int rowId)
         {
             int index = rowId * columnCount;
@@ -93,9 +102,63 @@ namespace HN.Framework
             AssetDatabase.Refresh();
         }
 
+        /// <summary>将Sheet数据保存回CSV文件</summary>
         public void SaveAsset()
         {
             //将SO数据写入到csv文件中
+            string content = "";
+            for (int i = 0; i < columnCount; i++)
+            {
+                content += types[i];
+                if (i != columnCount - 1)
+                    content += ",";
+                else
+                    content += "\n";
+            }
+            for (int i = 0; i < columnCount; i++)
+            {
+                content += headers[i];
+                if (i != columnCount - 1)
+                    content += ",";
+                else
+                    content += "\n";
+            }
+            for(int i = 0; i < columnCount; i++)
+            {
+                content += summaries[i];
+                if (i != columnCount - 1)
+                    content += ",";
+                else
+                    content += "\n";
+            }
+            for (int i = 0; i < rowCount; i++)
+            {
+                for (int j = 0; j < columnCount; j++)
+                {
+                    content += elements[i * columnCount + j];
+                    if (j != columnCount - 1)
+                        content += ",";
+                    else
+                        content += "\n";
+                }
+            }
+
+            if (!File.Exists(assetPath))
+            {
+                string dirPath = Path.GetDirectoryName(assetPath);
+                if (!Directory.Exists(dirPath))
+                {
+                    Directory.CreateDirectory(dirPath);
+                }
+            }
+            File.WriteAllText(assetPath, content, Encoding.UTF8);
+            AssetDatabase.Refresh();
+        }
+        
+        /// <summary>导出Sheet数据</summary>
+        public void Export()
+        {
+            
         }
 
 
@@ -116,7 +179,7 @@ namespace HN.Framework
             return data;
         }
 
-        private void ReadType(string[] typeNames)
+        private void ReadTypes(string[] typeNames)
         {
             for (int i = 0; i < typeNames.Length; i++)
             {
@@ -129,7 +192,7 @@ namespace HN.Framework
         {
             if (columnCount == 0)
                 return;
-            
+
             for (int i = 0; i < columnCount; i++)
             {
                 if (headers.Length > i)
@@ -138,21 +201,18 @@ namespace HN.Framework
                 }
             }
         }
-
-        private void ReadDescriptions(string[] descriptions)
+        
+        private void ReadSummarys(string[] summaries)
         {
             if (columnCount == 0)
                 return;
-            
+
             for(int i = 0; i < columnCount; i++)
             {
-                if(descriptions.Length > i)
-                {
-                    this.descriptions.Add(descriptions[i]);
-                }
+                this.summaries.Add(summaries[i]);
             }
         }
-
+        
         private void ReadSheetLine(string[] sheetLine)
         {
             if (columnCount == 0)
@@ -209,29 +269,49 @@ namespace HN.Framework
 
 
         [SerializeField]
-        public string assetPath;
+        private string assetPath;
+        public string AssetPath => assetPath;
 
         [SerializeField]
-        public List<string> types = new List<string>();
+        private string sheetName;
+        public string SheetName => sheetName;
 
         [SerializeField]
-        public int columnCount;
+        private string sheetNameSummary;
+        public string SheetNameSummary => sheetNameSummary;
 
         [SerializeField]
-        public List<string> headers = new List<string>();
+        private List<string> types = new List<string>();
+        public List<string> Types => types;
 
         [SerializeField]
-        public List<string> descriptions = new List<string>();
+        private List<string> headers = new List<string>();
+        public List<string> Headers => headers;
 
         [SerializeField]
-        public List<string> elements = new List<string>();
+        private List<string> summaries = new List<string>();
+        public List<string> Summaries => summaries;
 
         [SerializeField]
-        public int rowCount;
+        private List<string> elements = new List<string>();
+        public List<string> Elements => elements;
 
+        [SerializeField]
+        private int columnCount;
+        public int ColumnCount => columnCount;
+
+        [SerializeField]
+        private int rowCount;
+        public int RowCount => rowCount;
+
+        /// <summary>默认类型名称</summary>
         public const string defaultTypeName = "STRING";
+        /// <summary>默认表头名称</summary>
         public const string defaultHeaderName = "[Undefined]";
-        public string defaultElement = "";
+        /// <summary>默认摘要</summary>
+        public const string defaultSummary = "";
+        /// <summary>默认元素值</summary>
+        public const string defaultElement = "";
     }
 
 

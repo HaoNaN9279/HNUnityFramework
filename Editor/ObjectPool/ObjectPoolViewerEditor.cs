@@ -12,6 +12,9 @@ namespace HN.Framework.Editor
     [CustomEditor(typeof(ObjectPoolViewer))]
     public class ObjectPoolViewerEditor : UnityEditor.Editor
     {
+        /// <summary>
+        /// 绘制对象池查看器的 Inspector 界面
+        /// </summary>
         public override void OnInspectorGUI()
         {
             ObjectPoolViewer viewer = (ObjectPoolViewer)target;

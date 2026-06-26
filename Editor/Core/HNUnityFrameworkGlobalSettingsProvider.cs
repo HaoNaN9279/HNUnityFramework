@@ -8,6 +8,10 @@ namespace HN.Framework.Editor
 {
     public class HNUnityFrameworkGlobalSettingsProvider : SettingsProvider
     {
+        /// <summary>
+        /// 创建设置提供者实例
+        /// </summary>
+        /// <returns>设置提供者实例</returns>
         [SettingsProvider]
         public static SettingsProvider CreateHNUnityFrameworkGlobalSettingsProvider()
         {
@@ -19,6 +23,11 @@ namespace HN.Framework.Editor
 
         public HNUnityFrameworkGlobalSettingsProvider(string path, SettingsScope scope = SettingsScope.Project) : base(path, scope) { }
 
+        /// <summary>
+        /// 设置提供者激活时调用，初始化序列化属性
+        /// </summary>
+        /// <param name="searchContext">搜索上下文</param>
+        /// <param name="rootElement">根 VisualElement</param>
         public override void OnActivate(string searchContext, VisualElement rootElement)
         {
             base.OnActivate(searchContext, rootElement);
@@ -29,6 +38,10 @@ namespace HN.Framework.Editor
             m_MaxFrameTimeProperty = m_GlobalSettings.FindProperty("m_MaxFrameTime");
         }
 
+        /// <summary>
+        /// 绘制设置界面
+        /// </summary>
+        /// <param name="searchContext">搜索上下文</param>
         public override void OnGUI(string searchContext)
         {
             EditorGUILayout.PropertyField(m_LogicRateModeProperty, new GUIContent("Logic Rate Mode"));

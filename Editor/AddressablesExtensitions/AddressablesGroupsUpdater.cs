@@ -12,6 +12,9 @@ namespace HN.Framework.Editor
 {
     public static class AddressablesGroupsUpdater
     {
+        /// <summary>
+        /// 根据预设配置更新 Addressable Groups，创建缺失的组并将资源移动到对应组
+        /// </summary>
         public static void Update()
         {
             Debug.Log("Update Addressable Groups");

@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 
-namespace HN.Editor
+namespace HN.Framework.Editor
 {
     [CustomPropertyDrawer(typeof(HNDictionary), true)]
     public class SerializableDictionaryDrawer : PropertyDrawer 
