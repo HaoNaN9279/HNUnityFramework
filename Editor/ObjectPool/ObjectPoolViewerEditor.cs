@@ -22,7 +22,7 @@ namespace HN.Framework.Editor
             m_objectPoolFoldout = EditorGUILayout.Foldout(m_objectPoolFoldout, new GUIContent("Object Pools"));
             if (m_objectPoolFoldout)
             {
-                foreach (var item in viewer.m_pools)
+                foreach (var item in viewer.Pools)
                 {
                     if (IsSubclassOfRawGeneric(typeof(ObjectPool<>), item.Value.GetType()))
                     {
@@ -38,7 +38,7 @@ namespace HN.Framework.Editor
             m_gameObjectPoolFoldout = EditorGUILayout.Foldout(m_gameObjectPoolFoldout, new GUIContent("GameObject Pools"));
             if (m_gameObjectPoolFoldout)
             {
-                foreach (var item in viewer.m_pools)
+                foreach (var item in viewer.Pools)
                 {
                     if (item.Value is GameObjectPool)
                     {
