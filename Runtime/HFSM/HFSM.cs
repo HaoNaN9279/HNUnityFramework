@@ -7,7 +7,7 @@ namespace HN.Framework
     public interface IHFSM : IReference
     {
         /// <summary>
-        /// 状态机转台数量
+        /// 状态机状态数量
         /// </summary>
         public int StateCount { get; }
 
@@ -442,7 +442,7 @@ namespace HN.Framework
                         break;
                     }
                 }
-                if (m_TempStates.Contains(currentState))
+                if (m_TempStates.Contains(currentState as HFSMState))
                 {
                     Debug.LogError($"State machine {this} has death loop.");
                     break;
