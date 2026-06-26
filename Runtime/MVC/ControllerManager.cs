@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -91,17 +90,21 @@ namespace HN.Framework
         #region 实现接口 ITickable
         public void Tick()
         {
-            foreach (var controller in Instance.m_controllers)
+            var controllers = Instance.m_controllers;
+            var count = controllers.Count;
+            for (int i = 0; i < count; i++)
             {
-                controller.Tick();
+                controllers[i].Tick();
             }
         }
 
         public void LateTick()
         {
-            foreach (var controller in Instance.m_controllers)
+            var controllers = Instance.m_controllers;
+            var count = controllers.Count;
+            for (int i = 0; i < count; i++)
             {
-                controller.LateTick();
+                controllers[i].LateTick();
             }
         }
         #endregion

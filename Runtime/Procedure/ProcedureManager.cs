@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -160,7 +158,7 @@ namespace HN.Framework
         {
             if (m_currentState != null)
             {
-                m_currentState.TickEvent?.Invoke();
+                m_currentState.InvokeTickEvent();
             }
         }
 
@@ -171,7 +169,7 @@ namespace HN.Framework
         {
             if (m_currentState != null)
             {
-                m_currentState.LateTickEvent?.Invoke();
+                m_currentState.InvokeLateTickEvent();
             }
         }
         #endregion
@@ -182,7 +180,7 @@ namespace HN.Framework
             if (m_states.ContainsKey(stateName))
             {
                 m_currentState = m_states[stateName];
-                m_currentState.EnterEvent?.Invoke();
+                m_currentState.InvokeEnterEvent();
             }
             else
             {
@@ -195,7 +193,7 @@ namespace HN.Framework
             if (m_states.ContainsValue(startState))
             {
                 m_currentState = startState;
-                m_currentState.EnterEvent?.Invoke();
+                m_currentState.InvokeEnterEvent();
             }
             else
             {
@@ -207,7 +205,7 @@ namespace HN.Framework
         {
             if (m_currentState != null)
             {
-                m_currentState.ExitEvent?.Invoke();
+                m_currentState.InvokeExitEvent();
             }
             m_currentState = null;
         }
@@ -272,9 +270,9 @@ namespace HN.Framework
                 Debug.LogError($"Procedure does not contain state {targetStateName}.");
             }
 
-            m_currentState.ExitEvent?.Invoke();
+            m_currentState.InvokeExitEvent();
             m_currentState = m_states[targetStateName];
-            m_currentState.EnterEvent?.Invoke();
+            m_currentState.InvokeEnterEvent();
         }
 
         public void ChangeState(ProcedureState targetState)
@@ -289,9 +287,9 @@ namespace HN.Framework
                 Debug.LogError($"Procedure does not contain state {targetState}.");
             }
 
-            m_currentState.ExitEvent?.Invoke();
+            m_currentState.InvokeExitEvent();
             m_currentState = targetState;
-            m_currentState.EnterEvent?.Invoke();
+            m_currentState.InvokeEnterEvent();
         }
 
         /// <summary>

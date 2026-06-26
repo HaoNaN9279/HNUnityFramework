@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace HN.Framework
 {
@@ -67,9 +65,10 @@ namespace HN.Framework
         /// </summary>
         public void Tick()
         {
-            foreach (var unit in controllerUnits)
+            var units = controllerUnits;
+            for (int i = 0, len = units.Count; i < len; i++)
             {
-                unit.Tick();
+                units[i].Tick();
             }
         }
 
@@ -78,9 +77,10 @@ namespace HN.Framework
         /// </summary>
         public void LateTick()
         {
-            foreach (var unit in controllerUnits)
+            var units = controllerUnits;
+            for (int i = 0, len = units.Count; i < len; i++)
             {
-                unit.LateTick();
+                units[i].LateTick();
             }
         }
 
@@ -114,9 +114,10 @@ namespace HN.Framework
         /// </summary>
         public void Clear()
         {
-            foreach (var unit in controllerUnits)
+            var units = controllerUnits;
+            for (int i = 0, len = units.Count; i < len; i++)
             {
-                unit.Clear();
+                units[i].Clear();
             }
             ReferencePool.Release(controllerUnits);
         }

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,13 +20,13 @@ namespace HN.Framework
         public void OnFirstFrame();
 
         /// <summary>
-        /// 每帧更新
+        /// 添加Model单元
         /// </summary>
         /// <param name="unit"></param>
         public void AddUnit(ModelUnit unit);
 
         /// <summary>
-        /// 每帧后更新
+        /// 移除Model单元
         /// </summary>
         /// <param name="unit"></param>
         public void RemoveUnit(ModelUnit unit);
@@ -64,9 +63,10 @@ namespace HN.Framework
         /// </summary>
         public void Tick()
         {
-            foreach (var unit in modelUnits)
+            int count = modelUnits.Count;
+            for (int i = 0; i < count; i++)
             {
-                unit.Tick();
+                modelUnits[i].Tick();
             }
         }
 
@@ -75,9 +75,10 @@ namespace HN.Framework
         /// </summary>
         public void LateTick()
         {
-            foreach (var unit in modelUnits)
+            int count = modelUnits.Count;
+            for (int i = 0; i < count; i++)
             {
-                unit.LateTick();
+                modelUnits[i].LateTick();
             }
         }
 
@@ -111,9 +112,10 @@ namespace HN.Framework
         /// </summary>
         public void Clear()
         {
-            foreach (var unit in modelUnits)
+            int count = modelUnits.Count;
+            for (int i = 0; i < count; i++)
             {
-                unit.Clear();
+                modelUnits[i].Clear();
             }
             ReferencePool.Release(modelUnits);
         }

@@ -1,7 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace HN.Framework
 {
@@ -46,6 +43,11 @@ namespace HN.Framework
             TickEvent = null;
             ExitEvent = null;
         }
+
+        public void InvokeEnterEvent() => EnterEvent?.Invoke();
+        public void InvokeTickEvent() => TickEvent?.Invoke();
+        public void InvokeLateTickEvent() => LateTickEvent?.Invoke();
+        public void InvokeExitEvent() => ExitEvent?.Invoke();
         #endregion
 
         #region 对外属性
@@ -57,22 +59,22 @@ namespace HN.Framework
         /// <summary>
         /// 状态进入事件
         /// </summary>
-        public Action EnterEvent;
+        public event Action EnterEvent;
 
         /// <summary>
         /// 状态更新事件
         /// </summary>
-        public Action TickEvent;
+        public event Action TickEvent;
 
         /// <summary>
         /// 状态帧后更新事件
         /// </summary>
-        public Action LateTickEvent;
+        public event Action LateTickEvent;
 
         /// <summary>
         /// 状态退出事件
         /// </summary>
-        public Action ExitEvent;
+        public event Action ExitEvent;
         #endregion
 
         #region 私有变量

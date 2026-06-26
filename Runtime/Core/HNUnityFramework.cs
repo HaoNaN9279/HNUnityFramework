@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -12,11 +10,14 @@ namespace HN.Framework
     public abstract class HNUnityFramework : MonoBehaviour, ITickable
     {
         #region Unity生命周期
-        void Awake()
+        private void Awake()
         {
             OnAwake();
         }
 
+        /// <summary>
+        /// 框架初始化时调用
+        /// </summary>
         protected virtual void OnAwake()
         {
             HNLogicTime.Initialize();
@@ -25,12 +26,15 @@ namespace HN.Framework
             ControllerManager.Initialize();
         }
 
-        void Start()
+        private void Start()
         {
             LoadGlobalSetting();
             OnStart();
         }
 
+        /// <summary>
+        /// 框架启动时调用
+        /// </summary>
         protected virtual void OnStart()
         {
             if (globalSettings.LogicRateMode == LogicRateMode.Custom)
@@ -45,27 +49,33 @@ namespace HN.Framework
             currentTime = Time.realtimeSinceStartupAsDouble;
         }
 
-        void Update()
+        private void Update()
         {
             OnUpdate();
         }
 
+        /// <summary>
+        /// 每帧更新逻辑
+        /// </summary>
         protected virtual void OnUpdate()
         {
             LogicTimeUpdate(Tick);
         }
 
-        void LateUpdate()
+        private void LateUpdate()
         {
             OnLateUpdate();
         }
 
+        /// <summary>
+        /// 晚帧更新逻辑
+        /// </summary>
         protected virtual void OnLateUpdate()
         {
             LogicTimeUpdate(LateTick);
         }
 
-        void OnDestroy()
+        private void OnDestroy()
         {
             ControllerManager.Uninitialize();
             ProcedureManager.ShutdownProcedure();
@@ -129,10 +139,22 @@ namespace HN.Framework
         }
 
 
+        /// <summary>
+        /// 全局设置实例
+        /// </summary>
         protected HNUnityFrameworkGlobalSettings globalSettings;
 
+        /// <summary>
+        /// 固定逻辑帧间隔时间
+        /// </summary>
         protected double fixedLogicFrameTime;
+        /// <summary>
+        /// 累积逻辑帧时间
+        /// </summary>
         protected double accumulatedTime;
+        /// <summary>
+        /// 当前运行时间
+        /// </summary>
         protected double currentTime;
     }
 }
