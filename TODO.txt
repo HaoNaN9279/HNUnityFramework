@@ -31,8 +31,16 @@ framework
         骨架控制
     MVC
     UI系统
-    DOTween动画
+    DOTween动画 LitMotion
     TextMeshPro
+
+    音频
+        miniaudio（底层音频引擎）+ steamaudio（3d音频插件）+自研上层音频框架
+        Simple-Unity-Audio-Manager（简单替代方案）
+
+    材质历史记录清理工具
+    资源批量重命名工具
+    Timeline自动绑定机制
     
 
 
