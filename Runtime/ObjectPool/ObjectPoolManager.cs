@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,11 +12,16 @@ namespace HN.Framework
         /// <summary>
         /// 对象池管理器初始化
         /// </summary>
-        public static void Initialize()
+        public static void Initialize(GameObject managerRoot = null)
         {
             if (s_instance == null)
             {
                 s_instance = new ObjectPoolManager();
+            }
+
+            if (s_managerRoot == null)
+            {
+                s_managerRoot = managerRoot;
             }
 
             if (s_managerRoot == null)

@@ -29,8 +29,11 @@ namespace HN.Framework
         }
 
 
-        public ObjectPoolManager m_manager;
-        public IReadOnlyDictionary<string, PoolBase> m_pools;
+        [SerializeField] private ObjectPoolManager m_manager;
+        [SerializeField] private IReadOnlyDictionary<string, PoolBase> m_pools;
+
+        public ObjectPoolManager Manager => m_manager;
+        public IReadOnlyDictionary<string, PoolBase> Pools => m_pools;
     }
 }
 #endif
