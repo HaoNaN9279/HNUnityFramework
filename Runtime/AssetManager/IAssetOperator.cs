@@ -7,6 +7,9 @@ using Object = UnityEngine.Object;
 
 namespace HN.Framework
 {
+    /// <summary>
+    /// 资源操作器接口，定义资源的同步加载、异步加载和释放操作
+    /// </summary>
     public interface IAssetOperator : IReference
     {
         /// <summary>

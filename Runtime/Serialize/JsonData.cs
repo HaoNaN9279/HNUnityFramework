@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Unity.VisualScripting;
 using UnityEngine;
 using System.Reflection;
 
@@ -13,7 +12,13 @@ namespace HN.Serialize
     [Serializable]
     public class JsonData : ISerializationCallbackReceiver
     {
+        /// <summary>
+        /// 获取序列化后的 JSON 字符串。
+        /// </summary>
         public string JsonText => jsonText;
+        /// <summary>
+        /// 获取反序列化后的 JsonObject 对象。
+        /// </summary>
         public JsonObject Obj
         {
             get
@@ -36,6 +41,10 @@ namespace HN.Serialize
         private JsonObject obj;
 
 
+        /// <summary>
+        /// 创建 JsonData 实例，内部创建指定类型的 JsonObject。
+        /// </summary>
+        /// <param name="nodeDataType">继承 JsonObject 的类型。</param>
         public JsonData(Type nodeDataType)
         {
             obj = Activator.CreateInstance(nodeDataType) as JsonObject;
@@ -47,11 +56,17 @@ namespace HN.Serialize
             objAssemblyName = objType.Assembly.FullName;
         }
 
+        /// <summary>
+        /// 将 <see cref="Obj"/> 序列化为 JSON 字符串并存入 <see cref="JsonText"/>。
+        /// </summary>
         public void Serialize()
         {
             jsonText = SerializeToJson();
         }
         
+        /// <summary>
+        /// 从 <see cref="JsonText"/> 反序列化并更新 <see cref="Obj"/>。
+        /// </summary>
         public void Deserialize()
         {
             DeserializeFromString(jsonText);
