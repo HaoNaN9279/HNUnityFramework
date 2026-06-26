@@ -12,7 +12,6 @@
 
 # Generated API docs
 /docs/api/generated
-/docs/api/generated-sidebar.json
 
 # Generated files
 .docusaurus
