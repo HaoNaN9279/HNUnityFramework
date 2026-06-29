@@ -167,7 +167,13 @@ function parseCsFile(filePath) {
   }
 
   // 提取所有 XML 注释块及其后的声明
-  const members = [];
+  // 类追踪状态：遇到类声明时保存，继续扫描类体内成员，遇到类结束 } 时返回
+  let classInfo = null;
+  let inClass = false;
+  let classOpenDepth = 0;
+  let classBodyStarted = false;
+  let braceDepth = 0;
+
   let xmlCommentLines = [];
   let inXmlComment = false;
 
@@ -195,34 +201,37 @@ function parseCsFile(filePath) {
       if (line.startsWith('public ') || line.startsWith('internal ') || line.startsWith('protected ')) {
         if (line.includes('(') && !line.includes('=>') && !line.includes('{ get')) {
           const method = parseMethodSignature(line, xmlComment);
-          if (method) {
-            members.push({ type: 'method', ...method });
+          if (method && inClass && braceDepth === classOpenDepth + 1) {
+            classInfo.members.push({ type: 'method', ...method });
           }
         } else if (line.includes('{ get') || line.includes('{ set') || (line.includes('=>') && !line.includes('('))) {
           // 属性 - 需要更仔细的解析
           const prop = parseProperty(line, xmlComment);
-          if (prop) {
-            members.push({ type: 'property', ...prop });
+          if (prop && inClass && braceDepth === classOpenDepth + 1) {
+            classInfo.members.push({ type: 'property', ...prop });
           }
         } else if (
           matchDecl(line, 'class') || matchDecl(line, 'struct') || matchDecl(line, 'interface') || matchDecl(line, 'enum')
         ) {
           const declMatch = line.match(/(class|struct|interface|enum)\s+(\w+)/);
-          if (declMatch) {
-            return {
+          if (declMatch && !inClass) {
+            classInfo = {
               filePath,
               namespace,
               module,
               kind: declMatch[1],
               name: declMatch[2],
               summary: xmlComment.summary,
-              members,
+              members: [],
             };
+            inClass = true;
+            classOpenDepth = braceDepth;
+            classBodyStarted = false;
           }
         } else if (line.includes(' delegate ')) {
           const declMatch = line.match(/delegate\s+[\w<>\[\],.\s?]+\s+(\w+)\s*\(/);
-          if (declMatch) {
-            return {
+          if (declMatch && !inClass) {
+            classInfo = {
               filePath,
               namespace,
               module,
@@ -231,34 +240,60 @@ function parseCsFile(filePath) {
               summary: xmlComment.summary,
               members: [],
             };
+            inClass = true;
+            classOpenDepth = braceDepth;
+            classBodyStarted = false;
           }
         }
       }
 
       xmlCommentLines = [];
       inXmlComment = false;
-      continue;
-    }
-
-    // 没有 XML 注释的声明也记录（只记录主要的类型声明）
-    if (!inXmlComment && (matchDecl(line, 'class') || matchDecl(line, 'struct') || matchDecl(line, 'interface') || matchDecl(line, 'enum'))) {
+      // 不 continue，让后面 brace 计数处理本行
+    } else if (
+      matchDecl(line, 'class') || matchDecl(line, 'struct') || matchDecl(line, 'interface') || matchDecl(line, 'enum')
+    ) {
+      // 没有 XML 注释的声明也记录
       if (line.startsWith('public ') || line.startsWith('internal ')) {
         const declMatch = line.match(/(class|struct|interface|enum)\s+(\w+)/);
-        if (declMatch) {
-          return {
+        if (declMatch && !inClass) {
+          classInfo = {
             filePath,
             namespace,
             module,
             kind: declMatch[1],
             name: declMatch[2],
-            summary: xmlCommentLines.length > 0 ? extractXmlComments(xmlCommentLines.join('\n')).summary : '',
+            summary: '',
             members: [],
           };
+          inClass = true;
+          classOpenDepth = braceDepth;
+          classBodyStarted = false;
         }
+      }
+    }
+
+    // Brace 深度追踪：当 inClass 时，跟踪 {} 以确定类体结束
+    if (inClass) {
+      for (const ch of line) {
+        if (ch === '{') {
+          braceDepth++;
+          classBodyStarted = true;
+        }
+        if (ch === '}') braceDepth--;
+      }
+      // 只有遇到了类体的 { 之后才开始检测类结束
+      // 当 brace 深度回退到类声明时的深度，表示类体已结束
+      if (classBodyStarted && braceDepth <= classOpenDepth) {
+        return classInfo;
       }
     }
   }
 
+  // 文件末尾，返回还在追踪的类
+  if (inClass) {
+    return classInfo;
+  }
   return null;
 }
 
