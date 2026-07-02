@@ -14,7 +14,7 @@ namespace HN.Framework.Core.Driver
 
         // 平台适配接口（由 GameWorldDriver 注入）
         public ILogProvider LogProvider { get; set; }
-        public IAssetOperator AssetOperator { get; set; }
+        public IAssetManager? AssetManager { get; set; }
         public INetworkManager NetworkManager { get; set; }
         public IStorageProvider StorageProvider { get; set; }
 
@@ -37,6 +37,7 @@ namespace HN.Framework.Core.Driver
             PoolManager.Tick();
             ProcedureManager.Tick();
             ControllerManager.Tick();
+            AssetManager?.Tick();
         }
 
         public void LateTick()
@@ -44,6 +45,7 @@ namespace HN.Framework.Core.Driver
             PoolManager.LateTick();
             ProcedureManager.LateTick();
             ControllerManager.LateTick();
+            AssetManager?.LateTick();
         }
     }
 }

@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 #if HAS_ADDRESSABLES
@@ -11,7 +9,7 @@ using UnityEngine.ResourceManagement.ResourceProviders;
 
 using Object = System.Object;
 
-namespace HN.Framework.Core.Driver.Common
+namespace HN.Framework.Unity.Driver.Platform
 {
     /// <summary>
     /// 异步加载资源返回的句柄

@@ -1,0 +1,20 @@
+{
+    "name": "HN.Framework.Unity.Tests",
+    "rootNamespace": "HN.Framework.Unity.Tests",
+    "references": [
+        "HN.Framework.Core",
+        "HN.Framework.Unity"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": []
+}

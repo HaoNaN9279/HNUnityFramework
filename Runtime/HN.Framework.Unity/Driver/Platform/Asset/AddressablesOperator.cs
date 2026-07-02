@@ -8,8 +8,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
 #endif
 
-using HN.Framework.Core.Capability;
-using HN.Framework.Core.Driver.Common;
+using HN.Framework.Unity.Capability.Asset;
 
 namespace HN.Framework.Unity.Driver.Platform
 {
@@ -57,14 +56,6 @@ namespace HN.Framework.Unity.Driver.Platform
 #else
             Debug.LogWarning("Addressables is not installed. ReleaseAsset is a no-op.");
 #endif
-        }
-
-        /// <summary>
-        /// 实现接口 IReference
-        /// </summary>
-        public void Clear()
-        {
-
         }
     }
 }

@@ -2,8 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using HN.Framework.Core.Capability;
-using HN.Framework.Core.Driver.Common;
+using HN.Framework.Unity.Capability.Asset;
 
 using Object = UnityEngine.Object;
 
@@ -42,14 +41,6 @@ namespace HN.Framework.Unity.Driver.Platform
         public void ReleaseAsset(Object asset)
         {
             Resources.UnloadAsset(asset);
-        }
-
-        /// <summary>
-        /// 实现接口 IReference
-        /// </summary>
-        public void Clear()
-        {
-
         }
     }
 }

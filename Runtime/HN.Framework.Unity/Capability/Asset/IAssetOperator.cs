@@ -1,24 +1,19 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using HN.Framework.Core.Driver.Common;
-using UnityEngine;
+using HN.Framework.Unity.Driver.Platform;
 
-using Object = UnityEngine.Object;
-
-namespace HN.Framework.Core.Capability
+namespace HN.Framework.Unity.Capability.Asset
 {
     /// <summary>
     /// 资源操作器接口，定义资源的同步加载、异步加载和释放操作
     /// </summary>
-    public interface IAssetOperator : IReference
+    public interface IAssetOperator
     {
         /// <summary>
         /// 同步加载资源
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public Object LoadAsset(string name);
+        public UnityEngine.Object LoadAsset(string name);
 
         /// <summary>
         /// 异步加载资源
@@ -26,12 +21,12 @@ namespace HN.Framework.Core.Capability
         /// <typeparam name="T"></typeparam>
         /// <param name="name"></param>
         /// <returns></returns>
-        public AsyncLoadHandle LoadAssetAsync<T>(string name) where T : Object;
+        public AsyncLoadHandle LoadAssetAsync<T>(string name) where T : UnityEngine.Object;
 
         /// <summary>
         /// 释放资源
         /// </summary>
         /// <param name="asset"></param>
-        public void ReleaseAsset(Object asset);
+        public void ReleaseAsset(UnityEngine.Object asset);
     }
 }
