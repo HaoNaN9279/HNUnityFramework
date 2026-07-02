@@ -2,14 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+
+#if HAS_ADDRESSABLES
 using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.AddressableAssets.Settings.GroupSchemas;
+#endif
+
 using System;
 using System.IO;
 using System.Linq;
 
 namespace HN.Framework.Editor
 {
+#if HAS_ADDRESSABLES
     public static class AddressablesGroupsUpdater
     {
         /// <summary>
@@ -121,4 +126,16 @@ namespace HN.Framework.Editor
             return arrayA.All(element => arrayB.Contains(element));
         }
     }
+#else
+    public static class AddressablesGroupsUpdater
+    {
+        /// <summary>
+        /// Addressables 包未安装时的空实现
+        /// </summary>
+        public static void Update()
+        {
+            Debug.LogWarning("Addressables is not installed. AddressablesGroupsUpdater.Update() is a no-op.");
+        }
+    }
+#endif
 }
