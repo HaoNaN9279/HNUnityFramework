@@ -1,0 +1,16 @@
+{
+    "name": "HN.Framework.Unity",
+    "rootNamespace": "HN.Framework.Unity",
+    "references": [
+        "HN.Framework.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
