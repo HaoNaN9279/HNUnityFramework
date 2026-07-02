@@ -11,9 +11,13 @@ namespace HN.Framework.Editor
         /// </summary>
         public const string FRAMEWORK_NAME = "HN Unity Framework";
         /// <summary>
+        /// 项目文件夹根路径（由 FrameworkDeployer 自动创建）。
+        /// </summary>
+        public const string PROJECT_PATH = "Assets/Project";
+        /// <summary>
         /// 运行时资源文件夹路径。
         /// </summary>
-        public const string RUNTIME_ASSETS_FOLDER_PATH = "Assets/Project/RuntimeAssets";
+        public const string RUNTIME_ASSETS_FOLDER_PATH = PROJECT_PATH + "/RuntimeAssets";
         /// <summary>
         /// Addressable Asset Settings 配置文件路径。
         /// </summary>

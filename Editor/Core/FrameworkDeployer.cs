@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using HN.Framework.Unity.Driver.Platform;
 
 namespace HN.Framework.Editor
 {
@@ -31,23 +32,23 @@ namespace HN.Framework.Editor
             AssetDatabase.Refresh();
             TryCreateFolder("Assets", "Project");
             AssetDatabase.Refresh();
-            TryCreateFolder("Assets/Project", "EditorAssets");
-            TryCreateFolder("Assets/Project", "RuntimeAssets");
-            TryCreateFolder("Assets/Project", "Scripts");
+            TryCreateFolder(HNUnityFrameworkConstants.PROJECT_PATH, "EditorAssets");
+            TryCreateFolder(HNUnityFrameworkConstants.PROJECT_PATH, "RuntimeAssets");
+            TryCreateFolder(HNUnityFrameworkConstants.PROJECT_PATH, "Scripts");
             AssetDatabase.Refresh();
-            TryCreateFolder("Assets/Project/RuntimeAssets", "Core");
-            TryCreateFolder("Assets/Project/RuntimeAssets", "Scenes");
-            TryCreateFolder("Assets/Project/RuntimeAssets", "Shaders");
-            TryCreateFolder("Assets/Project/RuntimeAssets", "ConfigData");
-            TryCreateFolder("Assets/Project/RuntimeAssets", "UI");
+            TryCreateFolder(HNUnityFrameworkConstants.RUNTIME_ASSETS_FOLDER_PATH, "Core");
+            TryCreateFolder(HNUnityFrameworkConstants.RUNTIME_ASSETS_FOLDER_PATH, "Scenes");
+            TryCreateFolder(HNUnityFrameworkConstants.RUNTIME_ASSETS_FOLDER_PATH, "Shaders");
+            TryCreateFolder(HNUnityFrameworkConstants.RUNTIME_ASSETS_FOLDER_PATH, "ConfigData");
+            TryCreateFolder(HNUnityFrameworkConstants.RUNTIME_ASSETS_FOLDER_PATH, "UI");
             AssetDatabase.Refresh();
-            TryCreateFolder("Assets/Project/Scripts", "Editor");
-            TryCreateFolder("Assets/Project/Scripts", "Runtime");
+            TryCreateFolder(HNUnityFrameworkConstants.PROJECT_PATH + "/Scripts", "Editor");
+            TryCreateFolder(HNUnityFrameworkConstants.PROJECT_PATH + "/Scripts", "Runtime");
         }
 
         private static void CreateGameEntryScene()
         {
-            string gameEntryScenePath = "Assets/Project/RuntimeAssets/Core/GameEntry.unity";
+            string gameEntryScenePath = HNUnityFrameworkConstants.RUNTIME_ASSETS_FOLDER_PATH + "/Core/GameEntry.unity";
             var gameEntry = AssetDatabase.LoadAssetAtPath(gameEntryScenePath, typeof(Scene));
             if (gameEntry == null)
             {

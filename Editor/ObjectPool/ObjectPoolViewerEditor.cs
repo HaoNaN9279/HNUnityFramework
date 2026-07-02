@@ -1,3 +1,4 @@
+#if false // ObjectPoolViewer 类型已被删除，禁用此编辑器
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -82,3 +83,4 @@ namespace HN.Framework.Editor
         private bool m_gameObjectPoolFoldout = true;
     }
 }
+#endif
