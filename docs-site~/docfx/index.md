@@ -11,6 +11,6 @@ This documentation is automatically generated from XML comments in the source co
 | `HN.Framework` | Core framework runtime |
 | `HN.Framework.Editor` | Unity Editor extensions |
 | `HN` | Utility types |
-| `HN.Serialize` | Serialization utilities |
+| `HN.Framework.Core.Driver.Common.Serialization` | JSON 序列化/反序列化工具 |
 
 Browse the API reference using the navigation sidebar.

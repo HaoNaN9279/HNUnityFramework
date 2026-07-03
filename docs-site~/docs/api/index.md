@@ -65,6 +65,7 @@ Unity 平台层，依赖 UnityEngine。
 - **UnityCoroutineProvider** — Unity 协程提供者
 - **HNDictionary\<TKey, TValue\>** — 可序列化字典
 - **SerializableDictionary\<K, V\>** — Unity 序列化字典
+- **JsonData** — 可序列化 JSON 数据容器，实现 ISerializationCallbackReceiver
 - **HNUnityFrameworkGlobalSettings** — 框架全局资源配置
 - **HNRenderPipeline** 🚧 — 自定义渲染管线（待实现）
 - **HNRenderPipelineAsset** 🚧 — 渲染管线资源（待实现）

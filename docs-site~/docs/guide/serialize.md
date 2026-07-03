@@ -16,7 +16,7 @@ Serialize 模块提供 JSON 序列化/反序列化工具，按依赖拆分为两
 | `JsonObject` | Core | `HN.Framework.Core.Driver.Common.Serialization` | 数据基类，供 JsonData 内部使用 |
 | `JsonData` | Unity | `HN.Framework.Unity.Driver.Platform.Serialization` | 可序列化的数据容器，自动处理 ISerializationCallbackReceiver |
 
-> **分层说明**：Core 层（`Json`/`JsonObject`）为纯 C# 实现，不依赖 Unity 运行时；`Json` 类为纯 C# 手写 JSON 序列化器，不依赖 Unity JsonUtility。Unity 层（`JsonData`）依赖 `ISerializationCallbackReceiver` 和 `JsonUtility`，专用于 Inspector 编辑场景。
+> **分层说明**：Core 层（`Json`/`JsonObject`）为纯 C# 实现，不依赖 Unity 运行时；`Json` 类为纯 C# 手写 JSON 序列化器。Unity 层（`JsonData`）依赖 `ISerializationCallbackReceiver`，内部调用 Core 层的 `Json` 进行序列化，用于 Inspector 编辑场景。
 
 ## Json 静态类
 
