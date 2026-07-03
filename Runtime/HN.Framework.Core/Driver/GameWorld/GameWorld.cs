@@ -27,7 +27,6 @@ namespace HN.Framework.Core.Driver
 
         public void Initialize()
         {
-            PoolManager.Tick();
             ProcedureManager.Tick();
             ControllerManager.Tick();
         }

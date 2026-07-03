@@ -1,0 +1,56 @@
+F4: Scope Fidelity Verification — asset-manager-refactor
+=======================================================
+Date: 2026-07-02
+
+[PASS] 1. No UnityEngine references in Core
+       grep "using UnityEngine" in Runtime/HN.Framework.Core/ → 0 matches
+
+[PASS] 2. IAssetOperator.cs removed from Core
+       Test-Path → False (confirmed deleted)
+
+[PASS] 3. AsyncLoadHandle.cs removed from Core
+       Test-Path → False (confirmed deleted)
+
+[PASS] 4. New files only in expected paths (Runtime/, Tests/, .omo/)
+       Untracked files analysis:
+         Runtime/HN.Framework.Core/Capability/Asset/IAssetManager.cs        ← Core (new interface)
+         Runtime/HN.Framework.Unity/Driver/Platform/Asset/AsyncLoadHandle.cs ← Unity (moved from Core)
+         Runtime/HN.Framework.Unity/Capability/Asset/                        ← Unity (new dir)
+         Runtime/HN.Framework.Unity/AssemblyInfo.cs                          ← Unity
+         Tests/                                                              ← tests
+         .omo/drafts/, .omo/notepads/, .omo/plans/, .omo/run-continuation/  ← workflow
+       No files outside expected paths.
+
+[PASS] 5. ResourcesOperator.cs still exists
+       Path: Runtime/HN.Framework.Unity/Driver/Platform/Asset/ResourcesOperator.cs
+       Test-Path → True
+
+[PASS] 6. AddressablesExtensions unchanged
+       git diff HEAD → no output (no changes)
+
+[PASS] 7. ObjectPoolManager unchanged
+       git diff HEAD on Core/Capability/Pool/ObjectPoolManager.cs → no output
+
+[PASS] 8. ProcedureManager + ProcedureState unchanged
+       git diff HEAD on Core/Capability/Procedure/* → no output
+
+[PASS] 9. ControllerManager unchanged
+       git diff HEAD on Core/Level/Logic/MVC/ControllerManager.cs → no output
+
+[PASS] 10. Only modified files in Core (staged):
+       M  Runtime/HN.Framework.Core/Driver/GameWorld/GameWorld.cs
+       D  Runtime/HN.Framework.Core/Capability/Asset/IAssetOperator.cs
+       D  Runtime/HN.Framework.Core/Capability/Asset/IAssetOperator.cs.meta
+       D  Runtime/HN.Framework.Core/Driver/Common/AsyncLoadHandle.cs
+       D  Runtime/HN.Framework.Core/Driver/Common/AsyncLoadHandle.cs.meta
+       No unexpected Core modifications.
+
+[PASS] 11. Only expected Unity-layer modifications:
+       M  Runtime/HN.Framework.Unity/Driver/Platform/Asset/AddressablesOperator.cs
+       M  Runtime/HN.Framework.Unity/Driver/Platform/Asset/AssetDatabaseOperator.cs
+       M  Runtime/HN.Framework.Unity/Driver/Platform/Asset/ResourcesOperator.cs
+       M  Runtime/HN.Framework.Unity/Driver/Platform/GameWorldDriver.cs
+       All consistent with asset-manager-refactor scope.
+
+------------------------------------------------
+SUMMARY: ALL 11 CHECKS PASSED — Scope fidelity confirmed.

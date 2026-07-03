@@ -1,7 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using HN.Framework.Core.Driver.Common;
 
-namespace HN.Framework.Core.Driver.Common
+namespace HN.Framework.Core.Driver.Common.Pool.ObjectPool
 {
     /// <summary>
     /// 池化对象基类

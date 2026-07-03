@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using HN.Framework.Core.Driver.Common;
+using HN.Framework.Core.Driver.Common.Pool.ObjectPool;
+using HN.Framework.Core.Driver.Common.Pool.ReferencePool;
 
 namespace HN.Framework.Core.Capability
 {
@@ -11,211 +13,48 @@ namespace HN.Framework.Core.Capability
     public sealed class ObjectPoolManager : ITickable
     {
         /// <summary>
-        /// 创建一个 Object 对象池（无初始数量）
+        /// 创建纯 C# 对象池
         /// </summary>
-        public T CreateObjectPool<T>(string name) where T : ObjectPoolBase, new()
+        /// <param name="settings">对象池配置参数</param>
+        /// <typeparam name="T">对象池类型</typeparam>
+        /// <returns>创建的对象池实例</returns>
+        public T CreateObjectPool<T>(PoolSettings settings) where T : ObjectPoolBase, new()
         {
-            if (TryGet(name, out _))
-            {
-                throw new InvalidOperationException($"ObjectPoolManager already contains pool '{name}'.");
-            }
+            if (TryGet(settings.Name, out _))
+                throw new InvalidOperationException($"ObjectPoolManager already contains pool '{settings.Name}'.");
 
             T pool = ReferencePool.Acquire<T>();
-            pool.Initialize(name);
-            Add(name, pool);
+            pool.Initialize(settings);
+            Add(settings.Name, pool);
             return pool;
         }
 
         /// <summary>
-        /// 创建一个 Object 对象池（无初始数量，指定 Tick 频率）
+        /// 创建泛型 C# 对象池
         /// </summary>
-        public T CreateObjectPool<T>(string name, int tickFrequency) where T : ObjectPoolBase, new()
+        /// <param name="settings">对象池配置参数</param>
+        /// <typeparam name="T">对象池类型</typeparam>
+        /// <typeparam name="U">池中对象类型</typeparam>
+        /// <returns>创建的对象池实例</returns>
+        public T CreateObjectPool<T, U>(PoolSettings settings) where T : ObjectPool<U>, new() where U : PooledObjectBase, new()
         {
-            if (TryGet(name, out _))
-            {
-                throw new InvalidOperationException($"ObjectPoolManager already contains pool '{name}'.");
-            }
+            if (TryGet(settings.Name, out _))
+                throw new InvalidOperationException($"ObjectPoolManager already contains pool '{settings.Name}'.");
 
             T pool = ReferencePool.Acquire<T>();
-            pool.Initialize(name, tickFrequency);
-            Add(name, pool);
+            pool.Initialize(settings);
+            Add(settings.Name, pool);
             return pool;
         }
 
         /// <summary>
-        /// 创建一个 Object 对象池（无初始数量，指定上下限）
+        /// 注册已初始化的池实例（用于 GameObjectPool 等由外部创建的池）
         /// </summary>
-        public T CreateObjectPool<T>(string name, int tickFrequency, int maxCount, int minCount) where T : ObjectPoolBase, new()
+        /// <param name="name">池名称</param>
+        /// <param name="pool">池实例</param>
+        public void RegisterPool(string name, PoolBase pool)
         {
-            if (TryGet(name, out _))
-            {
-                throw new InvalidOperationException($"ObjectPoolManager already contains pool '{name}'.");
-            }
-
-            T pool = ReferencePool.Acquire<T>();
-            pool.Initialize(name, tickFrequency, maxCount, minCount);
             Add(name, pool);
-            return pool;
-        }
-
-        /// <summary>
-        /// 创建一个 Object 对象池（无初始数量，指定上下限和极限值）
-        /// </summary>
-        public T CreateObjectPool<T>(string name, int tickFrequency, int maxCount, int minCount, int maxLimitCount, int minLimitCount) where T : ObjectPoolBase, new()
-        {
-            if (TryGet(name, out _))
-            {
-                throw new InvalidOperationException($"ObjectPoolManager already contains pool '{name}'.");
-            }
-
-            T pool = ReferencePool.Acquire<T>();
-            pool.Initialize(name, tickFrequency, maxCount, minCount, maxLimitCount, minLimitCount);
-            Add(name, pool);
-            return pool;
-        }
-
-        /// <summary>
-        /// 创建一个 Object 对象池（指定初始数量）
-        /// </summary>
-        public T CreateObjectPool<T>(string name, int initialCount, int tickFrequency) where T : ObjectPoolBase, new()
-        {
-            if (TryGet(name, out _))
-            {
-                throw new InvalidOperationException($"ObjectPoolManager already contains pool '{name}'.");
-            }
-
-            T pool = ReferencePool.Acquire<T>();
-            pool.Initialize(name, initialCount, tickFrequency);
-            Add(name, pool);
-            return pool;
-        }
-
-        /// <summary>
-        /// 创建一个 Object 对象池（指定初始数量和上下限）
-        /// </summary>
-        public T CreateObjectPool<T>(string name, int initialCount, int tickFrequency, int maxCount, int minCount) where T : ObjectPoolBase, new()
-        {
-            if (TryGet(name, out _))
-            {
-                throw new InvalidOperationException($"ObjectPoolManager already contains pool '{name}'.");
-            }
-
-            T pool = ReferencePool.Acquire<T>();
-            pool.Initialize(name, initialCount, tickFrequency, maxCount, minCount);
-            Add(name, pool);
-            return pool;
-        }
-
-        /// <summary>
-        /// 创建一个 Object 对象池（指定初始数量、上下限和极限值）
-        /// </summary>
-        public T CreateObjectPool<T>(string name, int initialCount, int tickFrequency, int maxCount, int minCount, int maxLimitCount, int minLimitCount) where T : ObjectPoolBase, new()
-        {
-            if (TryGet(name, out _))
-            {
-                throw new InvalidOperationException($"ObjectPoolManager already contains pool '{name}'.");
-            }
-
-            T pool = ReferencePool.Acquire<T>();
-            pool.Initialize(name, initialCount, tickFrequency, maxCount, minCount, maxLimitCount, minLimitCount);
-            Add(name, pool);
-            return pool;
-        }
-
-        /// <summary>
-        /// 创建一个泛型 Object 对象池（指定初始数量和 Tick 频率）
-        /// </summary>
-        public T CreateObjectPool<T, U>(string name, int tickFrequency) where T : ObjectPool<U>, new() where U : PooledObjectBase, new()
-        {
-            if (TryGet(name, out _))
-            {
-                throw new InvalidOperationException($"ObjectPoolManager already contains pool '{name}'.");
-            }
-
-            T pool = ReferencePool.Acquire<T>();
-            pool.Initialize(name, tickFrequency);
-            Add(name, pool);
-            return pool;
-        }
-
-        /// <summary>
-        /// 创建一个泛型 Object 对象池（指定 Tick 频率和上下限）
-        /// </summary>
-        public T CreateObjectPool<T, U>(string name, int tickFrequency, int maxCount, int minCount) where T : ObjectPool<U>, new() where U : PooledObjectBase, new()
-        {
-            if (TryGet(name, out _))
-            {
-                throw new InvalidOperationException($"ObjectPoolManager already contains pool '{name}'.");
-            }
-
-            T pool = ReferencePool.Acquire<T>();
-            pool.Initialize(name, tickFrequency, maxCount, minCount);
-            Add(name, pool);
-            return pool;
-        }
-
-        /// <summary>
-        /// 创建一个泛型 Object 对象池（指定 Tick 频率、上下限和极限值）
-        /// </summary>
-        public T CreateObjectPool<T, U>(string name, int tickFrequency, int maxCount, int minCount, int maxLimitCount, int minLimitCount) where T : ObjectPool<U>, new() where U : PooledObjectBase, new()
-        {
-            if (TryGet(name, out _))
-            {
-                throw new InvalidOperationException($"ObjectPoolManager already contains pool '{name}'.");
-            }
-
-            T pool = ReferencePool.Acquire<T>();
-            pool.Initialize(name, tickFrequency, maxCount, minCount, maxLimitCount, minLimitCount);
-            Add(name, pool);
-            return pool;
-        }
-
-        /// <summary>
-        /// 创建一个泛型 Object 对象池（指定初始数量和 Tick 频率）
-        /// </summary>
-        public T CreateObjectPool<T, U>(string name, int initialCount, int tickFrequency) where T : ObjectPool<U>, new() where U : PooledObjectBase, new()
-        {
-            if (TryGet(name, out _))
-            {
-                throw new InvalidOperationException($"ObjectPoolManager already contains pool '{name}'.");
-            }
-
-            T pool = ReferencePool.Acquire<T>();
-            pool.Initialize(name, initialCount, tickFrequency);
-            Add(name, pool);
-            return pool;
-        }
-
-        /// <summary>
-        /// 创建一个泛型 Object 对象池（指定初始数量、Tick 频率和上下限）
-        /// </summary>
-        public T CreateObjectPool<T, U>(string name, int initialCount, int tickFrequency, int maxCount, int minCount) where T : ObjectPool<U>, new() where U : PooledObjectBase, new()
-        {
-            if (TryGet(name, out _))
-            {
-                throw new InvalidOperationException($"ObjectPoolManager already contains pool '{name}'.");
-            }
-
-            T pool = ReferencePool.Acquire<T>();
-            pool.Initialize(name, initialCount, tickFrequency, maxCount, minCount);
-            Add(name, pool);
-            return pool;
-        }
-
-        /// <summary>
-        /// 创建一个泛型 Object 对象池（指定初始数量、Tick 频率、上下限和极限值）
-        /// </summary>
-        public T CreateObjectPool<T, U>(string name, int initialCount, int tickFrequency, int maxCount, int minCount, int maxLimitCount, int minLimitCount) where T : ObjectPool<U>, new() where U : PooledObjectBase, new()
-        {
-            if (TryGet(name, out _))
-            {
-                throw new InvalidOperationException($"ObjectPoolManager already contains pool '{name}'.");
-            }
-
-            T pool = ReferencePool.Acquire<T>();
-            pool.Initialize(name, initialCount, tickFrequency, maxCount, minCount, maxLimitCount, minLimitCount);
-            Add(name, pool);
-            return pool;
         }
 
         /// <summary>
@@ -302,11 +141,12 @@ namespace HN.Framework.Core.Capability
             return m_objectPools.TryGetValue(name, out pool);
         }
 
-        private void ClearAll()
+        public void ClearAll()
         {
             foreach (var objectPool in m_objectPools.Values)
             {
                 objectPool.Clear();
+                ReferencePool.Release(objectPool);
             }
 
             m_objectPools.Clear();

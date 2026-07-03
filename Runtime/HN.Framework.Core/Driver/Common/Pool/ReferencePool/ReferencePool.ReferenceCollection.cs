@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using HN.Framework.Core.Driver.Common;
 
-namespace HN.Framework.Core.Driver.Common
+namespace HN.Framework.Core.Driver.Common.Pool.ReferencePool
 {
     public sealed partial class ReferencePool
     {

@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using HN.Framework.Core.Driver.Common;
+using HN.Framework.Core.Driver.Common.Pool.ObjectPool;
+using HN.Framework.Core.Driver.Common.Pool.ReferencePool;
 
 namespace HN.Framework.Unity.Driver.Platform
 {
@@ -43,134 +45,18 @@ namespace HN.Framework.Unity.Driver.Platform
         /// <summary>
         /// 初始化
         /// </summary>
-        /// <param name="managerRoot"></param>
-        /// <param name="prototype"></param>
-        /// <param name="name"></param>
-        public override void Initialize(GameObject managerRoot, GameObject prototype, string name)
+        /// <param name="settings">GameObject 对象池配置参数</param>
+        public override void Initialize(GameObjectPoolSettings settings)
         {
-            GenerateRoot(managerRoot, name);
-            this.prototype = prototype;
-            SetName(name);
-        }
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="managerRoot"></param>
-        /// <param name="prototype"></param>
-        /// <param name="name"></param>
-        /// <param name="tickFrequency"></param>
-        public override void Initialize(GameObject managerRoot, GameObject prototype, string name, int tickFrequency)
-        {
-            GenerateRoot(managerRoot, name);
-            this.prototype = prototype;
-            SetName(name);
-            this.tickFrequency = tickFrequency;
-        }
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="managerRoot"></param>
-        /// <param name="prototype"></param>
-        /// <param name="name"></param>
-        /// <param name="tickFrequency"></param>
-        /// <param name="maxCount"></param>
-        /// <param name="minCount"></param>
-        public override void Initialize(GameObject managerRoot, GameObject prototype, string name, int tickFrequency, int maxCount, int minCount)
-        {
-            GenerateRoot(managerRoot, name);
-            this.prototype = prototype;
-            SetName(name);
-            this.tickFrequency = tickFrequency;
-            this.maxCount = maxCount;
-            this.minCount = minCount;
-        }
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="managerRoot"></param>
-        /// <param name="prototype"></param>
-        /// <param name="name"></param>
-        /// <param name="tickFrequency"></param>
-        /// <param name="maxCount"></param>
-        /// <param name="minCount"></param>
-        /// <param name="maxLimitCount"></param>
-        /// <param name="minLimitCount"></param>
-        public override void Initialize(GameObject managerRoot, GameObject prototype, string name, int tickFrequency, int maxCount, int minCount, int maxLimitCount, int minLimitCount)
-        {
-            GenerateRoot(managerRoot, name);
-            this.prototype = prototype;
-            SetName(name);
-            this.tickFrequency = tickFrequency;
-            this.maxCount = maxCount;
-            this.minCount = minCount;
-            this.maxLimitCount = maxLimitCount;
-            this.minLimitCount = minLimitCount;
-        }
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="managerRoot"></param>
-        /// <param name="prototype"></param>
-        /// <param name="name"></param>
-        /// <param name="initialCount"></param>
-        /// <param name="tickFrequency"></param>
-        public override void Initialize(GameObject managerRoot, GameObject prototype, string name, int initialCount, int tickFrequency)
-        {
-            GenerateRoot(managerRoot, name);
-            this.prototype = prototype;
-            SetName(name);
-            SetInitialCount(initialCount);
-            this.tickFrequency = tickFrequency;
-        }
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="managerRoot"></param>
-        /// <param name="prototype"></param>
-        /// <param name="name"></param>
-        /// <param name="initialCount"></param>
-        /// <param name="tickFrequency"></param>
-        /// <param name="maxCount"></param>
-        /// <param name="minCount"></param>
-        public override void Initialize(GameObject managerRoot, GameObject prototype, string name, int initialCount, int tickFrequency, int maxCount, int minCount)
-        {
-            GenerateRoot(managerRoot, name);
-            this.prototype = prototype;
-            SetName(name);
-            SetInitialCount(initialCount);
-            this.tickFrequency = tickFrequency;
-            this.maxCount = maxCount;
-            this.minCount = minCount;
-        }
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="managerRoot"></param>
-        /// <param name="prototype"></param>
-        /// <param name="name"></param>
-        /// <param name="initialCount"></param>
-        /// <param name="tickFrequency"></param>
-        /// <param name="maxCount"></param>
-        /// <param name="minCount"></param>
-        /// <param name="maxLimitCount"></param>
-        /// <param name="minLimitCount"></param>
-        public override void Initialize(GameObject managerRoot, GameObject prototype, string name, int initialCount, int tickFrequency, int maxCount, int minCount, int maxLimitCount, int minLimitCount)
-        {
-            GenerateRoot(managerRoot, name);
-            this.prototype = prototype;
-            SetName(name);
-            SetInitialCount(initialCount);
-            this.tickFrequency = tickFrequency;
-            this.maxCount = maxCount;
-            this.minCount = minCount;
-            this.maxLimitCount = maxLimitCount;
-            this.minLimitCount = minLimitCount;
+            GenerateRoot(settings.ManagerRoot, settings.BaseSettings.Name);
+            this.prototype = settings.Prototype;
+            SetName(settings.BaseSettings.Name);
+            if (settings.BaseSettings.InitialCount > 0) SetInitialCount(settings.BaseSettings.InitialCount);
+            PoolTickFrequency = settings.BaseSettings.TickFrequency;
+            PoolMaxCount = settings.BaseSettings.MaxCount;
+            PoolMinCount = settings.BaseSettings.MinCount;
+            PoolMaxLimitCount = settings.BaseSettings.MaxLimitCount;
+            PoolMinLimitCount = settings.BaseSettings.MinLimitCount;
         }
 
         /// <summary>
@@ -184,7 +70,7 @@ namespace HN.Framework.Unity.Driver.Platform
                 return;
             }
 
-            this.initialCount = initialCount;
+            PoolInitialCount = initialCount;
             for (int i = 0; i < initialCount; i++)
             {
                 Spawn(out GameObject obj);
@@ -197,15 +83,10 @@ namespace HN.Framework.Unity.Driver.Platform
         /// <returns></returns>
         public GameObject Acquire(GameObject targetParent = null)
         {
-            bool isFaild = false;
             if (objects.Count == 0)
             {
-                isFaild = !Spawn(out GameObject obj);
-            }
-
-            if (isFaild)
-            {
-                return null;
+                if (!Spawn(out _))
+                    return null;
             }
 
             GameObject target = objects.Dequeue();
@@ -265,7 +146,10 @@ namespace HN.Framework.Unity.Driver.Platform
                 return;
             }
             GameObject obj = objects.Dequeue();
-            GameObject.Destroy(obj);
+            if (Application.isPlaying)
+                GameObject.Destroy(obj);
+            else
+                GameObject.DestroyImmediate(obj);
         }
 
         /// <summary>
@@ -284,42 +168,19 @@ namespace HN.Framework.Unity.Driver.Platform
 
 
         /// <summary>
-        /// 每帧更新
+        /// 由 Tick 获取当前存储数量
         /// </summary>
-        public override void Tick()
-        {
-            // 每隔tickFrequency帧执行一次
-            if (tickFrequency != 0 && HNLogicTime.LogicFrameCount % (ulong)tickFrequency != 0)
-            {
-                return;
-            }
+        protected override int GetStoredCount() => objects.Count;
 
-            // 超过上限开始销毁
-            if (objects.Count > maxCount && objects.Count < maxLimitCount)
-            {
-                Despawn();
-            }
-            else if (objects.Count > maxLimitCount)
-            {
-                for (int i = 0; i < objects.Count - maxLimitCount; i++)
-                {
-                    Despawn();
-                }
-            }
+        /// <summary>
+        /// 由 Tick 在数量低于下限时创建一个对象
+        /// </summary>
+        protected override void TickSpawn() => Spawn(out _);
 
-            // 小于下限开始创建
-            if (objects.Count < minCount && objects.Count > minLimitCount)
-            {
-                Spawn(out GameObject obj);
-            }
-            else if (objects.Count < minLimitCount)
-            {
-                for (int i = 0; i < minLimitCount - objects.Count; i++)
-                {
-                    Spawn(out GameObject obj);
-                }
-            }
-        }
+        /// <summary>
+        /// 由 Tick 在数量高于上限时销毁一个对象
+        /// </summary>
+        protected override void TickDespawn() => Despawn();
 
         /// <summary>
         /// 每帧后更新
@@ -339,17 +200,18 @@ namespace HN.Framework.Unity.Driver.Platform
                 Despawn();
             }
 
-            GameObject.Destroy(prototype);
-            GameObject.Destroy(root);
-            prototype = null;
+            if (Application.isPlaying)
+                GameObject.Destroy(root);
+            else
+                GameObject.DestroyImmediate(root);
             root = null;
-            name = string.Empty;
-            initialCount = 0;
-            tickFrequency = 0;
-            maxCount = int.MaxValue;
-            maxLimitCount = int.MaxValue;
-            minCount = 0;
-            minLimitCount = 0;
+            PoolName = string.Empty;
+            PoolInitialCount = 0;
+            PoolTickFrequency = 0;
+            PoolMaxCount = int.MaxValue;
+            PoolMaxLimitCount = int.MaxValue;
+            PoolMinCount = 0;
+            PoolMinLimitCount = 0;
         }
 
         /// <summary>

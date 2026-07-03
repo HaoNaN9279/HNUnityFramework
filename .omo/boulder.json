@@ -1,7 +1,113 @@
-{
-  "active_plan": "D:\\Unity Project\\FrameworkTest\\Assets\\HNUnityFramework\\.omo\\plans\\zhihu-arch-refactor.md",
-  "completed_at": "2026-07-01T11:45:00.000Z",
-  "session_ids": ["opencode:ses_0e2dc261effeeiIinlz63020zZ"],
-  "plan_name": "zhihu-arch-refactor",
-  "status": "completed"
+﻿{
+  "schema_version": 2,
+  "active_work_id": "fix-pool-systems-55c5efc2",
+  "works": {
+    "fix-pool-systems-55c5efc2": {
+      "work_id": "fix-pool-systems-55c5efc2",
+      "active_plan": "D:\\workspace\\work\\HNUnityFramework\\.omo\\plans\\fix-pool-systems.md",
+      "plan_name": "fix-pool-systems",
+      "status": "completed",
+      "started_at": "2026-07-02T10:42:55.786Z",
+      "updated_at": "2026-07-02T11:09:53.657Z",
+      "session_ids": [
+        "opencode:ses_0ddb0be59ffeOL7VE8FMFqe5OV",
+        "opencode:ses_0dd932beeffeSA8HBi5HfkPrOU",
+        "opencode:ses_0dd931aacffeH3DHKWz4EGZJ6Q",
+        "opencode:ses_0dd92f82cffeRtgN7jFvBUcMuF",
+        "opencode:ses_0dd8d89a8ffe1khgq6JrXTwEo8",
+        "opencode:ses_0dd8d79d1ffeFeiHzCMBqmXKMQ",
+        "opencode:ses_0dd8d6733ffeuWajqFTSDiIOHS",
+        "opencode:ses_0dd882890ffeHtlgHxq4Cb3bJC",
+        "opencode:ses_0dd881138ffeH4IMTNnrhOXj6N",
+        "opencode:ses_0dd7ea803ffekYeOHKX5oRbUGk",
+        "opencode:ses_0dd7e9df6ffewZpbTJog0ThEft",
+        "opencode:ses_0dd7e949dffeZVMyUWyapdryjq",
+        "opencode:ses_0dd7e8aa6ffeQ4XDRwSaSaOt0Q"
+      ],
+      "session_origins": {
+        "opencode:ses_0ddb0be59ffeOL7VE8FMFqe5OV": "direct",
+        "opencode:ses_0dd932beeffeSA8HBi5HfkPrOU": "appended",
+        "opencode:ses_0dd931aacffeH3DHKWz4EGZJ6Q": "appended",
+        "opencode:ses_0dd92f82cffeRtgN7jFvBUcMuF": "appended",
+        "opencode:ses_0dd8d89a8ffe1khgq6JrXTwEo8": "appended",
+        "opencode:ses_0dd8d79d1ffeFeiHzCMBqmXKMQ": "appended",
+        "opencode:ses_0dd8d6733ffeuWajqFTSDiIOHS": "appended",
+        "opencode:ses_0dd882890ffeHtlgHxq4Cb3bJC": "appended",
+        "opencode:ses_0dd881138ffeH4IMTNnrhOXj6N": "appended",
+        "opencode:ses_0dd7ea803ffekYeOHKX5oRbUGk": "appended",
+        "opencode:ses_0dd7e9df6ffewZpbTJog0ThEft": "appended",
+        "opencode:ses_0dd7e949dffeZVMyUWyapdryjq": "appended",
+        "opencode:ses_0dd7e8aa6ffeQ4XDRwSaSaOt0Q": "appended"
+      },
+      "agent": "atlas",
+      "task_sessions": {
+        "todo:1": {
+          "task_key": "todo:1",
+          "task_label": "1",
+          "task_title": "Compile the project via the Unity MCP 鈥?verify no compilation errors",
+          "session_id": "opencode:ses_0dd7e949dffeZVMyUWyapdryjq",
+          "agent": "Sisyphus-Junior",
+          "category": "quick",
+          "started_at": "2026-07-02T10:43:58.511Z",
+          "ended_at": "2026-07-02T10:48:55.372Z",
+          "elapsed_ms": 296861,
+          "status": "completed",
+          "updated_at": "2026-07-02T11:05:34.982Z"
+        },
+        "todo:4": { "task_key": "todo:4", "task_label": "4", "task_title": "C1 — Fix ObjectPool<T> safety", "status": "completed", "ended_at": "2026-07-02T11:10:00.000Z" }
+      }
+    }
+  },
+  "active_plan": "D:\\workspace\\work\\HNUnityFramework\\.omo\\plans\\fix-pool-systems.md",
+  "started_at": "2026-07-02T10:42:55.786Z",
+  "status": "completed",
+  "updated_at": "2026-07-02T11:09:53.657Z",
+  "session_ids": [
+    "opencode:ses_0ddb0be59ffeOL7VE8FMFqe5OV",
+    "opencode:ses_0dd932beeffeSA8HBi5HfkPrOU",
+    "opencode:ses_0dd931aacffeH3DHKWz4EGZJ6Q",
+    "opencode:ses_0dd92f82cffeRtgN7jFvBUcMuF",
+    "opencode:ses_0dd8d89a8ffe1khgq6JrXTwEo8",
+    "opencode:ses_0dd8d79d1ffeFeiHzCMBqmXKMQ",
+    "opencode:ses_0dd8d6733ffeuWajqFTSDiIOHS",
+    "opencode:ses_0dd882890ffeHtlgHxq4Cb3bJC",
+    "opencode:ses_0dd881138ffeH4IMTNnrhOXj6N",
+    "opencode:ses_0dd7ea803ffekYeOHKX5oRbUGk",
+    "opencode:ses_0dd7e9df6ffewZpbTJog0ThEft",
+    "opencode:ses_0dd7e949dffeZVMyUWyapdryjq",
+    "opencode:ses_0dd7e8aa6ffeQ4XDRwSaSaOt0Q"
+  ],
+  "session_origins": {
+    "opencode:ses_0ddb0be59ffeOL7VE8FMFqe5OV": "direct",
+    "opencode:ses_0dd932beeffeSA8HBi5HfkPrOU": "appended",
+    "opencode:ses_0dd931aacffeH3DHKWz4EGZJ6Q": "appended",
+    "opencode:ses_0dd92f82cffeRtgN7jFvBUcMuF": "appended",
+    "opencode:ses_0dd8d89a8ffe1khgq6JrXTwEo8": "appended",
+    "opencode:ses_0dd8d79d1ffeFeiHzCMBqmXKMQ": "appended",
+    "opencode:ses_0dd8d6733ffeuWajqFTSDiIOHS": "appended",
+    "opencode:ses_0dd882890ffeHtlgHxq4Cb3bJC": "appended",
+    "opencode:ses_0dd881138ffeH4IMTNnrhOXj6N": "appended",
+    "opencode:ses_0dd7ea803ffekYeOHKX5oRbUGk": "appended",
+    "opencode:ses_0dd7e9df6ffewZpbTJog0ThEft": "appended",
+    "opencode:ses_0dd7e949dffeZVMyUWyapdryjq": "appended",
+    "opencode:ses_0dd7e8aa6ffeQ4XDRwSaSaOt0Q": "appended"
+  },
+  "plan_name": "fix-pool-systems",
+  "task_sessions": {
+    "todo:1": {
+      "task_key": "todo:1",
+      "task_label": "1",
+      "task_title": "Compile the project via the Unity MCP 鈥?verify no compilation errors",
+      "session_id": "opencode:ses_0dd7e949dffeZVMyUWyapdryjq",
+      "agent": "Sisyphus-Junior",
+      "category": "quick",
+      "started_at": "2026-07-02T10:43:58.511Z",
+      "ended_at": "2026-07-02T10:48:55.372Z",
+      "elapsed_ms": 296861,
+      "status": "completed",
+      "updated_at": "2026-07-02T11:05:34.982Z"
+    },
+    "todo:4": { "task_key": "todo:4", "task_label": "4", "task_title": "C1 — Fix ObjectPool<T> safety", "status": "completed", "ended_at": "2026-07-02T11:10:00.000Z" }
+  },
+  "agent": "atlas"
 }

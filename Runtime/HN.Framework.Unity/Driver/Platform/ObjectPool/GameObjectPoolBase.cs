@@ -1,5 +1,7 @@
 using UnityEngine;
 using HN.Framework.Core.Driver.Common;
+using HN.Framework.Core.Driver.Common.Pool.ObjectPool;
+using HN.Framework.Core.Driver.Common.Pool.ReferencePool;
 
 namespace HN.Framework.Unity.Driver.Platform
 {
@@ -11,79 +13,8 @@ namespace HN.Framework.Unity.Driver.Platform
         /// <summary>
         /// 初始化
         /// </summary>
-        /// <param name="managerRoot"></param>
-        /// <param name="prototype"></param>
-        /// <param name="name"></param>
-        public abstract void Initialize(GameObject managerRoot, GameObject prototype, string name);
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="managerRoot"></param>
-        /// <param name="prototype"></param>
-        /// <param name="name"></param>
-        /// <param name="tickFrequency"></param>
-        public abstract void Initialize(GameObject managerRoot, GameObject prototype, string name, int tickFrequency);
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="managerRoot"></param>
-        /// <param name="prototype"></param>
-        /// <param name="name"></param>
-        /// <param name="tickFrequency"></param>
-        /// <param name="maxCount"></param>
-        /// <param name="minCount"></param>
-        public abstract void Initialize(GameObject managerRoot, GameObject prototype, string name, int tickFrequency, int maxCount, int minCount);
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="managerRoot"></param>
-        /// <param name="prototype"></param>
-        /// <param name="name"></param>
-        /// <param name="tickFrequency"></param>
-        /// <param name="maxCount"></param>
-        /// <param name="minCount"></param>
-        /// <param name="maxLimitCount"></param>
-        /// <param name="minLimitCount"></param>
-        public abstract void Initialize(GameObject managerRoot, GameObject prototype, string name, int tickFrequency, int maxCount, int minCount, int maxLimitCount, int minLimitCount);
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="managerRoot"></param>
-        /// <param name="prototype"></param>
-        /// <param name="name"></param>
-        /// <param name="initialCount"></param>
-        /// <param name="tickFrequency"></param>
-        public abstract void Initialize(GameObject managerRoot, GameObject prototype, string name, int initialCount, int tickFrequency);
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="managerRoot"></param>
-        /// <param name="prototype"></param>
-        /// <param name="name"></param>
-        /// <param name="initialCount"></param>
-        /// <param name="tickFrequency"></param>
-        /// <param name="maxCount"></param>
-        /// <param name="minCount"></param>
-        public abstract void Initialize(GameObject managerRoot, GameObject prototype, string name, int initialCount, int tickFrequency, int maxCount, int minCount);
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="managerRoot"></param>
-        /// <param name="prototype"></param>
-        /// <param name="name"></param>
-        /// <param name="initialCount"></param>
-        /// <param name="tickFrequency"></param>
-        /// <param name="maxCount"></param>
-        /// <param name="minCount"></param>
-        /// <param name="maxLimitCount"></param>
-        /// <param name="minLimitCount"></param>
-        public abstract void Initialize(GameObject managerRoot, GameObject prototype, string name, int initialCount, int tickFrequency, int maxCount, int minCount, int maxLimitCount, int minLimitCount);
+        /// <param name="settings">GameObject 对象池配置参数</param>
+        public abstract void Initialize(GameObjectPoolSettings settings);
 
         /// <summary>
         /// 从对象池中取出一个GameObject并执行OnAcquire

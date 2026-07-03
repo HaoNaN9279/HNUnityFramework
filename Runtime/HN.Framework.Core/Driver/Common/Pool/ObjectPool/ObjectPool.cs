@@ -1,7 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using HN.Framework.Core.Driver.Common;
+using HN.Framework.Core.Driver.Common.Pool.ReferencePool;
 
-namespace HN.Framework.Core.Driver.Common
+namespace HN.Framework.Core.Driver.Common.Pool.ObjectPool
 {
     /// <summary>
     /// UnityEngine.Object 对象池接口
@@ -43,106 +46,16 @@ namespace HN.Framework.Core.Driver.Common
         /// <summary>
         /// 初始化
         /// </summary>
-        /// <param name="name"></param>
-        public override void Initialize(string name)
+        /// <param name="settings">对象池配置参数</param>
+        public override void Initialize(PoolSettings settings)
         {
-            SetName(name);
-        }
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="tickFrequency"></param>
-        public override void Initialize(string name, int tickFrequency)
-        {
-            SetName(name);
-            this.tickFrequency = tickFrequency;
-        }
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="tickFrequency"></param>
-        /// <param name="maxCount"></param>
-        /// <param name="minCount"></param>
-        public override void Initialize(string name, int tickFrequency, int maxCount, int minCount)
-        {
-            SetName(name);
-            this.tickFrequency = tickFrequency;
-            this.maxCount = maxCount;
-            this.minCount = minCount;
-        }
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="tickFrequency"></param>
-        /// <param name="maxCount"></param>
-        /// <param name="minCount"></param>
-        /// <param name="maxLimitCount"></param>
-        /// <param name="minLimitCount"></param>
-        public override void Initialize(string name, int tickFrequency, int maxCount, int minCount, int maxLimitCount, int minLimitCount)
-        {
-            SetName(name);
-            this.tickFrequency = tickFrequency;
-            this.maxCount = maxCount;
-            this.minCount = minCount;
-            this.maxLimitCount = maxLimitCount;
-            this.minLimitCount = minLimitCount;
-        }
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="initialCount"></param>
-        /// <param name="tickFrequency"></param>
-        public override void Initialize(string name, int initialCount, int tickFrequency)
-        {
-            SetName(name);
-            SetInitialCount(initialCount);
-            this.tickFrequency = tickFrequency;
-        }
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="initialCount"></param>
-        /// <param name="tickFrequency"></param>
-        /// <param name="maxCount"></param>
-        /// <param name="minCount"></param>
-        public override void Initialize(string name, int initialCount, int tickFrequency, int maxCount, int minCount)
-        {
-            SetName(name);
-            SetInitialCount(initialCount);
-            this.tickFrequency = tickFrequency;
-            this.maxCount = maxCount;
-            this.minCount = minCount;
-        }
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="initialCount"></param>
-        /// <param name="tickFrequency"></param>
-        /// <param name="maxCount"></param>
-        /// <param name="minCount"></param>
-        /// <param name="maxLimitCount"></param>
-        /// <param name="minLimitCount"></param>
-        public override void Initialize(string name, int initialCount, int tickFrequency, int maxCount, int minCount, int maxLimitCount, int minLimitCount)
-        {
-            SetName(name);
-            SetInitialCount(initialCount);
-            this.tickFrequency = tickFrequency;
-            this.maxCount = maxCount;
-            this.minCount = minCount;
-            this.maxLimitCount = maxLimitCount;
-            this.minLimitCount = minLimitCount;
+            SetName(settings.Name);
+            if (settings.InitialCount > 0) SetInitialCount(settings.InitialCount);
+            PoolTickFrequency = settings.TickFrequency;
+            PoolMaxCount = settings.MaxCount;
+            PoolMinCount = settings.MinCount;
+            PoolMaxLimitCount = settings.MaxLimitCount;
+            PoolMinLimitCount = settings.MinLimitCount;
         }
 
         /// <summary>
@@ -156,7 +69,7 @@ namespace HN.Framework.Core.Driver.Common
                 return;
             }
 
-            this.initialCount = initialCount;
+            PoolInitialCount = initialCount;
             for (int i = 0; i < initialCount; i++)
             {
                 Spawn();
@@ -174,7 +87,7 @@ namespace HN.Framework.Core.Driver.Common
                 Spawn();
             }
 
-            return objects.Dequeue() as T;
+            return (T)objects.Dequeue();
         }
 
         /// <summary>
@@ -183,6 +96,18 @@ namespace HN.Framework.Core.Driver.Common
         /// <param name="pooledObject"></param>
         public void Release(T pooledObject)
         {
+            if (pooledObject == null)
+            {
+                throw new ArgumentNullException(nameof(pooledObject));
+            }
+
+            pooledObject.Clear();
+
+            if (objects.Contains(pooledObject))
+            {
+                throw new InvalidOperationException("Object has already been released to the pool.");
+            }
+
             objects.Enqueue(pooledObject);
         }
 
@@ -198,42 +123,19 @@ namespace HN.Framework.Core.Driver.Common
         public abstract void Despawn();
 
         /// <summary>
-        /// 每帧更新
+        /// 由 Tick 获取当前存储数量
         /// </summary>
-        public override void Tick()
-        {
-            // 每隔tickFrequency帧执行一次
-            if (tickFrequency != 0 && HNLogicTime.LogicFrameCount % (ulong)tickFrequency != 0)
-            {
-                return;
-            }
+        protected override int GetStoredCount() => objects.Count;
 
-            // 超过上限开始销毁
-            if (objects.Count > maxCount && objects.Count < maxLimitCount)
-            {
-                Despawn();
-            }
-            else if (objects.Count > maxLimitCount)
-            {
-                for (int i = 0; i < objects.Count - maxLimitCount; i++)
-                {
-                    Despawn();
-                }
-            }
+        /// <summary>
+        /// 由 Tick 在数量低于下限时创建一个对象
+        /// </summary>
+        protected override void TickSpawn() => Spawn();
 
-            // 小于下限开始创建
-            if (objects.Count < minCount && objects.Count > minLimitCount)
-            {
-                Spawn();
-            }
-            else if (objects.Count < minLimitCount)
-            {
-                for (int i = 0; i < minLimitCount - objects.Count; i++)
-                {
-                    Spawn();
-                }
-            }
-        }
+        /// <summary>
+        /// 由 Tick 在数量高于上限时销毁一个对象
+        /// </summary>
+        protected override void TickDespawn() => Despawn();
 
         /// <summary>
         /// 每帧后更新
@@ -271,13 +173,13 @@ namespace HN.Framework.Core.Driver.Common
                 Despawn();
             }
 
-            name = string.Empty;
-            initialCount = 0;
-            tickFrequency = 0;
-            maxCount = int.MaxValue;
-            maxLimitCount = int.MaxValue;
-            minCount = 0;
-            minLimitCount = 0;
+            PoolName = string.Empty;
+            PoolInitialCount = 0;
+            PoolTickFrequency = 0;
+            PoolMaxCount = int.MaxValue;
+            PoolMaxLimitCount = int.MaxValue;
+            PoolMinCount = 0;
+            PoolMinLimitCount = 0;
         }
 
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HN.Framework.Core.Capability;
 using HN.Framework.Core.Driver.Common;
+using HN.Framework.Core.Driver.Common.Pool.ReferencePool;
 using HN.Framework.Unity.Driver.Platform;
 using UnityEngine;
 

@@ -1,8 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using HN.Framework.Core.Driver.Common;
 
-namespace HN.Framework.Core.Driver.Common
+namespace HN.Framework.Core.Driver.Common.Pool.ObjectPool
 {
     /// <summary>
     /// 对象池抽象基类
@@ -21,13 +22,46 @@ namespace HN.Framework.Core.Driver.Common
         /// <param name="name"></param>
         public void SetName(string name)
         {
-            this.name = name;
+            this._name = name;
         }
+
+        /// <summary>
+        /// 由 Tick 获取当前存储数量
+        /// </summary>
+        protected abstract int GetStoredCount();
+
+        /// <summary>
+        /// 由 Tick 在数量低于下限时创建一个对象
+        /// </summary>
+        protected abstract void TickSpawn();
+
+        /// <summary>
+        /// 由 Tick 在数量高于上限时销毁一个对象
+        /// </summary>
+        protected abstract void TickDespawn();
 
         /// <summary>
         /// 每帧更新
         /// </summary>
-        public abstract void Tick();
+        public virtual void Tick()
+        {
+            if (PoolTickFrequency != 0 && HNLogicTime.LogicFrameCount % (ulong)PoolTickFrequency != 0)
+                return;
+
+            int count = GetStoredCount();
+            if (count > PoolMaxCount && count < PoolMaxLimitCount)
+                TickDespawn();
+            else if (count > PoolMaxLimitCount)
+                for (int i = 0; i < count - PoolMaxLimitCount; i++)
+                    TickDespawn();
+
+            count = GetStoredCount();
+            if (count < PoolMinCount && count > PoolMinLimitCount)
+                TickSpawn();
+            else if (count < PoolMinLimitCount)
+                for (int i = 0; i < PoolMinLimitCount - count; i++)
+                    TickSpawn();
+        }
 
         /// <summary>
         /// 每帧后更新
@@ -55,21 +89,21 @@ namespace HN.Framework.Core.Driver.Common
         /// <summary>
         /// 对象池名称
         /// </summary>
-        public string Name => name;
+        public string Name => _name;
 
         /// <summary>
         /// 初始数量
         /// </summary>
-        public int InitialCount { get { return initialCount; } }
+        public int InitialCount { get { return _initialCount; } }
 
         /// <summary>
         /// Tick频率 每隔N帧Tick一次
         /// </summary>
         public int TickFrequency
         {
-            get { return tickFrequency; }
+            get { return _tickFrequency; }
 
-            set { tickFrequency = value; }
+            set { _tickFrequency = value; }
         }
 
         /// <summary>
@@ -77,8 +111,8 @@ namespace HN.Framework.Core.Driver.Common
         /// </summary>
         public int MaxCount
         {
-            get { return maxCount; }
-            set { maxCount = value; }
+            get { return _maxCount; }
+            set { _maxCount = value; }
         }
 
         /// <summary>
@@ -86,8 +120,8 @@ namespace HN.Framework.Core.Driver.Common
         /// </summary>
         public int MaxLimitCount
         {
-            get { return maxLimitCount; }
-            set { maxLimitCount = value; }
+            get { return _maxLimitCount; }
+            set { _maxLimitCount = value; }
         }
 
         /// <summary>
@@ -95,8 +129,8 @@ namespace HN.Framework.Core.Driver.Common
         /// </summary>
         public int MinCount
         {
-            get { return minCount; }
-            set { minCount = value; }
+            get { return _minCount; }
+            set { _minCount = value; }
         }
 
         /// <summary>
@@ -104,8 +138,8 @@ namespace HN.Framework.Core.Driver.Common
         /// </summary>
         public int MinLimitCount
         {
-            get { return minLimitCount; }
-            set { minLimitCount = value; }
+            get { return _minLimitCount; }
+            set { _minLimitCount = value; }
         }
 
         /// <summary>
@@ -113,13 +147,48 @@ namespace HN.Framework.Core.Driver.Common
         /// </summary>
         public int CurrentCount => GetCurrentCount();
 
-        protected string name;
-        protected int initialCount = 0;
-        protected int tickFrequency = 0;
-        protected int maxCount = int.MaxValue;
-        protected int maxLimitCount = int.MaxValue;
-        protected int minCount = 0;
-        protected int minLimitCount = 0;
+        private string _name;
+        private int _initialCount = 0;
+        private int _tickFrequency = 0;
+        private int _maxCount = int.MaxValue;
+        private int _maxLimitCount = int.MaxValue;
+        private int _minCount = 0;
+        private int _minLimitCount = 0;
+
+        /// <summary>
+        /// 对象池名称
+        /// </summary>
+        protected string PoolName { get => _name; set => _name = value; }
+
+        /// <summary>
+        /// 初始数量
+        /// </summary>
+        protected int PoolInitialCount { get => _initialCount; set => _initialCount = value; }
+
+        /// <summary>
+        /// Tick频率
+        /// </summary>
+        protected int PoolTickFrequency { get => _tickFrequency; set => _tickFrequency = value; }
+
+        /// <summary>
+        /// 最大数量
+        /// </summary>
+        protected int PoolMaxCount { get => _maxCount; set => _maxCount = value; }
+
+        /// <summary>
+        /// 最大极限数量
+        /// </summary>
+        protected int PoolMaxLimitCount { get => _maxLimitCount; set => _maxLimitCount = value; }
+
+        /// <summary>
+        /// 最小数量
+        /// </summary>
+        protected int PoolMinCount { get => _minCount; set => _minCount = value; }
+
+        /// <summary>
+        /// 最小极限数量
+        /// </summary>
+        protected int PoolMinLimitCount { get => _minLimitCount; set => _minLimitCount = value; }
     }
 
 
@@ -131,64 +200,7 @@ namespace HN.Framework.Core.Driver.Common
         /// <summary>
         /// 初始化
         /// </summary>
-        /// <param name="name"></param>
-        public abstract void Initialize(string name);
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="tickFrequency"></param>
-        public abstract void Initialize(string name, int tickFrequency);
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="tickFrequency"></param>
-        /// <param name="maxCount"></param>
-        /// <param name="minCount"></param>
-        public abstract void Initialize(string name, int tickFrequency, int maxCount, int minCount);
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="tickFrequency"></param>
-        /// <param name="maxCount"></param>
-        /// <param name="minCount"></param>
-        /// <param name="maxLimitCount"></param>
-        /// <param name="minLimitCount"></param>
-        public abstract void Initialize(string name, int tickFrequency, int maxCount, int minCount, int maxLimitCount, int minLimitCount);
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="initialCount"></param>
-        /// <param name="tickFrequency"></param>
-        public abstract void Initialize(string name, int initialCount, int tickFrequency);
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="initialCount"></param>
-        /// <param name="tickFrequency"></param>
-        /// <param name="maxCount"></param>
-        /// <param name="minCount"></param>
-        public abstract void Initialize(string name, int initialCount, int tickFrequency, int maxCount, int minCount);
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="initialCount"></param>
-        /// <param name="tickFrequency"></param>
-        /// <param name="maxCount"></param>
-        /// <param name="minCount"></param>
-        /// <param name="maxLimitCount"></param>
-        /// <param name="minLimitCount"></param>
-        public abstract void Initialize(string name, int initialCount, int tickFrequency, int maxCount, int minCount, int maxLimitCount, int minLimitCount);
+        /// <param name="settings">对象池配置参数</param>
+        public abstract void Initialize(PoolSettings settings);
     }
 }
