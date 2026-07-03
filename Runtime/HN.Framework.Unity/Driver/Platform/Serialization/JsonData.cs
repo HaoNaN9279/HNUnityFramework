@@ -24,7 +24,11 @@ namespace HN.Framework.Unity.Driver.Platform.Serialization
         {
             get
             {
-                DeserializeFromString(jsonText);
+                if (jsonText != cachedJsonText)
+                {
+                    DeserializeFromString(jsonText);
+                    cachedJsonText = jsonText ?? string.Empty;
+                }
                 return obj;
             }
         }
@@ -41,6 +45,7 @@ namespace HN.Framework.Unity.Driver.Platform.Serialization
 
         private JsonObject obj;
 
+        private string cachedJsonText;
 
         /// <summary>
         /// 创建 JsonData 实例，内部创建指定类型的 JsonObject。
@@ -63,6 +68,7 @@ namespace HN.Framework.Unity.Driver.Platform.Serialization
         public void Serialize()
         {
             jsonText = SerializeToJson();
+            cachedJsonText = jsonText ?? string.Empty;
         }
         
         /// <summary>
@@ -82,9 +88,6 @@ namespace HN.Framework.Unity.Driver.Platform.Serialization
             if (string.IsNullOrEmpty(objTypeName))
                 return "";
 
-            Assembly assembly = Assembly.Load(objAssemblyName);
-            Type type = assembly.GetType(objTypeName);
-            // var o = Convert.ChangeType(obj, type);
             return Json.Serialize(obj);
         }
 
@@ -108,12 +111,12 @@ namespace HN.Framework.Unity.Driver.Platform.Serialization
 
         public void OnBeforeSerialize()
         {
-            jsonText = "";
             Serialize();
         }
 
         public void OnAfterDeserialize()
         {
+            cachedJsonText = null; // Force re-parse on next access
             DeserializeFromString(jsonText);
         }
     }
