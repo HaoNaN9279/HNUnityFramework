@@ -10,6 +10,7 @@ namespace HN.Framework.Core.Driver.Common.Serialization
     public class Json
     {
         private const int IndentSize = 2;
+        private const int MaxDepth = 64;
 
         /// <summary>
         /// 将字符串内容写入指定路径的文件。如果文件存在则覆盖，不存在则创建。
@@ -19,18 +20,10 @@ namespace HN.Framework.Core.Driver.Common.Serialization
         /// <returns>写入成功返回 true，路径为空返回 false。</returns>
         public static bool WriteToDisk(string path, string text)
         {
-            if(string.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
                 return false;
 
-            FileStream file = File.Open(path, FileMode.OpenOrCreate, FileAccess.Write);
-            file.Seek(0, SeekOrigin.Begin);
-            file.SetLength(0);
-            file.Close();
-            StreamWriter sw;
-            sw = File.CreateText(path);
-            sw.Write(text);
-            sw.Close();
-            sw.Dispose();
+            File.WriteAllText(path, text, Encoding.UTF8);
             return true;
         }
 
@@ -41,7 +34,10 @@ namespace HN.Framework.Core.Driver.Common.Serialization
         /// <returns>文件的文本内容。</returns>
         public static string ReadFromDisk(string path)
         {
-            return File.ReadAllText(path, Encoding.UTF8);
+            if (string.IsNullOrEmpty(path)) return string.Empty;
+            if (!File.Exists(path)) return string.Empty;
+            try { return File.ReadAllText(path, Encoding.UTF8); }
+            catch { return string.Empty; }
         }
 
         /// <summary>
@@ -84,11 +80,9 @@ namespace HN.Framework.Core.Driver.Common.Serialization
         /// <returns>反序列化成功返回 true，否则返回 false。</returns>
         public static bool Deserialize<T>(T obj, string path)
         {
-            if(string.IsNullOrEmpty(path) || obj == null)
-            {
-                return false;
-            }
+            if (string.IsNullOrEmpty(path) || obj == null) return false;
             string jsonString = ReadFromDisk(path);
+            if (string.IsNullOrEmpty(jsonString)) return false;
             JsonOverwrite(obj, jsonString);
             return true;
         }
@@ -119,13 +113,14 @@ namespace HN.Framework.Core.Driver.Common.Serialization
         /// <returns>反序列化后的对象，失败时返回 null。</returns>
         public static System.Object DeserializeFromString(string typeName, string jsonString)
         {
-            if(string.IsNullOrEmpty(jsonString))
+            if (string.IsNullOrEmpty(jsonString) || string.IsNullOrEmpty(typeName))
             {
                 return null;
             }
             var type = Type.GetType(typeName);
+            if (type == null) return null;
             var obj = Activator.CreateInstance(type);
-            if(obj == null)
+            if (obj == null)
             {
                 return null;
             }
@@ -141,12 +136,12 @@ namespace HN.Framework.Core.Driver.Common.Serialization
         /// <returns>反序列化后的对象，失败时返回 default(T)。</returns>
         public static T Deserialize<T>(string path)
         {
+            if (string.IsNullOrEmpty(path)) return default;
+            string jsonString = ReadFromDisk(path);
+            if (string.IsNullOrEmpty(jsonString)) return default;
             var obj = Activator.CreateInstance<T>();
-            if(Deserialize(obj, path))
-            {
-                return obj;
-            }
-            return default;
+            JsonOverwrite(obj, jsonString);
+            return obj;
         }
 
         /// <summary>
@@ -165,7 +160,7 @@ namespace HN.Framework.Core.Driver.Common.Serialization
 
         // ==================== Private Implementation ====================
 
-        private static void JsonOverwrite(object target, string jsonString)
+        private static void JsonOverwrite(object target, string jsonString, int depth = 0)
         {
             if (target == null || string.IsNullOrEmpty(jsonString))
                 return;
@@ -179,7 +174,7 @@ namespace HN.Framework.Core.Driver.Common.Serialization
             {
                 if (values.TryGetValue(field.Name, out string strVal))
                 {
-                    SetFieldValue(target, field, strVal);
+                    SetFieldValue(target, field, strVal, depth);
                 }
             }
         }
@@ -187,6 +182,12 @@ namespace HN.Framework.Core.Driver.Common.Serialization
         private static void SerializeObject(object obj, int depth, StringBuilder sb)
         {
             if (obj == null)
+            {
+                sb.Append("null");
+                return;
+            }
+
+            if (depth > MaxDepth)
             {
                 sb.Append("null");
                 return;
@@ -217,12 +218,10 @@ namespace HN.Framework.Core.Driver.Common.Serialization
                 return;
             }
 
-            // Enum
+            // Enum — serialize as integer
             if (type.IsEnum)
             {
-                sb.Append('"');
-                sb.Append(EscapeJson(obj.ToString()));
-                sb.Append('"');
+                sb.Append(((int)obj).ToString());
                 return;
             }
 
@@ -383,7 +382,7 @@ namespace HN.Framework.Core.Driver.Common.Serialization
                     if (json[i] == '\\') i++;
                     i++;
                 }
-                string key = json.Substring(keyStart, i - keyStart);
+                string key = UnescapeJsonString(json.Substring(keyStart, i - keyStart));
                 i++; // closing quote
 
                 SkipWhitespace(json, ref i);
@@ -441,7 +440,20 @@ namespace HN.Framework.Core.Driver.Common.Serialization
                 char c = json[i];
                 if (inString)
                 {
-                    if (c == '\\') i++;
+                    if (c == '\\')
+                    {
+                        i++;
+                        // Skip \uXXXX (4 hex digits after 'u')
+                        if (i + 1 < json.Length && json[i] == 'u')
+                        {
+                            int hexCount = 0;
+                            while (hexCount < 4 && i + 1 < json.Length && IsHexDigit(json[i + 1]))
+                            {
+                                i++;
+                                hexCount++;
+                            }
+                        }
+                    }
                     else if (c == '"') inString = false;
                 }
                 else
@@ -463,7 +475,7 @@ namespace HN.Framework.Core.Driver.Common.Serialization
             while (i < s.Length && char.IsWhiteSpace(s[i])) i++;
         }
 
-        private static void SetFieldValue(object target, FieldInfo field, string strVal)
+        private static void SetFieldValue(object target, FieldInfo field, string strVal, int depth = 0)
         {
             Type fieldType = field.FieldType;
 
@@ -478,16 +490,16 @@ namespace HN.Framework.Core.Driver.Common.Serialization
 
             try
             {
-                object value = ConvertJsonValue(strVal, fieldType);
+                object value = ConvertJsonValue(strVal, fieldType, depth);
                 field.SetValue(target, value);
             }
-            catch
+            catch (Exception ex)
             {
-                // Silently ignore conversion errors for compatibility
+                System.Diagnostics.Debug.WriteLine($"Json deserialization: failed to set field '{field.Name}' (type {fieldType.Name}) to '{strVal}': {ex.Message}");
             }
         }
 
-        private static object ConvertJsonValue(string strVal, Type targetType)
+        private static object ConvertJsonValue(string strVal, Type targetType, int depth = 0)
         {
             if (string.IsNullOrEmpty(strVal) || strVal == "null")
             {
@@ -506,7 +518,7 @@ namespace HN.Framework.Core.Driver.Common.Serialization
             }
 
             if (targetType == typeof(string))
-                return strVal.Trim('"');
+                return UnescapeJsonString(strVal.Trim('"'));
             if (targetType == typeof(int))
                 return int.Parse(strVal);
             if (targetType == typeof(float))
@@ -533,23 +545,31 @@ namespace HN.Framework.Core.Driver.Common.Serialization
                 return sbyte.Parse(strVal);
             if (targetType == typeof(char))
             {
-                var trimmed = strVal.Trim('"');
+                var trimmed = UnescapeJsonString(strVal.Trim('"'));
                 return trimmed.Length > 0 ? trimmed[0] : '\0';
             }
             if (targetType.IsEnum)
-                return Enum.Parse(targetType, strVal.Trim('"'));
+            {
+                string enumStr = strVal.Trim().Trim('"');
+                if (int.TryParse(enumStr, out int enumInt))
+                    return Enum.ToObject(targetType, enumInt);
+                return Enum.Parse(targetType, enumStr);
+            }
             if (targetType.IsArray || (targetType.IsGenericType && targetType.GetGenericTypeDefinition() == typeof(List<>)))
-                return DeserializeArray(strVal, targetType);
+                return DeserializeArray(strVal, targetType, depth);
             if (targetType.IsPrimitive)
                 return Convert.ChangeType(strVal, targetType);
 
             // Complex object
-            return DeserializeObject(strVal, targetType);
+            return DeserializeObject(strVal, targetType, depth);
         }
 
-        private static object DeserializeObject(string json, Type type)
+        private static object DeserializeObject(string json, Type type, int depth = 0)
         {
             if (string.IsNullOrEmpty(json) || json == "null")
+                return null;
+
+            if (depth > MaxDepth)
                 return null;
 
             json = json.Trim();
@@ -557,11 +577,11 @@ namespace HN.Framework.Core.Driver.Common.Serialization
                 return null;
 
             object result = Activator.CreateInstance(type);
-            JsonOverwrite(result, json);
+            JsonOverwrite(result, json, depth + 1);
             return result;
         }
 
-        private static object DeserializeArray(string json, Type arrayType)
+        private static object DeserializeArray(string json, Type arrayType, int depth = 0)
         {
             if (string.IsNullOrEmpty(json) || json == "null" || json == "[]")
             {
@@ -582,7 +602,7 @@ namespace HN.Framework.Core.Driver.Common.Serialization
                 var array = Array.CreateInstance(elementType, elements.Count);
                 for (int i = 0; i < elements.Count; i++)
                 {
-                    array.SetValue(ConvertJsonValue(elements[i], elementType), i);
+                    array.SetValue(ConvertJsonValue(elements[i], elementType, depth), i);
                 }
                 return array;
             }
@@ -591,7 +611,7 @@ namespace HN.Framework.Core.Driver.Common.Serialization
                 var list = (IList)Activator.CreateInstance(arrayType);
                 for (int i = 0; i < elements.Count; i++)
                 {
-                    list.Add(ConvertJsonValue(elements[i], elementType));
+                    list.Add(ConvertJsonValue(elements[i], elementType, depth));
                 }
                 return list;
             }
@@ -612,10 +632,77 @@ namespace HN.Framework.Core.Driver.Common.Serialization
                     case '\n': sb.Append("\\n"); break;
                     case '\r': sb.Append("\\r"); break;
                     case '\t': sb.Append("\\t"); break;
-                    default:   sb.Append(c); break;
+                    default:
+                        if (c > 127)
+                            sb.Append($"\\u{(int)c:x4}");
+                        else
+                            sb.Append(c);
+                        break;
                 }
             }
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// 将 JSON 字符串中的转义序列（\uXXXX, \\, \", \n, \r, \t）还原为实际字符。
+        /// </summary>
+        private static string UnescapeJsonString(string s)
+        {
+            if (string.IsNullOrEmpty(s) || !s.Contains('\\'))
+                return s;
+
+            var sb = new StringBuilder(s.Length);
+            for (int i = 0; i < s.Length; i++)
+            {
+                if (s[i] == '\\' && i + 1 < s.Length)
+                {
+                    i++;
+                    switch (s[i])
+                    {
+                        case '"': sb.Append('"'); break;
+                        case '\\': sb.Append('\\'); break;
+                        case '/': sb.Append('/'); break;
+                        case 'n': sb.Append('\n'); break;
+                        case 'r': sb.Append('\r'); break;
+                        case 't': sb.Append('\t'); break;
+                        case 'u':
+                            if (i + 4 < s.Length)
+                            {
+                                string hex = s.Substring(i + 1, 4);
+                                if (int.TryParse(hex,
+                                    System.Globalization.NumberStyles.HexNumber,
+                                    System.Globalization.CultureInfo.InvariantCulture,
+                                    out int code))
+                                {
+                                    sb.Append((char)code);
+                                    i += 4;
+                                }
+                                else
+                                {
+                                    sb.Append("\\u");
+                                }
+                            }
+                            else
+                            {
+                                sb.Append("\\u");
+                            }
+                            break;
+                        default:
+                            sb.Append(s[i]);
+                            break;
+                    }
+                }
+                else
+                {
+                    sb.Append(s[i]);
+                }
+            }
+            return sb.ToString();
+        }
+
+        private static bool IsHexDigit(char c)
+        {
+            return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
         }
     }
 }
