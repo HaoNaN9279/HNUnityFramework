@@ -45,10 +45,12 @@ namespace HN.Framework.Core.Level.Logic
         /// </summary>
         public void Initialize()
         {
-            foreach (var unit in controllerUnits)
+            var units = controllerUnits;
+            for (int i = 0, len = units.Count; i < len; i++)
             {
-                unit.Initialize();
+                units[i].Initialize();
             }
+            OnInitialize();
         }
 
         /// <summary>
@@ -56,9 +58,10 @@ namespace HN.Framework.Core.Level.Logic
         /// </summary>
         public void OnFirstFrame()
         {
-            foreach (var unit in controllerUnits)
+            var units = controllerUnits;
+            for (int i = 0, len = units.Count; i < len; i++)
             {
-                unit.OnFirstFrame();
+                units[i].OnFirstFrame();
             }
         }
 
@@ -116,6 +119,7 @@ namespace HN.Framework.Core.Level.Logic
         /// </summary>
         public void Clear()
         {
+            OnClear();
             var units = controllerUnits;
             for (int i = 0, len = units.Count; i < len; i++)
             {
@@ -130,6 +134,18 @@ namespace HN.Framework.Core.Level.Logic
         /// Controller单元列表
         /// </summary>
         public IReadOnlyList<ControllerUnit> ControllerUnits => controllerUnits;
+        #endregion
+
+        #region 虚方法
+        /// <summary>
+        /// 初始化后调用，子类可重写以执行自定义初始化逻辑
+        /// </summary>
+        protected virtual void OnInitialize() { }
+
+        /// <summary>
+        /// 销毁时调用，子类可重写以执行自定义清理逻辑
+        /// </summary>
+        protected virtual void OnClear() { }
         #endregion
 
         #region 私有字段

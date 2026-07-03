@@ -57,18 +57,14 @@ git submodule add https://github.com/HaoNaN9279/HNUnityFramework.git HNUnityFram
 ```
 Assets/HNUnityFramework/
 ├── Runtime/
-│   ├── Core/
-│   ├── MVC/
-│   ├── AssetManager/
-│   ├── ObjectPool/
-│   ├── ReferencePool/
-│   ├── HFSM/
-│   ├── Procedure/
-│   ├── Serialize/
-│   └── Utils/
+│   ├── HN.Framework.Core/        (Driver/, Capability/, Level/)
+│   └── HN.Framework.Unity/       (Driver/Platform/, Capability/, Level/View/)
 ├── Editor/
 │   ├── Core/
-│   └── ...
+│   ├── Sheet/
+│   ├── ObjectPool/
+│   ├── AddressablesExtensions/
+│   └── Utils/
 └── README.md
 ```
 

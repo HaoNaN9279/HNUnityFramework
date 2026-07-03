@@ -31,7 +31,7 @@ HFSM 的核心概念：
 ### 创建状态
 
 ```csharp
-using HN.Framework;
+using HN.Framework.Core.Level.Logic;
 
 public class IdleState : HFSMState
 {

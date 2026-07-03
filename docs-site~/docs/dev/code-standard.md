@@ -12,10 +12,14 @@ sidebar_position: 4
 
 | 命名空间 | 适用代码 |
 |---------|---------|
-| `HN.Framework` | Runtime 核心代码 |
-| `HN.Framework.Editor` | Editor 扩展代码 |
-| `HN.Serialize` | 序列化模块 |
-| `HN` | 通用工具类 |
+| `HN.Framework.Core.Driver` | GameWorld, GameWorld 基础类库 |
+| `HN.Framework.Core.Driver.Common` | ITickable, IReference, HNLogicTime, 序列化, 池系统 |
+| `HN.Framework.Core.Capability` | Capability 接口定义 (IAssetManager, ILogProvider, INetworkManager, IStorageProvider, ProcedureManager, ObjectPoolManager) |
+| `HN.Framework.Core.Level.Logic` | MVC, HFSM, Entity |
+| `HN.Framework.Unity.Driver.Platform` | Unity 平台适配 (GameWorldDriver, AddressablesOperator, GameObjectPool, UnityLogProvider 等) |
+| `HN.Framework.Unity.Capability` | FishNet 封装, Sheet 运行时 |
+| `HN.Framework.Unity.Level.View` | ViewFactory, EntityView, PropertyBinder |
+| `HN.Framework.Editor` | Editor 工具 |
 
 ### 标识符
 
@@ -25,9 +29,9 @@ sidebar_position: 4
 | 接口 | PascalCase + `I` 前缀 | `ITickable`, `IReference`, `IAssetOperator` |
 | 方法 | PascalCase | `Initialize()`, `ClearAll()` |
 | 公共属性 | PascalCase | `CurrentState`, `LogicFrameCount` |
-| 私有字段 | camelCase | `m_currentState`, `s_instance` |
-| 静态私有字段 | camelCase + `s_` 前缀 | `s_instance`, `s_managerRoot` |
-| 实例私有字段 | camelCase + `m_` 前缀 | `m_objectPools`, `m_currentState` |
+| 私有字段 | camelCase | `currentState`, `instance` |
+| 静态私有字段 | camelCase | `instance`, `managerRoot` |
+| 实例私有字段 | camelCase | `objectPools`, `currentState` |
 | 常量 | UPPER_SNAKE_CASE | `FRAMEWORK_NAME` |
 | 参数 / 局部变量 | camelCase | `stateName`, `targetState` |
 

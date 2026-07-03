@@ -4,19 +4,19 @@ sidebar_position: 11
 
 # 序列化
 
-Serialize 模块提供 JSON 序列化/反序列化工具，位于命名空间 `HN.Serialize`。
+Serialize 模块提供 JSON 序列化/反序列化工具，按依赖拆分为两层。
 
 ## 概述
 
-模块提供三个层次的序列化支持：
+序列化模块按依赖拆分为 Core 和 Unity 两层：
 
-| 类型 | 说明 |
-|------|------|
-| `Json` | 静态工具类，直接读写 JSON 文件/字符串 |
-| `JsonData` | 可序列化的数据容器，自动处理 ISerializationCallbackReceiver |
-| `JsonObject` | 数据基类，供 JsonData 内部使用 |
+| 类型 | 层 | 命名空间 | 说明 |
+|------|-----|----------|------|
+| `Json` | Core | `HN.Framework.Core.Driver.Common.Serialization` | 静态工具类，直接读写 JSON 文件/字符串 |
+| `JsonObject` | Core | `HN.Framework.Core.Driver.Common.Serialization` | 数据基类，供 JsonData 内部使用 |
+| `JsonData` | Unity | `HN.Framework.Unity.Driver.Platform.Serialization` | 可序列化的数据容器，自动处理 ISerializationCallbackReceiver |
 
-所有序列化基于 Unity 的 `JsonUtility`，因此仅支持标记了 `[Serializable]` 的类型。
+> **分层说明**：Core 层（`Json`/`JsonObject`）为纯 C# 实现，不依赖 Unity 运行时；Unity 层（`JsonData`）依赖 `ISerializationCallbackReceiver` 和 `JsonUtility`，专用于 Inspector 编辑场景。所有序列化基于 Unity 的 `JsonUtility`，因此仅支持标记了 `[Serializable]` 的类型。
 
 ## Json 静态类
 
@@ -25,7 +25,7 @@ Serialize 模块提供 JSON 序列化/反序列化工具，位于命名空间 `H
 ### 序列化到文件
 
 ```csharp
-using HN.Serialize;
+using HN.Framework.Core.Driver.Common.Serialization;
 
 [Serializable]
 public class GameConfig
@@ -81,7 +81,8 @@ string content = Json.ReadFromDisk("path/to/file.txt");
 `JsonData` 实现了 `ISerializationCallbackReceiver`，适用于需要在 Inspector 中编辑 JSON 数据的场景。
 
 ```csharp
-using HN.Serialize;
+using HN.Framework.Core.Driver.Common.Serialization;
+using HN.Framework.Unity.Driver.Platform.Serialization;
 using UnityEngine;
 
 [Serializable]

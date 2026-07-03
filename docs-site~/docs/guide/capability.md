@@ -1,0 +1,17 @@
+---
+sidebar_position: 13
+---
+
+# 通用能力层 (CapabilityModule)
+
+CapabilityModule 位于 DriverLayer 与 Level 之间，提供跨关卡复用的通用服务接口和框架级实现。各接口通过 `GameWorld` 属性暴露，由 `GameWorldDriver` 在初始化时注入具体实现。
+
+## 服务接口一览
+
+| 接口 | 状态 | 说明 |
+|------|------|------|
+| `ILogProvider` | ✅ | 日志服务接口。已实现 `UnityLogProvider`，封装 `Debug.Log` |
+| `IAssetManager` | ✅ | 资源管理器接口。已实现 `AssetManager`，支持 Addressables / AssetDatabase / Resources 三种 Operator |
+| `INetworkManager` | 🚧 | 网络服务接口。`FishNetNetworkManager` 骨架已创建，FishNet 封装待实现 |
+| `IStorageProvider` | ✅ | 存储服务接口。提供 `Save` / `Load` / `Delete` 方法，接口已定义 |
+| `IEventBus` | 🚧 | 事件总线接口。待实现，支持模块间解耦通信 |

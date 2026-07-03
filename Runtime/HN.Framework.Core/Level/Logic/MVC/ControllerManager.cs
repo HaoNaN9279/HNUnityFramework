@@ -17,9 +17,9 @@ namespace HN.Framework.Core.Level.Logic
         /// <param name="controller"></param>
         public void RegisterController(Controller controller)
         {
-            if (!m_controllers.Contains(controller))
+            if (!controllers.Contains(controller))
             {
-                m_controllers.Add(controller);
+                controllers.Add(controller);
             }
             else
             {
@@ -33,9 +33,9 @@ namespace HN.Framework.Core.Level.Logic
         /// <param name="controller"></param>
         public void UnregisterController(Controller controller)
         {
-            if (m_controllers.Contains(controller))
+            if (controllers.Contains(controller))
             {
-                m_controllers.Remove(controller);
+                controllers.Remove(controller);
                 ReferencePool.Release(controller);
             }
             else
@@ -49,7 +49,7 @@ namespace HN.Framework.Core.Level.Logic
         /// </summary>
         public void Initialize()
         {
-            foreach (var controller in m_controllers)
+            foreach (var controller in controllers)
             {
                 controller.Initialize();
             }
@@ -60,7 +60,7 @@ namespace HN.Framework.Core.Level.Logic
         /// </summary>
         public void OnFirstFrame()
         {
-            foreach (var controller in m_controllers)
+            foreach (var controller in controllers)
             {
                 controller.OnFirstFrame();
             }
@@ -71,10 +71,13 @@ namespace HN.Framework.Core.Level.Logic
         /// </summary>
         public void Uninitialize()
         {
-            foreach (var controller in m_controllers)
+            foreach (var controller in controllers)
             {
                 controller.Clear();
             }
+
+            ReferencePool.Release(controllers);
+            controllers = ReferencePool.Acquire<PooledList<Controller>>();
         }
         #endregion
 
@@ -82,21 +85,21 @@ namespace HN.Framework.Core.Level.Logic
         #region 实现接口 ITickable
         public void Tick()
         {
-            var controllers = m_controllers;
-            var count = controllers.Count;
+            var list = controllers;
+            var count = list.Count;
             for (int i = 0; i < count; i++)
             {
-                controllers[i].Tick();
+                list[i].Tick();
             }
         }
 
         public void LateTick()
         {
-            var controllers = m_controllers;
-            var count = controllers.Count;
+            var list = controllers;
+            var count = list.Count;
             for (int i = 0; i < count; i++)
             {
-                controllers[i].LateTick();
+                list[i].LateTick();
             }
         }
         #endregion
@@ -106,9 +109,9 @@ namespace HN.Framework.Core.Level.Logic
         /// <summary>
         /// 所有Controller的列表
         /// </summary>
-        public IReadOnlyList<Controller> Controllers => m_controllers;
+        public IReadOnlyList<Controller> Controllers => controllers;
         #endregion
 
-        private List<Controller> m_controllers = new List<Controller>();
+        private PooledList<Controller> controllers = ReferencePool.Acquire<PooledList<Controller>>();
     }
 }

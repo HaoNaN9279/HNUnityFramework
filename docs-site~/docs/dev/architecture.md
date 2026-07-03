@@ -4,142 +4,225 @@ sidebar_position: 2
 
 # 项目架构
 
-HNUnityFramework 采用模块化分层架构设计。
+HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule → Level），
+配合四仓库菱形依赖解耦与三程序集分离设计。
 
-## 整体结构
+## 三层架构全景
 
-```
-HNUnityFramework/
-├── Runtime/          # 运行时代码 (程序集: HN.Framework)
-│   ├── Core/         # 框架核心（启动、全局设置、Tick 系统）
-│   ├── MVC/          # MVC 模式实现（Model、View、Controller）
-│   ├── AssetManager/ # 资源管理（Addressables/Resources/AssetDatabase）
-│   ├── ObjectPool/   # 对象池系统
-│   ├── ReferencePool/# 引用池系统
-│   ├── HFSM/         # 层次有限状态机
-│   ├── Procedure/    # 流程管理
-│   ├── Serialize/    # 序列化 (程序集: HN.Serialize)
-│   ├── Utils/        # 工具类 (命名空间: HN)
-│   └── Sheet/        # 配置表
-├── Editor/           # 编辑器扩展代码 (程序集: HN.Framework.Editor)
-│   ├── Core/         # 编辑器核心（菜单、部署、设置面板）
-│   ├── Sheet/        # 配置表编辑器
-│   ├── ObjectPool/   # 对象池调试面板
-│   ├── AddressablesExtensitions/ # Addressables 分组管理
-│   └── Utils/        # 编辑器工具
-└── ~docs-site/       # 文档站点 (Docusaurus)
-```
-
-## 核心设计原则
-
-- **低耦合、高内聚**：各模块职责清晰，通过接口通信
-- **可扩展**：基于接口设计，易于替换和扩展
-- **零 GC 压力**：核心运行时使用引用池避免内存分配
-- **编辑器友好**：提供丰富的编辑器工具和调试面板
-
-## 框架生命周期
-
-框架入口是 `HNUnityFramework`（抽象 MonoBehaviour），完整生命周期如下：
+框架从底到顶分为驱动层、通用能力层、关卡层三层：
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                       Awake                             │
-│  1. HNLogicTime.Initialize()     — 重置逻辑时间         │
-│  2. ObjectPoolManager.Initialize() — 创建对象池管理器   │
-│  3. ProcedureManager.Initialize()  — 创建流程管理器     │
-│  4. ControllerManager.Initialize() — 创建控制器管理器   │
-├─────────────────────────────────────────────────────────┤
-│                       Start                             │
-│  加载 HNUnityFrameworkGlobalSettings (via Addressables) │
-│  计算 fixedLogicFrameTime (默认 1/60 ≈ 16.67ms)        │
-├─────────────────────────────────────────────────────────┤
-│                 每帧 Update / LateUpdate                 │
-│  LogicTimeUpdate(tickFunc):                             │
-│    计算帧耗时 → 截断(MaxFrameTime) → 累加              │
-│    → 以 fixedLogicFrameTime 为步长循环执行:             │
-│       a. HNLogicTime 推进 (Time, DeltaTime, FrameCount) │
-│       b. Tick 链:                                       │
-│          ObjectPoolManager → ProcedureManager →         │
-│          ControllerManager                              │
-│    → 步数保护(MaxStepsPerFrame)                         │
-├─────────────────────────────────────────────────────────┤
-│                     OnDestroy                            │
-│  1. ControllerManager.Uninitialize()                     │
-│  2. ProcedureManager.Shutdown() + Uninitialize()         │
-│  3. ObjectPoolManager.Uninitialize()                     │
-└─────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                         Level (关卡层)                               │
+│  ┌─────────────────────────┐   ┌─────────────────────────────────┐  │
+│  │     ViewModule           │<─>│         LogicModule             │  │
+│  │   (视图层, 纯表现)        │   │     (数据/逻辑层, 纯逻辑)        │  │
+│  │  3D场景  Pawn  UI         │   │  任务 Entity 场景 战斗 成就     │  │
+│  │  相机   特效  天气  过场   │   │  商城 剧情 导航 技能 背包      │  │
+│  │  音频   输入               │   │  物品 行为树 关卡状态          │  │
+│  └─────────────────────────┘   └─────────────────────────────────┘  │
+└──────────────────────────────┬─┬───────────────────────────────────┘
+                               │ │  双向通信
+┌──────────────────────────────┼─┼───────────────────────────────────┐
+│                   CapabilityModule (通用能力层)                       │
+│                               │ │                                   │
+│  UI系统  日志系统  资源管理    音频系统  网络系统  事件系统             │
+│  关卡重置  空间查询  存储系统  任务调度器  Procedure  对象池           │
+└──────────────────────────────┬─────────────────────────────────────┘
+                               │  单向依赖
+┌──────────────────────────────┼─────────────────────────────────────┐
+│                     DriverLayer (驱动层)                              │
+│                               ▼                                     │
+│  GameWorld     基础类库        游戏引擎         平台抽象层             │
+│  全局驱动根节点  算法/工具      Unity           Unity 适配            │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
-## 固定步长逻辑帧
+**依赖规则**：
+- `Level` ↔ `CapabilityModule`：双向通信
+- `CapabilityModule` → `DriverLayer`：单向依赖
+- `DriverLayer` 自底向上，GameWorld 在最上层驱动所有模块
 
-框架使用**独立于 Unity Time.timeScale 的固定步长逻辑帧循环**：
+### 框架提供 vs 上层仓库提供
 
-- 时间源：`Time.realtimeSinceStartupAsDouble`（不受 timeScale 影响）
-- 逻辑时间：`HNLogicTime`（Time/DeltaTime/LogicFrameCount）
-- 步长：由 `LogicRate` 决定（默认 60 Hz → ~16.67ms）
-- 保护机制：`MaxFrameTime`（默认 0.1s 截断）+ `MaxStepsPerFrame`（默认 5 步上限）
+| 架构层 | 框架提供 | 上层仓库提供 |
+|--------|---------|-------------|
+| **DriverLayer** | GameWorld、基础类库（HNLogicTime、ReferencePool、ITickable 等）、平台抽象层 | — |
+| **CapabilityModule** | 服务接口定义 + 通用实现（ProcedureManager、ObjectPoolManager） | 游戏特定实现（GameNetworkService 等）→ Scripts |
+| **Level.LogicModule** | MVC 框架、HFSM、Entity 基类、Sheet 属性 | 具体玩法逻辑（Task/Battle/Shop）→ Scripts |
+| **Level.ViewModule** | ViewFactory 基类、EntityView 基类、PropertyBinder | 视图代码 → Scripts；Prefab 装配 → Design |
 
-## 模块依赖关系
+## 四仓库菱形依赖
 
-```
-                    ┌─────────────┐
-                    │    Core     │ (框架入口 + 逻辑时间)
-                    └──┬──┬──┬───┘
-                       │  │  │
-          ┌────────────┘  │  └────────────┐
-          ▼               ▼               ▼
-   ┌──────────┐   ┌──────────┐    ┌──────────┐
-   │ObjectPool│   │Procedure │    │   MVC    │
-   │ Manager  │   │ Manager  │    │ Manager  │
-   └────┬─────┘   └────┬─────┘    └────┬─────┘
-        │              │               │
-        └──────────────┼───────────────┘
-                       │
-                       ▼
-               ┌──────────────┐
-               │ ReferencePool│ (被所有模块依赖)
-               └──────────────┘
-
-   HFSM ──→ ReferencePool (独立模块，自行管理生命周期)
-   Serialize ──→ 独立模块 (命名空间 HN.Serialize)
-   Utils ──→ 独立模块 (命名空间 HN)
-```
-
-## 对象池架构
+项目由四个独立仓库组成，框架在最底层，形成单向菱形依赖：
 
 ```
-ObjectPoolManager (单例)
-  ├── Dictionary<string, PoolBase>
-  ├── 工厂: CreateObjectPool<T> / CreateGameObjectPool<T>
-  └── 生命周期: Tick → 遍历所有池 → 自动调节
-
-PoolBase (抽象，ITickable + IReference)
-  ├── ObjectPoolBase → ObjectPool<T> (PooledQueue 容器)
-  └── GameObjectPoolBase → GameObjectPool (PooledQueue 容器)
-
-PooledObjectBase → PooledObject<T> (被池化对象基类)
+                        ┌─────────────────┐
+                        │   策划设计内容    │  ← 最上层
+                        │   (Design Repo)  │
+                        │  零代码，纯装配   │
+                        └───────┬─┬───────┘
+                                │ │
+                     ┌──────────┘ └──────────┐
+                     │                       │
+                     ▼                       ▼
+         ┌──────────────────┐    ┌──────────────────┐
+         │   项目脚本         │    │   纯美术资源       │
+         │  (Scripts Repo)   │    │   (Art Repo)      │
+         │  玩法逻辑 + 视图   │    │  零代码，按实体组织 │
+         └────────┬─────────┘    └────────┬──────────┘
+                  │                       │
+                  └───────────┬───────────┘
+                              │
+                 ┌────────────────────────┐
+                 │   HNUnityFramework      │  ← 最底层
+                 │   (Framework Repo)      │
+                 │   HN.Framework.Core    │  ← 纯 C# 逻辑层
+                 │   HN.Framework.Unity   │  ← Unity 平台层
+                 │   HN.Framework.Editor  │  ← 编辑器工具层
+                 └────────────────────────┘
 ```
 
-Tick 自动调节算法：
+**解耦原则**：
+- 程序写代码 → 不需要美术资源与策划 Prefab，只需 Framework
+- 美术做资源 → 不需要程序代码与策划场景，只需 Framework（Shader 依赖）
+- 策划搭场景 → 不需要修改代码与源美术资产，引用 Art + Scripts 装配
+
+## 三程序集依赖关系
+
+按 Unity 依赖边界拆分为三个程序集：
+
+| 程序集 | 架构层 | 外部依赖 | noEngineRefs | 命名空间 |
+|--------|--------|---------|:------------:|---------|
+| `HN.Framework.Core` | DriverLayer + CapabilityModule（纯 C# 部分）+ Level.Logic 基础设施 | 无（仅 .NET Standard 2.1） | ✅ true | `HN.Framework.Core.*` |
+| `HN.Framework.Unity` | 平台抽象层 + Unity 依赖实现 + Level.View 基础设施 | UnityEngine + Addressables + FishNet | ❌ | `HN.Framework.Unity.*` |
+| `HN.Framework.Editor` | 编辑器工具层 | UnityEditor | ❌ | `HN.Framework.Editor` |
 
 ```
-if count > MaxCount → Despawn 至 MaxLimitCount
-if count < MinCount → Spawn 至 MinLimitCount
+┌─────────────────────────┐
+│   HN.Framework.Editor   │  Editor only
+└───────────┬─────────────┘
+            │ 引用
+    ┌───────┴───────────────────────┐
+    ▼                               ▼
+┌──────────────────┐  ┌─────────────────────────────────┐
+│ HN.Framework     │  │    HN.Framework.Unity            │
+│  .Core            │  │                                 │
+│  (noEngineRefs)   │  │  + UnityEngine + Addressables   │
+│                   │  │  + FishNet (封装)               │
+│  GameWorld        │◄─┤  (引用 HN.Framework.Core)       │
+│  Capability 接口  │  │                                 │
+│  Level.Logic 基础 │  └─────────────────────────────────┘
+└──────────────────┘
 ```
 
-## 引用池架构
+**跨仓库依赖规则**：
+- Scripts → Framework：asmdef `references` 显式引用 Core 和 Unity 的 GUID
+- `HN.Framework.Core` → FishNet：**禁止**，纯 C# 层只定义 `INetworkManager`
+- `HN.Framework.Unity` → FishNet：唯一在 Framework 内引用 FishNet 的位置
+- Framework → 上层：**禁止**，asmdef 绝不包含上层仓库 GUID
+
+## GameWorld 双组件驱动模型
+
+所有有状态的 Manager 从静态单例改为 GameWorld 持有的实例。`ReferencePool` 和 `HNLogicTime` 因其工具类性质保持不变。
 
 ```
-ReferencePool (静态，线程安全)
-  └── Dictionary<Type, ReferenceCollection>
-        └── ReferenceCollection (Queue<IReference>)
-              ├── Acquire: 出队 | new
-              └── Release: Clear() + 入队
+   HN.Framework.Core（纯 C#）            HN.Framework.Unity（Unity 层）
+   ────────────────────────            ──────────────────────────────
 
-IReference (接口)
-  └── Clear() — 重置对象状态
-
-PooledCollections (16 种)
-  ├── PooledList<T>, PooledDictionary<K,V>, PooledQueue<T> ...
-  └── PooledConcurrentQueue<T>, PooledConcurrentDictionary<K,V> ...
+   ┌──────────────────────┐           ┌──────────────────────────┐
+   │     GameWorld        │◄──────────│    GameWorldDriver        │
+   │                      │  持有并驱动 │   (MonoBehaviour)         │
+   │  · PoolManager       │           │                          │
+   │  · ProcedureManager  │           │  Awake() → new GameWorld │
+   │  · ControllerManager │           │     → 注入平台实现        │
+   │                      │           │     → World.Initialize   │
+   │  · LogProvider       │←─────────│  Update()->World.Tick()  │
+   │  · AssetOperator     │  注入      │  LateUpdate()->LateTick  │
+   │  · NetworkManager    │           │                          │
+   └──────────────────────┘           └──────────────────────────┘
+                                       ▲
+                                       │ 继承
+                              ┌────────┴───────────┐
+                              │     GameEntry        │ ← Scripts 仓库
+                              │  (Scripts Repo)      │
+                              │  OnRegisterGameModules│
+                              │   → 注册游戏特定模块   │
+                              └──────────────────────┘
 ```
+
+**GameWorld**（纯 C#）：创建并持有所有模块，驱动 Tick 循环，暴露平台接口供外部注入。
+
+**GameWorldDriver**（MonoBehaviour）：在 Awake 中创建 GameWorld，注入平台实现，调用虚方法 `OnRegisterGameModules` 让 Scripts 仓库注册游戏特定模块，在 Unity 生命周期中驱动 Tick。
+
+## 关键设计决策
+
+### ReferencePool 和 HNLogicTime 为何保留静态
+- `ReferencePool`：线程安全的零 GC 工具类，类比 .NET 的 `ArrayPool<T>.Shared`，无业务状态
+- `HNLogicTime`：纯数据类，仅提供 Time/DeltaTime/LogicFrameCount，不依赖外部服务
+
+### ObjectPool 拆分边界
+- Core 层：`PoolBase` 抽象、`ObjectPool<T>` 泛型池、`PooledObjectBase`、`ObjectPoolManager`
+- Unity 层：`GameObjectPoolBase`、`GameObjectPool`、`PooledObject<T>`（管理 UnityEngine.Object）
+- `ObjectPoolManager` 通过 `PoolBase` 接口管理所有池，Unity 侧的 GameObjectPool 由 GameWorldDriver 创建注册
+
+### FishNet 隔离策略
+- Core 层只定义 `INetworkManager` 接口和消息协议（纯 C#）
+- Unity 层通过 `FishNetNetworkManager` 封装 FishNet Client/Server API
+- FishNet 的 NetworkBehaviour/SyncVar/RPC 不使用，自定义消息协议替代
+
+### Addressables 策略
+- `AddressablesOperator` 为运行时主要路径
+- `AssetDatabaseOperator` Editor only，用于快速迭代
+- `ResourcesOperator` 标记 deprecated
+
+### UNITY_SERVER 宏策略
+- Core 层禁止使用，保证客户端/服务端代码一致
+- Unity 层渲染相关代码用 `#if !UNITY_SERVER` 包裹
+
+## 命名空间规范
+
+| 架构层 | 命名空间 | 程序集 |
+|--------|---------|--------|
+| GameWorld | `HN.Framework.Core.Driver` | Core |
+| 基础类库 | `HN.Framework.Core.Driver.Common` | Core |
+| 池系统 | `HN.Framework.Core.Driver.Common.Pool.*` | Core |
+| 平台抽象层 | `HN.Framework.Unity.Driver.Platform` | Unity |
+| Capability（通用） | `HN.Framework.Core.Capability` | Core |
+| Capability（Unity 实现） | `HN.Framework.Unity.Capability` | Unity |
+| Level.LogicModule | `HN.Framework.Core.Level.Logic` | Core |
+| Level.ViewModule | `HN.Framework.Unity.Level.View` | Unity |
+| Editor | `HN.Framework.Editor` | Editor |
+
+## 模块状态一览
+
+| 架构层 | 模块 | 状态 | 说明 |
+|--------|------|:----:|------|
+| D1 | GameWorld | ✅ | 已从静态单例迁移 |
+| D2 | 基础类库（Interfaces/HNLogicTime/Serialization） | ✅ | |
+| D2 | ReferencePool / PooledCollections | ✅ | 静态，不做迁移 |
+| D2 | `ObjectPool<T>` / PoolBase / PooledObjectBase | ✅ | |
+| D2 | IEventBus | 🚧 Stub | 接口定义 |
+| D2 | 定点数 / 确定性随机数 | 🚧 Stub | |
+| D4 | GameWorldDriver | ✅ | |
+| D4 | AddressablesOperator / ResourcesOperator / AssetDatabaseOperator | ✅ | |
+| D4 | GameObjectPool / `PooledObject<T>` | ✅ | |
+| D4 | UnityLogProvider / UnityTimeProvider / UnityCoroutineProvider | ✅ | |
+| D4 | HNRenderPipeline + ShaderLibrary | 🚧 Stub | |
+| S2 | ILogProvider / UnityLogProvider | ✅ | |
+| S3 | IAssetOperator + 三种实现 | ✅ | |
+| S5 | INetworkManager + FishNet 封装 | 🚧 Stub | |
+| S6 | IEventBus / EventBus | 🚧 Stub | |
+| S7 | ProcedureManager / ProcedureState | ✅ | 静态单例已消除 |
+| S9 | IStorageProvider | ✅ | 接口定义 |
+| Level.Logic | MVC | ✅ | |
+| Level.Logic | HFSM | ✅ | |
+| Level.Logic | Entity 系统 | 🚧 Stub | |
+| Level.View | ViewFactory / EntityView | 🚧 Stub | |
+| Level.View | PropertyBinder | partial ✅ | 属性绑定抽象类，提供 Bind/UnbindAll 方法 |
+
+> ✅ = 已实现  🚧 Stub = 骨架已创建待完整实现
+
+---
+
+完整架构详情（含完整目录树、FishNet 封装策略、Luban + Sheet 协作模式、SRP 渲染管线分工、Art 仓库组织原则等）请参阅 [`架构~/最终架构.md`](pathname:///file/?path=D%3A%5Cworkspace%5Cwork%5CHNUnityFramework%5C%E6%9E%B6%E6%9E%84~%5C%E6%9C%80%E7%BB%88%E6%9E%B6%E6%9E%84.md)。

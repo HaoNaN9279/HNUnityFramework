@@ -4,14 +4,14 @@ sidebar_position: 12
 
 # 工具类
 
-Utils 模块提供通用工具类，位于命名空间 `HN`。目前包含两种可序列化字典实现。
+Utils 模块提供通用工具类，位于命名空间 `HN.Framework.Unity.Driver.Platform.DataStructures`。目前包含两种可序列化字典实现。
 
 ## 核心类型
 
 | 类型 | 命名空间 | 说明 |
 |------|---------|------|
-| `HNDictionary<TKey, TValue>` | `HN` | 功能完整的可序列化字典，实现 `IDictionary<TKey,TValue>` |
-| `SerializableDictionary<K, V>` | `HN` | 轻量可序列化字典，直接在 Inspector 中编辑 |
+| `HNDictionary<TKey, TValue>` | `HN.Framework.Unity.Driver.Platform.DataStructures` | 功能完整的可序列化字典，实现 `IDictionary<TKey,TValue>` |
+| `SerializableDictionary<K, V>` | `HN.Framework.Unity.Driver.Platform.DataStructures` | 轻量可序列化字典，直接在 Inspector 中编辑 |
 
 ## HNDictionary — 可序列化字典
 
@@ -27,7 +27,7 @@ Utils 模块提供通用工具类，位于命名空间 `HN`。目前包含两种
 ### 使用示例
 
 ```csharp
-using HN;
+using HN.Framework.Unity.Driver.Platform.DataStructures;
 using UnityEngine;
 
 public class ConfigHolder : MonoBehaviour
@@ -71,7 +71,7 @@ public class ConfigHolder : MonoBehaviour
 `SerializableDictionary<K, V>` 是更简单的实现，直接继承 `Dictionary<K, V>` 并实现序列化：
 
 ```csharp
-using HN;
+using HN.Framework.Unity.Driver.Platform.DataStructures;
 using UnityEngine;
 
 public class ItemDatabase : MonoBehaviour

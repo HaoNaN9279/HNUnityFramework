@@ -8,63 +8,69 @@ sidebar_position: 3
 
 ## 1. 创建框架入口
 
-HNUnityFramework 的核心是一个抽象类 `HNUnityFramework`（继承自 `MonoBehaviour`）。你需要创建自己的 GameEntry 类继承它：
+框架的核心入口是 `GameWorldDriver`（继承自 `MonoBehaviour`）。你需要创建自己的 GameEntry 类继承它，并重写 `OnRegisterGameModules` 方法来注册游戏专属模块：
 
 ```csharp
-using HN.Framework;
+using HN.Framework.Unity.Driver.Platform;
+using HN.Framework.Core.Driver;
 using UnityEngine;
 
-public class GameEntry : HNUnityFramework
+public class GameEntry : GameWorldDriver
 {
-    protected override void OnAwake()
+    protected override void OnRegisterGameModules(GameWorld world)
     {
-        base.OnAwake(); // 初始化 ObjectPoolManager、ProcedureManager、ControllerManager
+        // 在此注册游戏特定的 Controller、Procedure 等模块
         Debug.Log("GameEntry 初始化完成");
-    }
 
-    protected override void OnStart()
-    {
-        base.OnStart(); // 加载全局设置
-        // 在这里启动你的第一个流程
+        // 例如注册游戏 Controller
+        // world.ControllerManager.RegisterController(new BattleController(world));
     }
 }
 ```
 
 将 `GameEntry` 脚本挂载到场景中的任意 GameObject 上即可。
 
+> `GameWorldDriver.Awake` 会自动创建 `GameWorld` 实例，注入平台适配层（日志、资源管理等），然后调用 `OnRegisterGameModules` 让你注册游戏专属模块，最后调用 `GameWorld.Initialize()`。无需手动初始化任何管理器。
+
 ## 2. 框架生命周期
 
 框架启动后按以下顺序执行：
 
 ```
-Awake → HNLogicTime.Initialize()
-      → ObjectPoolManager.Initialize()
-      → ProcedureManager.Initialize()
-      → ControllerManager.Initialize()
+GameWorldDriver.Awake → 创建 GameWorld 实例
+                      → 注入 UnityLogProvider、AssetManager 等平台实现
+                      → OnRegisterGameModules(GameWorld world)   ← 你在此注册游戏模块
+                      → GameWorld.Initialize()
+                      →   ProcedureManager.Initialize() → ControllerManager.Initialize()
 
-Start → 加载 HNUnityFrameworkGlobalSettings（通过 Addressables）
-      → 计算 fixedLogicFrameTime
-
-每帧 Update  → LogicTimeUpdate(Tick) → 依次 Tick 各管理器
-每帧 LateUpdate → LogicTimeUpdate(LateTick) → 依次 LateTick 各管理器
-
-OnDestroy → ControllerManager.Uninitialize()
-          → ProcedureManager.Shutdown()
-          → ObjectPoolManager.Uninitialize()
+每帧 Update       → GameWorld.Tick()
+每帧 LateUpdate   → GameWorld.LateTick()
 ```
 
-框架使用**固定步长逻辑帧**循环，独立于 Unity 的 `Time.timeScale`。默认以 60Hz 的逻辑帧率运行。
+`GameWorld.Tick()` 内部按顺序驱动各管理器：
+
+```
+PoolManager.Tick() → ProcedureManager.Tick() → ControllerManager.Tick() → AssetManager?.Tick()
+```
+
+框架使用**固定步长逻辑帧**循环，独立于 Unity 的 `Time.timeScale`。所有管理器由 `GameWorld` 统一驱动，无需手动调用初始化或关闭方法。
 
 ## 3. 创建第一个 Procedure 流程
 
 Procedure 是框架推荐的游戏顶层流程管理方式。创建第一个流程状态：
 
 ```csharp
-using HN.Framework;
+using HN.Framework.Core.Capability;
+using HN.Framework.Core.Driver;
 using UnityEngine;
 
 public class GameStartProcedure : ProcedureState
 {
+    /// <summary>
+    /// 所属的 GameWorld 实例，注册时通过 AddState 返回值注入
+    /// </summary>
+    public GameWorld World { get; set; }
+
     public override void Initialize(string name)
     {
         base.Initialize(name);
@@ -82,7 +88,7 @@ public class GameStartProcedure : ProcedureState
         // 加载完成后切换到主菜单
         if (/* 加载完成条件 */)
         {
-            ProcedureManager.ChangeProcedureState("MainMenu");
+            World.ProcedureManager.ChangeState("MainMenu");
         }
     }
 
@@ -95,21 +101,23 @@ public class GameStartProcedure : ProcedureState
 }
 ```
 
-注册并启动流程：
+在 `OnRegisterGameModules` 中注册并启动流程：
 
 ```csharp
-protected override void OnStart()
+protected override void OnRegisterGameModules(GameWorld world)
 {
-    base.OnStart();
-    
-    // 注册流程状态
-    ProcedureManager.AddProcedureState<GameStartProcedure>("GameStart");
-    ProcedureManager.AddProcedureState<MainMenuProcedure>("MainMenu");
-    
+    // 注册流程状态，AddState<T> 返回创建的实例以便注入 World
+    var startup = world.ProcedureManager.AddState<GameStartProcedure>("GameStart");
+    startup.World = world;
+
+    world.ProcedureManager.AddState<MainMenuProcedure>("MainMenu");
+
     // 启动流程
-    ProcedureManager.StartProcedure("GameStart");
+    world.ProcedureManager.Start("GameStart");
 }
 ```
+
+> 所有 Procedure 相关 API 均通过 `world.ProcedureManager` 实例调用，不再使用静态方法。
 
 ## 4. 资源加载
 
@@ -134,12 +142,11 @@ handle.Completed += (op) =>
 
 ## 5. 使用对象池
 
-```csharp
-// 初始化管理器
-ObjectPoolManager.Initialize();
+对象池由 `GameWorld` 自动创建，通过 `world.PoolManager` 访问：
 
+```csharp
 // 创建对象池
-var pool = ObjectPoolManager.CreateObjectPool<MyObjectPool>("MyPool");
+var pool = world.PoolManager.CreateObjectPool<MyObjectPool>("MyPool");
 
 // 获取和归还
 var obj = pool.Acquire();

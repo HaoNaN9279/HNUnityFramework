@@ -6,6 +6,63 @@ sidebar_position: 6
 
 > ⚠️ **重要提示：框架原有的 `AssetManager` 调度类已弃用，所有代码已被注释。推荐直接使用 Unity Addressables 原生 API 进行资源管理。**
 
+## 架构定位
+
+资源管理系统属于 **CapabilityModule（通用能力层）**，采用接口定义 — 调度实现 — 平台适配三层分离设计：
+
+| 层次 | 位置 | 说明 |
+|------|------|------|
+| **接口定义** | `HN.Framework.Core.Capability` — `IAssetManager` | 纯 C# 接口，无 Unity 依赖 |
+| **调度实现** | `HN.Framework.Unity.Capability.Asset` — `AssetManager` | 资源加载 / 缓存 / 引用计数调度，实现 `IAssetManager` |
+| **平台适配** | `HN.Framework.Unity.Driver.Platform` — `AddressablesOperator` 等 | 对接具体加载方式的操作器 |
+
+### 架构关系
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                    CapabilityModule                          │
+│                                                              │
+│  HN.Framework.Core.Capability                                │
+│  ┌──────────────────────────────────────────────────────┐    │
+│  │  IAssetManager (interface)                           │    │
+│  │  · LoadSceneGroup / PreloadSceneGroup                │    │
+│  │  · LoadAsset / ReleaseAsset / IsLoaded               │    │
+│  │  · GetReferenceCount / GetGroupProgress              │    │
+│  │  · Tick / LateTick                                   │    │
+│  │  纯 C# 接口，无 UnityEngine 依赖                       │    │
+│  └──────────────────────────────────────────────────────┘    │
+│                          ▲                                    │
+│                          │ implements                         │
+│  HN.Framework.Unity.Capability.Asset                         │
+│  ┌──────────────────────────────────────────────────────┐    │
+│  │  AssetManager : IAssetManager, ITickable             │    │
+│  │  资源加载 / AssetCache / 引用计数 / 自动卸载          │    │
+│  │  内部持有 IAssetOperator 引用，由平台适配层注入         │    │
+│  └──────────────────────────────────────────────────────┘    │
+│                          │                                    │
+│                          │ uses                               │
+│  HN.Framework.Unity.Driver.Platform                          │
+│  ┌──────────────────────────────────────────────────────┐    │
+│  │  IAssetOperator 实现                                  │    │
+│  │  ├── AddressablesOperator    ✅ 运行时唯一推荐路径     │    │
+│  │  ├── AssetDatabaseOperator   🎯 Editor 环境专用        │    │
+│  │  └── ResourcesOperator       ⚠️ 已标记 deprecated      │    │
+│  └──────────────────────────────────────────────────────┘    │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### IAssetManager 接口
+
+`IAssetManager` 定义于 `HN.Framework.Core.Capability` 命名空间，是资源管理系统的顶层抽象。它提供资源组标签加载、单资源加载、引用计数查询、加载进度追踪以及 Tick 生命周期管理。该接口完全独立于 Unity 引擎，可在纯 C# 逻辑层直接依赖。
+
+### AssetManager 调度器
+
+`AssetManager` 类位于 `HN.Framework.Unity.Capability.Asset` 命名空间，实现 `IAssetManager` 接口。它负责统一的加载调度、弱引用缓存（`AssetCacheItem`）、引用计数跟踪以及超时自动卸载。内部通过 `IAssetOperator` 接口委派实际的资源加载操作。
+
+### 平台操作器
+
+`AddressablesOperator`、`AssetDatabaseOperator`、`ResourcesOperator` 位于 `HN.Framework.Unity.Driver.Platform` 命名空间，是 `IAssetOperator` 接口的平台实现。三者均从 `GameWorldDriver` 的初始化流程中注入 `AssetManager`。其中 `AddressablesOperator` 是运行时资源加载的唯一推荐路径。
+
 ## 推荐方案：直接使用 Addressables
 
 ### 基本用法

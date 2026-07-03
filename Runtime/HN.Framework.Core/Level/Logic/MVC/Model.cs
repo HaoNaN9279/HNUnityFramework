@@ -42,10 +42,12 @@ namespace HN.Framework.Core.Level.Logic
         /// </summary>
         public void Initialize()
         {
-            foreach (var unit in modelUnits)
+            int count = modelUnits.Count;
+            for (int i = 0; i < count; i++)
             {
-                unit.Initialize();
+                modelUnits[i].Initialize();
             }
+            OnInitialize();
         }
 
         /// <summary>
@@ -53,9 +55,10 @@ namespace HN.Framework.Core.Level.Logic
         /// </summary>
         public void OnFirstFrame()
         {
-            foreach (var unit in modelUnits)
+            int count = modelUnits.Count;
+            for (int i = 0; i < count; i++)
             {
-                unit.OnFirstFrame();
+                modelUnits[i].OnFirstFrame();
             }
         }
 
@@ -113,6 +116,7 @@ namespace HN.Framework.Core.Level.Logic
         /// </summary>
         public void Clear()
         {
+            OnClear();
             int count = modelUnits.Count;
             for (int i = 0; i < count; i++)
             {
@@ -120,6 +124,18 @@ namespace HN.Framework.Core.Level.Logic
             }
             ReferencePool.Release(modelUnits);
         }
+        #endregion
+
+        #region 虚方法
+        /// <summary>
+        /// 初始化完成时调用，子类可重写以执行自定义初始化逻辑
+        /// </summary>
+        protected virtual void OnInitialize() { }
+
+        /// <summary>
+        /// 销毁时调用，子类可重写以执行自定义清理逻辑
+        /// </summary>
+        protected virtual void OnClear() { }
         #endregion
 
         #region 对外属性
