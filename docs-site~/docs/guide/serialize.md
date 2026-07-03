@@ -16,7 +16,7 @@ Serialize 模块提供 JSON 序列化/反序列化工具，按依赖拆分为两
 | `JsonObject` | Core | `HN.Framework.Core.Driver.Common.Serialization` | 数据基类，供 JsonData 内部使用 |
 | `JsonData` | Unity | `HN.Framework.Unity.Driver.Platform.Serialization` | 可序列化的数据容器，自动处理 ISerializationCallbackReceiver |
 
-> **分层说明**：Core 层（`Json`/`JsonObject`）为纯 C# 实现，不依赖 Unity 运行时；Unity 层（`JsonData`）依赖 `ISerializationCallbackReceiver` 和 `JsonUtility`，专用于 Inspector 编辑场景。所有序列化基于 Unity 的 `JsonUtility`，因此仅支持标记了 `[Serializable]` 的类型。
+> **分层说明**：Core 层（`Json`/`JsonObject`）为纯 C# 实现，不依赖 Unity 运行时；`Json` 类为纯 C# 手写 JSON 序列化器，不依赖 Unity JsonUtility。Unity 层（`JsonData`）依赖 `ISerializationCallbackReceiver` 和 `JsonUtility`，专用于 Inspector 编辑场景。
 
 ## Json 静态类
 
@@ -144,8 +144,8 @@ public class PlayerData : JsonObject
 
 ## 注意事项
 
-- 序列化基于 `JsonUtility`，只支持 `[Serializable]` 标记的类型
-- 不支持字典、多维数组等复杂类型（Unity JsonUtility 限制）
+- 支持基本类型（int/float/double/string/bool 等）、数组、`List<T>`、`Dictionary<K,V>`、嵌套对象等；类型需标记为 `[Serializable]`
+- 枚举序列化为整数值（如 `0`、`1`），反序列化时兼容读取旧的字符串格式（如 `"ValueName"`）
 - `JsonData` 需要配合 `JsonObject` 子类使用
 - 文件读写使用 `System.IO.File` API，在 WebGL 等平台不可用（需平台适配）
 - `DeserializeFromString` 在 JSON 为空时自动使用 `"{}"` 避免报错
