@@ -4,7 +4,7 @@ using System.Diagnostics;
 using HN.Framework.Core.Driver.Common;
 using HN.Framework.Core.Driver.Common.Pool.ReferencePool;
 
-namespace HN.Framework.Level.Logic
+namespace HN.Framework.Core.Level.Logic
 {
     public interface IHFSM : IReference
     {
@@ -146,6 +146,7 @@ namespace HN.Framework.Level.Logic
             this.paused = false;
             currentState = null;
             states = ReferencePool.Acquire<PooledDictionary<string, IHFSMState>>();
+            transitions = ReferencePool.Acquire<PooledDictionary<KeyValuePair<IHFSMState, IHFSMState>, IHFSMTransition>>();
             entryState = AddState<HFSMEntryState>(HFSMEntryState.EntryStateName);
             exitState = AddState<HFSMExitState>(HFSMExitState.ExitStateName);
             m_TempStates = ReferencePool.Acquire<PooledList<HFSMState>>();
@@ -370,6 +371,8 @@ namespace HN.Framework.Level.Logic
                 return;
             }
 
+            transition.FromState.RemoveOutputTransition(transition);
+            transition.TargetState.RemoveInputTransition(transition);
             transitions.Remove(key);
             ReferencePool.Release(transition);
         }
@@ -435,14 +438,20 @@ namespace HN.Framework.Level.Logic
             while (currentState != null && currentState.IsAllowedTrans)
             {
                 m_TempStates.Add(currentState as HFSMState);
+                bool transitionFired = false;
                 foreach (var transition in currentState.OutputTransitions.Values)
                 {
                     if (transition.Active && transition.Eval())
                     {
                         ChangeState(transition.TargetState);
                         currentState.Update();
+                        transitionFired = true;
                         break;
                     }
+                }
+                if (!transitionFired)
+                {
+                    break;
                 }
                 if (m_TempStates.Contains(currentState as HFSMState))
                 {
@@ -519,12 +528,12 @@ namespace HN.Framework.Level.Logic
         /// <summary>
         /// 状态机状态列表
         /// </summary>
-        public IReadOnlyDictionary<string, IHFSMState> States => states;
+        public IReadOnlyDictionary<string, IHFSMState> States => states ?? s_EmptyStates;
 
         /// <summary>
         /// 状态机转换列表
         /// </summary>
-        public IReadOnlyDictionary<KeyValuePair<IHFSMState, IHFSMState>, IHFSMTransition> Transitions => transitions;
+        public IReadOnlyDictionary<KeyValuePair<IHFSMState, IHFSMState>, IHFSMTransition> Transitions => transitions ?? s_EmptyTransitions;
 
 
         /// <summary>
@@ -565,6 +574,9 @@ namespace HN.Framework.Level.Logic
         /// <summary>
         /// 存储本次更新执行过的状态，用于检测死循环
         /// </summary>
+        private static readonly System.Collections.Generic.Dictionary<string, IHFSMState> s_EmptyStates = new System.Collections.Generic.Dictionary<string, IHFSMState>();
+        private static readonly System.Collections.Generic.Dictionary<KeyValuePair<IHFSMState, IHFSMState>, IHFSMTransition> s_EmptyTransitions = new System.Collections.Generic.Dictionary<KeyValuePair<IHFSMState, IHFSMState>, IHFSMTransition>();
+
         private PooledList<HFSMState> m_TempStates;
     }
 }

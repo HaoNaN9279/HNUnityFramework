@@ -3,7 +3,7 @@
 using HN.Framework.Core.Driver.Common;
 using HN.Framework.Core.Driver.Common.Pool.ReferencePool;
 
-namespace HN.Framework.Level.Logic
+namespace HN.Framework.Core.Level.Logic
 {
     public interface IHFSMCompoundState : IHFSMState
     {
@@ -61,6 +61,17 @@ namespace HN.Framework.Level.Logic
             }
         }
 
+
+        public override void Clear()
+        {
+            if (subStateMachine != null)
+            {
+                subStateMachine.Shutdown();
+                ReferencePool.Release(subStateMachine);
+                subStateMachine = null;
+            }
+            base.Clear();
+        }
 
         /// <summary>
         /// 此状态内的子状态机

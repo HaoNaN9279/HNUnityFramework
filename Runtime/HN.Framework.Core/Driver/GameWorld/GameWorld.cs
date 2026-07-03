@@ -1,7 +1,7 @@
 using HN.Framework.Capability.Core.Network;
 using HN.Framework.Core.Capability;
 using HN.Framework.Core.Driver.Common;
-using HN.Framework.Level.Logic;
+using HN.Framework.Core.Level.Logic;
 
 namespace HN.Framework.Core.Driver
 {

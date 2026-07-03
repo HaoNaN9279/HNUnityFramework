@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using HN.Framework.Core.Driver.Common;
 
-namespace HN.Framework.Level.Logic
+namespace HN.Framework.Core.Level.Logic
 {
     #region Model单元接口
     /// <summary>

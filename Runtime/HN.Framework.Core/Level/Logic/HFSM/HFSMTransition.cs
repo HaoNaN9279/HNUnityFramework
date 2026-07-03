@@ -1,7 +1,7 @@
 using System;
 using HN.Framework.Core.Driver.Common;
 
-namespace HN.Framework.Level.Logic
+namespace HN.Framework.Core.Level.Logic
 {
     public interface IHFSMTransition : IReference
     {
@@ -53,10 +53,10 @@ namespace HN.Framework.Level.Logic
         /// <param name="conditionFunc"></param>
         public void Initialize(IHFSMState fromState, IHFSMState targetState, Func<bool> conditionFunc)
         {
-            fromState.AddOutputTransition(this);
             this.fromState = fromState;
-            targetState.AddInputTransition(this);
             this.targetState = targetState;
+            fromState.AddOutputTransition(this);
+            targetState.AddInputTransition(this);
             this.conditionFunc = conditionFunc;
         }
 

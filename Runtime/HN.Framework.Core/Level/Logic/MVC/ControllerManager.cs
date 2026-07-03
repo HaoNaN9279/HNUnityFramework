@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using HN.Framework.Core.Driver.Common;
 using HN.Framework.Core.Driver.Common.Pool.ReferencePool;
 
-namespace HN.Framework.Level.Logic
+namespace HN.Framework.Core.Level.Logic
 {
     /// <summary>
     /// Controller管理器

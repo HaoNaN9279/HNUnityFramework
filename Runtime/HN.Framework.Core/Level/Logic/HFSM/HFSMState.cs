@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using HN.Framework.Core.Driver.Common;
 using HN.Framework.Core.Driver.Common.Pool.ReferencePool;
 
-namespace HN.Framework.Level.Logic
+namespace HN.Framework.Core.Level.Logic
 {
     public interface IHFSMState : IReference
     {
@@ -118,9 +118,10 @@ namespace HN.Framework.Level.Logic
         /// <param name="inputTransition"></param>
         public void AddInputTransition(IHFSMTransition inputTransition)
         {
-            if (inputTransitions != null && !inputTransitions.ContainsValue(inputTransition))
+            if (inputTransitions != null)
             {
-                inputTransitions.Add(new KeyValuePair<IHFSMState, IHFSMState>(inputTransition.FromState, inputTransition.TargetState), inputTransition);
+                var key = new KeyValuePair<IHFSMState, IHFSMState>(inputTransition.FromState, inputTransition.TargetState);
+                inputTransitions[key] = inputTransition;
             }
         }
 
@@ -130,9 +131,10 @@ namespace HN.Framework.Level.Logic
         /// <param name="outputTransition"></param>
         public void AddOutputTransition(IHFSMTransition outputTransition)
         {
-            if (outputTransitions != null && !outputTransitions.ContainsValue(outputTransition))
+            if (outputTransitions != null)
             {
-                outputTransitions.Add(new KeyValuePair<IHFSMState, IHFSMState>(outputTransition.FromState, outputTransition.TargetState), outputTransition);
+                var key = new KeyValuePair<IHFSMState, IHFSMState>(outputTransition.FromState, outputTransition.TargetState);
+                outputTransitions[key] = outputTransition;
             }
         }
 
@@ -142,9 +144,10 @@ namespace HN.Framework.Level.Logic
         /// <param name="inputTransition"></param>
         public void RemoveInputTransition(IHFSMTransition inputTransition)
         {
-            if (inputTransitions != null && inputTransitions.ContainsValue(inputTransition))
+            if (inputTransitions != null)
             {
-                inputTransitions.Remove(new KeyValuePair<IHFSMState, IHFSMState>(inputTransition.FromState, inputTransition.TargetState));
+                var key = new KeyValuePair<IHFSMState, IHFSMState>(inputTransition.FromState, inputTransition.TargetState);
+                inputTransitions.Remove(key);
             }
         }
 
@@ -154,9 +157,10 @@ namespace HN.Framework.Level.Logic
         /// <param name="outuputTransition"></param>
         public void RemoveOutputTransition(IHFSMTransition outputTransition)
         {
-            if (outputTransitions != null && outputTransitions.ContainsValue(outputTransition))
+            if (outputTransitions != null)
             {
-                outputTransitions.Remove(new KeyValuePair<IHFSMState, IHFSMState>(outputTransition.FromState, outputTransition.TargetState));
+                var key = new KeyValuePair<IHFSMState, IHFSMState>(outputTransition.FromState, outputTransition.TargetState);
+                outputTransitions.Remove(key);
             }
         }
 
@@ -232,10 +236,12 @@ namespace HN.Framework.Level.Logic
         /// <summary>
         /// 清理状态
         /// </summary>
-        public void Clear()
+        public virtual void Clear()
         {
-            outputTransitions.Clear();
-            inputTransitions.Clear();
+            ReferencePool.Release(outputTransitions);
+            outputTransitions = null;
+            ReferencePool.Release(inputTransitions);
+            inputTransitions = null;
             name = default;
         }
 
