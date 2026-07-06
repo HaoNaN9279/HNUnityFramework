@@ -6,9 +6,9 @@
       "work_id": "memorypack-serialization-8b9a6a34",
       "active_plan": "D:\\workspace\\work\\HNUnityFramework\\.omo\\plans\\memorypack-serialization.md",
       "plan_name": "memorypack-serialization",
-      "status": "active",
+      "status": "completed",
       "started_at": "2026-07-06T07:05:56.458Z",
-      "updated_at": "2026-07-06T08:27:52.542Z",
+      "updated_at": "2026-07-06T08:32:44.922Z",
       "session_ids": [
         "opencode:ses_0c9d36a70ffekz2Fsi0PghYDoP",
         "opencode:ses_0c9a9c293ffe5sOYxJ65PMz7m7",
@@ -115,13 +115,15 @@
           "ended_at": "2026-07-06T08:27:52.542Z",
           "elapsed_ms": 198058
         }
-      }
+      },
+      "ended_at": "2026-07-06T08:32:44.922Z",
+      "elapsed_ms": 5208464
     }
   },
   "active_plan": "D:\\workspace\\work\\HNUnityFramework\\.omo\\plans\\memorypack-serialization.md",
   "started_at": "2026-07-06T07:05:56.458Z",
-  "status": "active",
-  "updated_at": "2026-07-06T08:27:52.542Z",
+  "status": "completed",
+  "updated_at": "2026-07-06T08:32:44.922Z",
   "session_ids": [
     "opencode:ses_0c9d36a70ffekz2Fsi0PghYDoP",
     "opencode:ses_0c9a9c293ffe5sOYxJ65PMz7m7",
@@ -229,5 +231,7 @@
       "elapsed_ms": 198058
     }
   },
-  "agent": "atlas"
+  "agent": "atlas",
+  "ended_at": "2026-07-06T08:32:44.922Z",
+  "elapsed_ms": 5208464
 }
