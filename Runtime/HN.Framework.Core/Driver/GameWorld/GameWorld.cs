@@ -1,7 +1,6 @@
 using HN.Framework.Capability.Core.Network;
 using HN.Framework.Core.Capability;
 using HN.Framework.Core.Driver.Common;
-using HN.Framework.Core.Driver.Common.Debug;
 using HN.Framework.Core.Level.Logic;
 
 namespace HN.Framework.Core.Driver
@@ -13,11 +12,8 @@ namespace HN.Framework.Core.Driver
         public ProcedureManager ProcedureManager { get; }
         public ControllerManager ControllerManager { get; }
 
-        // 调试中枢
-        public DebugHub DebugHub { get; }
-
         // 平台适配接口（由 GameWorldDriver 注入）
-        public ILogProvider? LogProvider { get; set; }
+        public ILogProvider LogProvider { get; set; }
         public IAssetManager? AssetManager { get; set; }
         public INetworkManager NetworkManager { get; set; }
         public IStorageProvider StorageProvider { get; set; }
@@ -27,7 +23,6 @@ namespace HN.Framework.Core.Driver
             PoolManager = new ObjectPoolManager();
             ProcedureManager = new ProcedureManager();
             ControllerManager = new ControllerManager();
-            DebugHub = new DebugHub();
         }
 
         public void Initialize()

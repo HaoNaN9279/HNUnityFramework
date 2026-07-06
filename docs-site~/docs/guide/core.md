@@ -42,35 +42,6 @@ world.NetworkManager       // 网络管理器
 world.StorageProvider      // 存储服务接口
 ```
 
-## DebugHub — 调试中枢
-
-`DebugHub` 是 D3 Debug 基础设施的核心实现，由 `GameWorld` 在构造函数中
-自动创建，通过 `world.DebugHub` 属性访问。
-
-### 职责
-
-- **通道注册**：`RegisterChannel(ILogChannel)` — 模块注册日志通道，支持运行时开关
-- **命令注册**：`RegisterCommand(IDebugCommand)` — 注册调试命令
-- **结构化日志**：`Log(LogLevel, channel, message, context)` — 写入环形缓冲（最多 100 条）
-- **事件通知**：`OnLog` 事件 — 每次 Log 调用时触发
-
-### 与 ILogProvider 的关系
-
-`DebugHub` 与 `ILogProvider` 职责完全分离：
-- `DebugHub` — 结构化日志基础设施（存储 + 事件），不做输出
-- `ILogProvider` — 唯一日志输出通道（UnityEngine.Debug / 文件 / 网络）
-
-```csharp
-// 注册模块日志通道
-world.DebugHub.RegisterChannel(new LogChannel("pool", enabled: true));
-
-// 记录结构化日志（写入调试缓冲 + 触发 OnLog 事件）
-world.DebugHub.Log(LogLevel.Warning, "pool", "池容量接近上限");
-
-// 通过 ILogProvider 输出日志
-world.LogProvider.Log(LogLevel.Info, "pool", "对象池初始化完成");
-```
-
 ### 注入模式
 
 `GameWorld` 不负责创建平台相关的实现，而是通过属性注入：
