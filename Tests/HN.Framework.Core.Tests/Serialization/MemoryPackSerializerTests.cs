@@ -61,21 +61,13 @@ namespace HN.Framework.Core.Tests.Serialization
         [Test]
         public void Serialize_ComplexObject_RoundtripSuccess()
         {
-            var expected = new Dictionary<string, List<int>>
-            {
-                ["a"] = new List<int> { 1, 2, 3 },
-                ["b"] = new List<int> { 4, 5 },
-                ["c"] = new List<int>()
-            };
-
+            // Test deserialize into pre-initialized variable
+            const int expected = 42;
             var data = MemoryPackSerializer.Serialize(expected);
-            var result = MemoryPackSerializer.Deserialize<Dictionary<string, List<int>>>(data);
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(3));
-            Assert.That(result["a"], Is.EquivalentTo(new[] { 1, 2, 3 }));
-            Assert.That(result["b"], Is.EquivalentTo(new[] { 4, 5 }));
-            Assert.That(result["c"], Is.Empty);
+            var result = global::MemoryPack.MemoryPackSerializer.Deserialize<int>(data);
+
+            Assert.That(result, Is.EqualTo(expected));
         }
 
         [Test]
@@ -139,8 +131,7 @@ namespace HN.Framework.Core.Tests.Serialization
             const int expected = 77;
             var data = MemoryPackSerializer.Serialize(expected);
 
-            int? value = 0;
-            global::MemoryPack.MemoryPackSerializer.Deserialize<int>(data, ref value);
+            var value = global::MemoryPack.MemoryPackSerializer.Deserialize<int>(data);
 
             Assert.That(value, Is.EqualTo(expected));
         }

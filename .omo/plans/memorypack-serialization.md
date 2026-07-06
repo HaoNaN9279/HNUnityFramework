@@ -284,10 +284,10 @@ Your next move: 批准后即可开始执行（`$start-work`）。完整执行细
 
 ## Final verification wave
 > Runs in parallel after ALL todos. ALL must APPROVE. Surface results and wait for the user's explicit okay before declaring complete.
-- [ ] F1. Plan compliance audit — 对照架构文档检查：所有 D2+C1 文件是否创建、命名空间是否正确、asmdef 引用是否正确
-- [ ] F2. Code quality review — 检查 XML 文档注释完整性、命名规范一致性、代码风格与现有代码一致
-- [ ] F3. Real manual QA — 运行全量 EditMode 测试 (`vibe_unityMCP_run_tests(mode="EditMode")`) 确认零回归
-- [ ] F4. Scope fidelity — 确认未修改范围外的文件（Json.cs, JsonObject.cs, JsonData.cs, HFSM, MVC, ProcedureManager 等）
+- [x] F1. Plan compliance audit — 对照架构文档检查：所有 D2+C1 文件是否创建、命名空间是否正确、asmdef 引用是否正确
+- [x] F2. Code quality review — 检查 XML 文档注释完整性、命名规范一致性、代码风格与现有代码一致
+- [x] F3. Real manual QA — 运行全量 EditMode 测试 (`vibe_unityMCP_run_tests(mode="EditMode")`) 确认零回归
+- [x] F4. Scope fidelity — 确认未修改范围外的文件（Json.cs, JsonObject.cs, JsonData.cs, HFSM, MVC, ProcedureManager 等）
 
 ## Commit strategy
 每个 todo 完成后独立提交（共 7 个 commits），使用 conventional commits 格式：

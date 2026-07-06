@@ -1,6 +1,7 @@
 using System;
 using HN.Framework.Unity.Capability.Serialization;
 using MemoryPack;
+using MemoryPack;
 using NUnit.Framework;
 using UnityEngine;
 

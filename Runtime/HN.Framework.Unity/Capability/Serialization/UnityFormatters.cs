@@ -232,20 +232,18 @@ namespace HN.Framework.Unity.Capability.Serialization
     {
         public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref Matrix4x4 value)
         {
-            writer.WriteUnmanaged(
-                value.m00, value.m01, value.m02, value.m03,
-                value.m10, value.m11, value.m12, value.m13,
-                value.m20, value.m21, value.m22, value.m23,
-                value.m30, value.m31, value.m32, value.m33);
+            writer.WriteUnmanaged(value.m00, value.m01, value.m02, value.m03);
+            writer.WriteUnmanaged(value.m10, value.m11, value.m12, value.m13);
+            writer.WriteUnmanaged(value.m20, value.m21, value.m22, value.m23);
+            writer.WriteUnmanaged(value.m30, value.m31, value.m32, value.m33);
         }
 
         public override void Deserialize(ref MemoryPackReader reader, scoped ref Matrix4x4 value)
         {
-            reader.ReadUnmanaged(
-                out float m00, out float m01, out float m02, out float m03,
-                out float m10, out float m11, out float m12, out float m13,
-                out float m20, out float m21, out float m22, out float m23,
-                out float m30, out float m31, out float m32, out float m33);
+            reader.ReadUnmanaged(out float m00, out float m01, out float m02, out float m03);
+            reader.ReadUnmanaged(out float m10, out float m11, out float m12, out float m13);
+            reader.ReadUnmanaged(out float m20, out float m21, out float m22, out float m23);
+            reader.ReadUnmanaged(out float m30, out float m31, out float m32, out float m33);
             value = new Matrix4x4(
                 new Vector4(m00, m01, m02, m03),
                 new Vector4(m10, m11, m12, m13),

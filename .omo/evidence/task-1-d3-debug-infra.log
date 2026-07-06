@@ -1,0 +1,15 @@
+﻿@@ task-1-d3-debug-infra.log
+Event: task-completed
+Plan: d3-debug-infra
+Task: 1
+Created:
+- Runtime/HN.Framework.Core/Driver/Common/Debug/LogLevel.cs
+- Runtime/HN.Framework.Core/Driver/Common/Debug/LogEntry.cs
+- Runtime/HN.Framework.Core/Driver/Common/Debug/ILogChannel.cs
+- Runtime/HN.Framework.Core/Driver/Common/Debug/IDebugCommand.cs
+- Runtime/HN.Framework.Core/Driver/Common/Debug/IDebugHub.cs
+- Tests/HN.Framework.Core.Tests/Debug/LogLevelTests.cs
+- Tests/HN.Framework.Core.Tests/Debug/LogEntryTests.cs
+Tests: 6/6 passed
+Verification: vibe_unityMCP_run_tests EditMode HN.Framework.Core.Tests - all passed
+

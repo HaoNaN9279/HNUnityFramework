@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "domains": {
+    "game-dev/unity": {
+      "links": {
+        "rules/game-dev_unity_unity.md": "domains/game-dev/unity/rules/unity.md"
+      }
+    }
+  }
+}

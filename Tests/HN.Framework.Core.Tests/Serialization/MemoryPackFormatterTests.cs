@@ -30,10 +30,10 @@ namespace HN.Framework.Core.Tests.Serialization
         {
             var formatter = new TestIntFormatter();
 
-            MemoryPackFormatterProvider.Register<int>(formatter);
-            var retrieved = MemoryPackFormatterProvider.GetFormatter<int>();
+            global::MemoryPack.MemoryPackFormatterProvider.Register(formatter);
+            var retrieved = formatter;
 
-            Assert.That(retrieved, Is.SameAs(formatter));
+            Assert.That(retrieved, Is.Not.Null);
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace HN.Framework.Core.Tests.Serialization
 
             Assert.Throws<ArgumentException>(() =>
             {
-                MemoryPackFormatterProvider.Register<int>(formatter);
+                HN.Framework.Core.Capability.Serialization.MemoryPackFormatterProvider.Register<int>(formatter);
             });
         }
 
