@@ -2,7 +2,8 @@
     "name": "HN.Framework.Unity",
     "rootNamespace": "HN.Framework.Unity",
     "references": [
-        "HN.Framework.Core"
+        "HN.Framework.Core",
+        "GUID:3c1b0d1c2470401da464c2f78e21cbbe"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
