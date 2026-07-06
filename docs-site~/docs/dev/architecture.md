@@ -199,7 +199,7 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 | 架构层 | 模块 | 状态 | 说明 |
 |--------|------|:----:|------|
 | D1 | GameWorld | ✅ | 已从静态单例迁移 |
-| D2 | 基础类库（Interfaces/HNLogicTime/Serialization） | ✅ | 手写 JSON 序列化器，支持基本类型/集合/嵌套对象，Enum 整数格式 |
+| D2 | 基础类库（Interfaces/HNLogicTime/Serialization） | ✅ | 手写 JSON 序列化器 + MemoryPack 二进制序列化包装器 |
 | D2 | ReferencePool / PooledCollections | ✅ | 静态，不做迁移 |
 | D2 | `ObjectPool<T>` / PoolBase / PooledObjectBase | ✅ | |
 | D2 | IEventBus | 🚧 Stub | 接口定义 |
@@ -211,6 +211,7 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 | D4 | GameObjectPool / `PooledObject<T>` | ✅ | |
 | D4 | UnityLogProvider / UnityTimeProvider / UnityCoroutineProvider | ✅ | |
 | D4 | HNRenderPipeline + ShaderLibrary | 🚧 Stub | |
+| C1 | MemoryPack 序列化模块 | ✅ | 二进制序列化，含 Core 包装器 + Unity 类型格式化器（16种） |
 | S2 | ILogProvider / UnityLogProvider | ✅ | |
 | S3 | IAssetOperator + 三种实现 | ✅ | |
 | S5 | INetworkManager + FishNet 封装 | 🚧 Stub | |

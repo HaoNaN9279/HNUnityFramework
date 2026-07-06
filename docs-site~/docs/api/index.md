@@ -26,6 +26,7 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
 - **PooledCollections** — `PooledList<T>`、`PooledDictionary<K,V>` 等 16 种池化集合
 - **Json** — JSON 序列化/反序列化工具
 - **JsonObject** — 动态 JSON 对象
+- **MemoryPackSerializer** — 二进制序列化包装器，封装 vendored MemoryPack API
 - **LogLevel** — 日志等级枚举（Debug/Info/Warning/Error/Fatal）
 - **ILogChannel** — 模块级日志通道接口（Name / Enabled）
 - **LogEntry** — 结构化日志条目（Timestamp, Channel, Level, Message, Context）
@@ -38,6 +39,8 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
 - **IAssetManager** — 资源管理器接口
 - **ILogProvider** — 日志提供者接口（支持 LogLevel 分级 + Channel 通道）
 - **INetworkManager** — 网络管理器接口
+- **ISerializer** — 统一序列化接口，支持泛型和非泛型
+- **MemoryPackFormatterProvider** — 格式化器注册适配器，框架友好封装
 - **IStorageProvider** — 存储提供者接口
 - **ProcedureManager** — 流程管理器，驱动游戏状态切换
 - **ProcedureState** — 流程状态基类
@@ -81,7 +84,9 @@ Unity 平台层，依赖 UnityEngine。
 - **FishNetNetworkManager** 🚧 — FishNet 网络管理器（待实现）
 - **FishNetMessageBus** 🚧 — FishNet 消息总线（待实现）
 - **FishNetConnectionAdapter** 🚧 — FishNet 连接适配器（待实现）
-- **FishNetSerializerAdapter** 🚧 — FishNet 序列化适配器（待实现）
+- **FishNetSerializerAdapter** 🚧 — FishNet 序列化适配器骨架，将 MemoryPack 注入 FishNet（完整实现由 C6 模块负责）
+- **UnityFormatters** — Unity 类型格式化器集合，含 16 种内置类型
+- **UnityFormattersInitializer** — Unity 格式化器初始化器，提供 `RegisterAll()` 批量注册
 - **SheetElementTypeAttribute** 🚧 — 配置表元素类型标记（待实现）
 
 **Level.View — 视图层**
