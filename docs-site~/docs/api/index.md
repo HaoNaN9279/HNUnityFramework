@@ -26,11 +26,17 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
 - **PooledCollections** — `PooledList<T>`、`PooledDictionary<K,V>` 等 16 种池化集合
 - **Json** — JSON 序列化/反序列化工具
 - **JsonObject** — 动态 JSON 对象
+- **LogLevel** — 日志等级枚举（Debug/Info/Warning/Error/Fatal）
+- **ILogChannel** — 模块级日志通道接口（Name / Enabled）
+- **LogEntry** — 结构化日志条目（Timestamp, Channel, Level, Message, Context）
+- **IDebugHub** — 调试中枢接口（RegisterChannel / RegisterCommand / Log）
+- **IDebugCommand** — 调试命令接口（Name / Description / Execute）
+- **DebugHub** — 调试中枢实现类（通道/命令注册表 + 环形日志缓冲）
 
 **Capability — 能力模块（接口定义）**
 
 - **IAssetManager** — 资源管理器接口
-- **ILogProvider** — 日志提供者接口
+- **ILogProvider** — 日志提供者接口（支持 LogLevel 分级 + Channel 通道）
 - **INetworkManager** — 网络管理器接口
 - **IStorageProvider** — 存储提供者接口
 - **ProcedureManager** — 流程管理器，驱动游戏状态切换
