@@ -215,7 +215,7 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 | S2 | ILogProvider / UnityLogProvider | ✅ | |
 | S3 | IAssetOperator + 三种实现 | ✅ | |
 | S5 | INetworkManager + FishNet 封装 | 🚧 Stub | |
-| S6 | IEventBus / EventBus | 🚧 Stub | |
+| S6 | IEventBus / EventBus | ✅ | 线程安全事件总线（lock+snapshot），由 GameWorld 持有 |
 | S7 | ProcedureManager / ProcedureState | ✅ | 静态单例已消除 |
 | S9 | IStorageProvider | ✅ | 接口定义 |
 | Level.Logic | MVC | ✅ | |

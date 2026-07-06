@@ -45,6 +45,8 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
 - **ProcedureManager** — 流程管理器，驱动游戏状态切换
 - **ProcedureState** — 流程状态基类
 - **ObjectPoolManager** — 对象池管理器，统一管理所有对象池
+- **IEventBus** — 事件总线接口，提供 `Subscribe<T>` / `Unsubscribe<T>` / `Publish<T>` / `HasSubscribers<T>` 方法
+- **EventBus** — 事件总线实现，线程安全，基于锁+快照模式
 
 **Level.Logic — 逻辑层**
 

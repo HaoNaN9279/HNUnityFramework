@@ -14,4 +14,4 @@ CapabilityModule 位于 DriverLayer 与 Level 之间，提供跨关卡复用的�
 | `IAssetManager` | ✅ | 资源管理器接口。已实现 `AssetManager`，支持 Addressables / AssetDatabase / Resources 三种 Operator |
 | `INetworkManager` | 🚧 | 网络服务接口。`FishNetNetworkManager` 骨架已创建，FishNet 封装待实现 |
 | `IStorageProvider` | ✅ | 存储服务接口。提供 `Save` / `Load` / `Delete` 方法，接口已定义 |
-| `IEventBus` | 🚧 | 事件总线接口。待实现，支持模块间解耦通信 |
+| `IEventBus` | ✅ | 事件总线接口。支持 Subscribe/Unsubscribe/Publish/HasSubscribers，线程安全 |
