@@ -1,9 +1,8 @@
 {
-    "name": "HN.Framework.Unity.Tests",
-    "rootNamespace": "HN.Framework.Unity.Tests",
+    "name": "HN.Framework.Core.Tests",
+    "rootNamespace": "HN.Framework.Core.Tests",
     "references": [
-        "HN.Framework.Core",
-        "HN.Framework.Unity"
+        "HN.Framework.Core"
     ],
     "includePlatforms": [
         "Editor"

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using HN.Framework.Core.Driver.Common.Serialization;
 using NUnit.Framework;
 
-namespace HN.Framework.Unity.Tests
+namespace HN.Framework.Unity.Tests.Serialization
 {
     /// <summary>
     /// EditMode 单元测试，覆盖 Json 序列化往返（serialize → deserialize → equality）：

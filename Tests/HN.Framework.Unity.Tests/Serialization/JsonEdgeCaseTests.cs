@@ -4,7 +4,7 @@ using System.Text;
 using HN.Framework.Core.Driver.Common.Serialization;
 using NUnit.Framework;
 
-namespace HN.Framework.Unity.Tests
+namespace HN.Framework.Unity.Tests.Serialization
 {
     /// <summary>
     /// JSON 序列化模块边界和错误处理测试。
