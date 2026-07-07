@@ -1,3 +1,4 @@
+using System;
 using HN.Framework.Core.Driver;
 using HN.Framework.Core.Capability;
 using HN.Framework.Core.Driver.Common;

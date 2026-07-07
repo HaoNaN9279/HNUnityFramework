@@ -32,9 +32,8 @@ namespace HN.Framework.Unity.Capability.Input
             var go = new GameObject("VirtualStick", typeof(RectTransform), typeof(OnScreenStick));
             go.transform.SetParent(parent, false);
 
-            var action = InputActionReference.Create(InputSystem.LoadAsset<InputActionAsset>(actionReference));
             var stick = go.GetComponent<OnScreenStick>();
-            stick.control = action;
+            stick.controlPath = actionReference;
 
             _createdObjects.Add(go);
             return go;
@@ -56,9 +55,8 @@ namespace HN.Framework.Unity.Capability.Input
             var go = new GameObject("VirtualButton", typeof(RectTransform), typeof(OnScreenButton));
             go.transform.SetParent(parent, false);
 
-            var action = InputActionReference.Create(InputSystem.LoadAsset<InputActionAsset>(actionReference));
             var button = go.GetComponent<OnScreenButton>();
-            button.control = action;
+            button.controlPath = actionReference;
 
             _createdObjects.Add(go);
             return go;
