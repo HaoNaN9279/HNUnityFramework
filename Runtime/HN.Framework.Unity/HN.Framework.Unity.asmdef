@@ -7,7 +7,7 @@
         "Unity.Cinemachine",
         "Unity.TextMeshPro",
         "Unity.Timeline",
-        "UnityEngine.InputSystem",
+        "Unity.InputSystem",
         "GUID:3c1b0d1c2470401da464c2f78e21cbbe"
     ],
     "includePlatforms": [],

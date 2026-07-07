@@ -71,7 +71,7 @@ namespace HN.Framework.Unity.Capability.Debug
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.BackQuote))
+            if (UnityEngine.Input.GetKeyDown(KeyCode.BackQuote))
             {
                 Toggle();
             }
@@ -79,19 +79,19 @@ namespace HN.Framework.Unity.Capability.Debug
             if (!_isVisible || _inputField == null || !_inputField.isFocused)
                 return;
 
-            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Return) || UnityEngine.Input.GetKeyDown(KeyCode.KeypadEnter))
             {
                 ExecuteInput();
             }
-            else if (Input.GetKeyDown(KeyCode.Tab))
+            else if (UnityEngine.Input.GetKeyDown(KeyCode.Tab))
             {
                 HandleTabComplete();
             }
-            else if (Input.GetKeyDown(KeyCode.UpArrow))
+            else if (UnityEngine.Input.GetKeyDown(KeyCode.UpArrow))
             {
                 NavigateHistory(-1);
             }
-            else if (Input.GetKeyDown(KeyCode.DownArrow))
+            else if (UnityEngine.Input.GetKeyDown(KeyCode.DownArrow))
             {
                 NavigateHistory(1);
             }
