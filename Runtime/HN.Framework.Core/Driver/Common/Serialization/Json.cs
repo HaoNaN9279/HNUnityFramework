@@ -173,7 +173,17 @@ namespace HN.Framework.Core.Driver.Common.Serialization
                 var type = typeof(T);
                 if (!type.IsEnum)
                 {
-                    return (T)ConvertJsonValue(jsonString, typeof(T));
+                    try
+                    {
+                        var result = ConvertJsonValue(jsonString, typeof(T));
+                        if (result is T tResult)
+                            return tResult;
+                    }
+                    catch
+                    {
+                        // Conversion failed (type mismatch or invalid input) —
+                        // fall through to return a default instance below.
+                    }
                 }
             }
 

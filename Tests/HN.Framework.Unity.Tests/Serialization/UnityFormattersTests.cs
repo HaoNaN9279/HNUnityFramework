@@ -1,6 +1,6 @@
 using System;
+using System.Buffers;
 using HN.Framework.Unity.Capability.Serialization;
-using MemoryPack;
 using MemoryPack;
 using NUnit.Framework;
 using UnityEngine;
@@ -19,25 +19,50 @@ namespace HN.Framework.Unity.Tests.Serialization
 
         /// <summary>
         /// 用于测试复合 Unity 类型的 MemoryPack 序列化数据类。
+        /// 使用公共字段以兼容 MemoryPack 的反射回退序列化。
         /// </summary>
-        [MemoryPackable]
-        public partial class TestUnityData
+        public class TestUnityData
         {
-            public Vector3 Position { get; set; }
-            public Quaternion Rotation { get; set; }
-            public Color Color { get; set; }
-            public Vector3 Scale { get; set; }
+            public Vector3 Position;
+            public Quaternion Rotation;
+            public Color Color;
+            public Vector3 Scale;
+        }
+
+        /// <summary>
+        /// TestUnityData 的手动 MemoryPack 格式化器。
+        /// 因 MemoryPack 源码生成器未在测试程序集运行，需手动注册此格式化器。
+        /// </summary>
+        public sealed class TestUnityDataFormatter : MemoryPackFormatter<TestUnityData>
+        {
+            public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref TestUnityData? value)
+            {
+                if (value == null) return;
+
+                writer.WriteValue(value.Position);
+                writer.WriteValue(value.Rotation);
+                writer.WriteValue(value.Color);
+                writer.WriteValue(value.Scale);
+            }
+
+            public override void Deserialize(ref MemoryPackReader reader, scoped ref TestUnityData? value)
+            {
+                value ??= new TestUnityData();
+                value.Position = reader.ReadValue<Vector3>();
+                value.Rotation = reader.ReadValue<Quaternion>();
+                value.Color = reader.ReadValue<Color>();
+                value.Scale = reader.ReadValue<Vector3>();
+            }
         }
 
         /// <summary>
         /// 用于测试包含可空 Unity 类型的复合数据类。
         /// </summary>
-        [MemoryPackable]
-        public partial class ExtendedUnityData
+        public class ExtendedUnityData
         {
-            public Vector3? NullablePosition { get; set; }
-            public Vector2Int GridCoord { get; set; }
-            public Color32 Color32 { get; set; }
+            public Vector3? NullablePosition;
+            public Vector2Int GridCoord;
+            public Color32 Color32;
         }
 
         #endregion
@@ -49,6 +74,7 @@ namespace HN.Framework.Unity.Tests.Serialization
         public void SetUp()
         {
             UnityFormattersInitializer.RegisterAll();
+            MemoryPackFormatterProvider.Register(new TestUnityDataFormatter());
         }
 
         /// <summary>

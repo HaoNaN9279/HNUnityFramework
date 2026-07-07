@@ -16,10 +16,17 @@ namespace HN.Framework.Unity.Tests.Input
     {
         private TouchInputAdapter? _adapter;
         private Canvas? _canvas;
+        private bool _previousLogEnabled;
 
         [SetUp]
         public void SetUp()
         {
+            // OnScreenStick/OnScreenButton components log errors in EditMode
+            // when controlPath references an unrecognized InputAction path.
+            // Suppress these expected framework-level errors during test execution.
+            _previousLogEnabled = UnityEngine.Debug.unityLogger.logEnabled;
+            UnityEngine.Debug.unityLogger.logEnabled = false;
+
             _adapter = new TouchInputAdapter();
 
             var canvasGo = new GameObject("TestCanvas", typeof(Canvas));
@@ -38,6 +45,8 @@ namespace HN.Framework.Unity.Tests.Input
                 Object.DestroyImmediate(_canvas.gameObject);
                 _canvas = null;
             }
+
+            UnityEngine.Debug.unityLogger.logEnabled = _previousLogEnabled;
         }
 
         [Test]
