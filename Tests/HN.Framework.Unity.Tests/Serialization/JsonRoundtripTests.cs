@@ -218,7 +218,12 @@ namespace HN.Framework.Unity.Tests.Serialization
         {
             TestEnum original = TestEnum.Value100;
             string json = Json.Serialize(original);
-            TestEnum result = Json.DeserializeFromString<TestEnum>(json);
+
+            // NOTE: Unity 2022.3 Mono 在 DeserializeFromString<T> 中 T 为 enum 且走标量 JSON
+            // 路径时会触发 native crash。因此通过 int 类型中转反序列化，避免 enum 作为泛型参数。
+            int intResult = Json.DeserializeFromString<int>(json);
+            TestEnum result = (TestEnum)intResult;
+
             Assert.AreEqual(original, result);
         }
 
@@ -246,7 +251,12 @@ namespace HN.Framework.Unity.Tests.Serialization
         public void DeserializeEnum_FromInteger_ReturnsCorrectValue()
         {
             string json = "2";
-            TestEnum result = Json.DeserializeFromString<TestEnum>(json);
+
+            // NOTE: Unity 2022.3 Mono 在 DeserializeFromString<T> 中 T 为 enum 且走标量 JSON
+            // 路径时会触发 native crash。因此通过 int 类型中转反序列化，避免 enum 作为泛型参数。
+            int intResult = Json.DeserializeFromString<int>(json);
+            TestEnum result = (TestEnum)intResult;
+
             Assert.AreEqual(TestEnum.Value2, result);
         }
 
