@@ -77,6 +77,78 @@ public void LateTick()
 }
 ```
 
+## DebugHub — 调试中枢
+
+DebugHub 是框架的调试中枢，位于 `HN.Framework.Core.Driver.Common.Debug` 命名空间（Driver 层基础实现）和 `HN.Framework.Core.Capability.Debug` 命名空间（Capability 层增强实现）。
+
+### 基础功能 (Driver 层)
+
+- **通道注册** — 模块级日志通道注册与分级过滤
+- **命令注册** — 调试命令的注册与按名查找
+- **环形日志缓冲** — 最多保留 100 条结构化日志条目
+
+### 与 ILogProvider 的关系
+
+`ILogProvider` 是框架的日志输出抽象，`DebugHub` 在 Phase 2 中支持通过 `SetLogProvider` 方法将日志条目自动转发到 `ILogProvider`，实现调试日志与业务日志的统一输出。
+
+```csharp
+// GameWorld.LogProvider setter 自动调用 DebugHub.SetLogProvider
+world.LogProvider = new UnityLogProvider();
+```
+
+#### Capability 层扩展 (v2)
+
+Phase 2 在 `HN.Framework.Core.Capability.Debug` 命名空间新增了增强版 DebugHub，
+继承自 Driver 层的基础实现，新增以下功能：
+
+- **模块注册**：`RegisterModule(DebugModule)` — 批量注册模块的所有通道和命令
+- **命令执行**：`ExecuteCommand(name, args)` — 按名称查找并执行调试命令（异常安全）
+- **前缀搜索**：`SearchCommands(prefix)` — 按前缀匹配命令（用于控制台 Tab 自动补全）
+- **ILogProvider 桥接**：`SetLogProvider(provider)` — 日志条目自动转发到 ILogProvider
+
+```csharp
+// 创建 DebugModule 并注册
+var poolModule = new DebugModule("Pool",
+    new ILogChannel[] { new PoolLogChannel() },
+    new IDebugCommand[] { new PoolShowCommand(), new PoolClearCommand() });
+world.DebugHub.RegisterModule(poolModule);
+
+// 执行命令
+world.DebugHub.ExecuteCommand("pool.show", new[] { "-v" });
+
+// 搜索命令（前缀匹配）
+var commands = world.DebugHub.SearchCommands("pool");
+
+// 桥接到 ILogProvider（GameWorld setter 自动调用）
+world.LogProvider = new UnityLogProvider();
+```
+
+## RuntimeDebugConsole — 运行时调试控制台
+
+`RuntimeDebugConsole` 是一个 UGUI 调试终端组件，挂载到场景中的任意 GameObject 上即可激活。
+
+### 功能
+
+- **`~` 键切换** — 显示/隐藏控制台面板（屏幕下半部分）
+- **命令执行** — 输入命令并回车，调用 `DebugHub.ExecuteCommand`
+- **Tab 自动补全** — 按 Tab 键循环匹配已注册的命令
+- **历史浏览** — ↑/↓ 键浏览命令历史（最多 50 条）
+- **错误回显** — 未知命令显示红色错误提示
+- **输出截断** — 最多保留 200 行输出
+
+### 使用方式
+
+```csharp
+// 将组件挂载到场景中的 GameObject 上
+// 运行时通过 GameWorldDriver 自动发现 DebugHub
+var console = gameObject.AddComponent<RuntimeDebugConsole>();
+
+// 也可手动注入 DebugHub（覆盖自动发现）
+console.DebugHub = world.DebugHub;
+```
+
+> 控制台使用纯代码创建 UGUI 元素，无需 UXML/USS 或手动 Canvas 配置。
+
 ## GameWorldDriver — Unity 生命周期桥接
 
 `GameWorldDriver` 是一个 MonoBehaviour，位于 `HN.Framework.Unity` 程序集，负责：

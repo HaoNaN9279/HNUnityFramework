@@ -47,6 +47,9 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
 - **ObjectPoolManager** — 对象池管理器，统一管理所有对象池
 - **IEventBus** — 事件总线接口，提供 `Subscribe<T>` / `Unsubscribe<T>` / `Publish<T>` / `HasSubscribers<T>` 方法
 - **EventBus** — 事件总线实现，线程安全，基于锁+快照模式
+- **DebugHub** — Capability 层调试中枢，支持模块注册（RegisterModule）、命令执行（ExecuteCommand）、前缀搜索（SearchCommands）、ILogProvider 桥接（SetLogProvider）
+- **DebugModule** — 调试模块，将关联的日志通道和调试命令打包为一个逻辑模块
+- **DebugCommandRegistry** — 命令注册表查询层，支持精确查找和前缀搜索（Tab 自动补全）
 
 **Level.Logic — 逻辑层**
 
@@ -90,6 +93,7 @@ Unity 平台层，依赖 UnityEngine。
 - **UnityFormatters** — Unity 类型格式化器集合，含 16 种内置类型
 - **UnityFormattersInitializer** — Unity 格式化器初始化器，提供 `RegisterAll()` 批量注册
 - **SheetElementTypeAttribute** 🚧 — 配置表元素类型标记（待实现）
+- **RuntimeDebugConsole** — UGUI 运行时调试控制台（`~` 键切换，命令输入/自动补全/历史）
 
 **Level.View — 视图层**
 

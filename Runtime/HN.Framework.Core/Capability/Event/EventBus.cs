@@ -85,7 +85,7 @@ namespace HN.Framework.Core.Capability.Event
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine(ex);
+                    System.Diagnostics.Debug.WriteLine(ex);
                 }
             }
         }

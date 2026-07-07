@@ -88,7 +88,7 @@ namespace HN.Framework.Unity.Capability.Asset
             // 1. Auto-unload expired assets (RefCount == 0 && beyond delay threshold)
             if (m_Operator == null)
             {
-                Debug.LogWarning("[AssetManager] Tick: m_Operator is null, cannot perform auto-unload.");
+                UnityEngine.Debug.LogWarning("[AssetManager] Tick: m_Operator is null, cannot perform auto-unload.");
             }
             else
             {
@@ -256,7 +256,7 @@ namespace HN.Framework.Unity.Capability.Asset
             var asset = m_Operator.LoadAsset(key);
             if (asset == null)
             {
-                Debug.LogWarning($"[AssetManager] LoadAsset failed: key '{key}' returned null.");
+                UnityEngine.Debug.LogWarning($"[AssetManager] LoadAsset failed: key '{key}' returned null.");
                 return;
             }
 
@@ -292,7 +292,7 @@ namespace HN.Framework.Unity.Capability.Asset
             }
             else
             {
-                Debug.LogWarning($"AssetManager.ReleaseAsset: key '{key}' not found.");
+                UnityEngine.Debug.LogWarning($"AssetManager.ReleaseAsset: key '{key}' not found.");
             }
         }
 
@@ -381,7 +381,7 @@ namespace HN.Framework.Unity.Capability.Asset
             // 恢复默认值
             m_AutoUnloadDelay = 30f;
 
-            Debug.Log("[AssetManager] Cleared all resources.");
+            UnityEngine.Debug.Log("[AssetManager] Cleared all resources.");
         }
 
         /// <summary>

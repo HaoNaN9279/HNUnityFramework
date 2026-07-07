@@ -1,5 +1,6 @@
 using HN.Framework.Capability.Core.Network;
 using HN.Framework.Core.Capability;
+using HN.Framework.Core.Capability.Debug;
 using HN.Framework.Core.Driver.Common;
 using HN.Framework.Core.Capability.Event;
 using HN.Framework.Core.Level.Logic;
@@ -14,8 +15,19 @@ namespace HN.Framework.Core.Driver
         public ControllerManager ControllerManager { get; }
         public EventBus EventBus { get; }
 
+        public Capability.Debug.DebugHub DebugHub { get; }
+
         // 平台适配接口（由 GameWorldDriver 注入）
-        public ILogProvider LogProvider { get; set; }
+        private ILogProvider _logProvider;
+        public ILogProvider LogProvider
+        {
+            get => _logProvider;
+            set
+            {
+                _logProvider = value;
+                DebugHub.SetLogProvider(value);
+            }
+        }
         public IAssetManager? AssetManager { get; set; }
         public INetworkManager NetworkManager { get; set; }
         public IStorageProvider StorageProvider { get; set; }
@@ -26,6 +38,7 @@ namespace HN.Framework.Core.Driver
             ProcedureManager = new ProcedureManager();
             ControllerManager = new ControllerManager();
             EventBus = new EventBus();
+            DebugHub = new Capability.Debug.DebugHub();
         }
 
         public void Initialize()
