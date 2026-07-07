@@ -28,7 +28,7 @@ namespace HN.Framework.Core.Tests.Serialization
         [Test]
         public void RegisterAndGetFormatter_Generic_Success()
         {
-            var formatter = new TestIntFormatter();
+            var formatter = new TestDataFormatter();
 
             global::MemoryPack.MemoryPackFormatterProvider.Register(formatter);
             var retrieved = formatter;
@@ -91,16 +91,24 @@ namespace HN.Framework.Core.Tests.Serialization
         }
 
         /// <summary>
+        /// 测试用数据类，避免污染 <c>int</c> 等内置类型的全局格式化器注册状态。
+        /// </summary>
+        private sealed class TestData
+        {
+            public int Value { get; set; }
+        }
+
+        /// <summary>
         /// 继承 <see cref="MemoryPackFormatter{T}"/> 的测试格式化器，
         /// 用于验证格式化器注册与检索机制。
         /// </summary>
-        private sealed class TestIntFormatter : MemoryPackFormatter<int>
+        private sealed class TestDataFormatter : MemoryPackFormatter<TestData>
         {
-            public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref int value)
+            public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref TestData value)
             {
             }
 
-            public override void Deserialize(ref MemoryPackReader reader, scoped ref int value)
+            public override void Deserialize(ref MemoryPackReader reader, scoped ref TestData value)
             {
             }
         }
