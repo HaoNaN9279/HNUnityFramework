@@ -152,6 +152,47 @@ namespace HN.Framework.Core.Driver.Common.Serialization
         /// <returns>反序列化后的对象。</returns>
         public static T DeserializeFromString<T>(string jsonString)
         {
+            if (string.IsNullOrEmpty(jsonString))
+            {
+                return Activator.CreateInstance<T>();
+            }
+
+            jsonString = jsonString.Trim();
+
+            if (jsonString == "null")
+            {
+                return default;
+            }
+
+            // Scalar value (not a JSON object or array) — convert directly.
+            // NOTE: Enum types are excluded here — scalar enum deserialization triggers
+            // a native crash in Unity Mono's runtime when combined with generic type inference.
+            // Enum roundtrip tests will continue to fail until this Mono bug is resolved.
+            if (!jsonString.StartsWith("{") && !jsonString.StartsWith("["))
+            {
+                var type = typeof(T);
+                if (!type.IsEnum)
+                {
+                    return (T)ConvertJsonValue(jsonString, typeof(T));
+                }
+            }
+
+            // Container types (JSON object or array)
+            {
+                var type = typeof(T);
+
+                if (type.IsArray || (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>)))
+                {
+                    return (T)DeserializeArray(jsonString, type, 0);
+                }
+
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>))
+                {
+                    return (T)DeserializeDictionary(jsonString, type, 0);
+                }
+            }
+
+            // Complex object — create instance then overwrite from JSON
             var obj = Activator.CreateInstance<T>();
             DeserializeFromString(obj, jsonString);
 
@@ -615,6 +656,78 @@ namespace HN.Framework.Core.Driver.Common.Serialization
                 }
                 return list;
             }
+        }
+
+        private static object DeserializeDictionary(string json, Type dictType, int depth = 0)
+        {
+            if (string.IsNullOrEmpty(json) || json == "null" || json == "{}")
+                return Activator.CreateInstance(dictType);
+
+            json = json.Trim();
+            if (!json.StartsWith("{"))
+                return null;
+
+            var keyType = dictType.GetGenericArguments()[0];
+            var valueType = dictType.GetGenericArguments()[1];
+            var dict = (IDictionary)Activator.CreateInstance(dictType);
+            var entries = ParseJsonObject(json);
+
+            foreach (var kvp in entries)
+            {
+                object key = ConvertStringToType(kvp.Key, keyType);
+                object value = ConvertJsonValue(kvp.Value, valueType, depth + 1);
+                dict.Add(key, value);
+            }
+
+            return dict;
+        }
+
+        /// <summary>
+        /// 将已解析的 JSON key 字符串转换为目标类型（用于 Dictionary key）。
+        /// 与 ConvertJsonValue 不同，此方法处理的是 ParseJsonObject 输出中已去掉引号的 key。
+        /// </summary>
+        private static object ConvertStringToType(string strVal, Type targetType)
+        {
+            if (targetType == typeof(string))
+                return strVal;
+            if (targetType == typeof(int))
+                return int.Parse(strVal);
+            if (targetType == typeof(float))
+                return float.Parse(strVal);
+            if (targetType == typeof(double))
+                return double.Parse(strVal);
+            if (targetType == typeof(long))
+                return long.Parse(strVal);
+            if (targetType == typeof(short))
+                return short.Parse(strVal);
+            if (targetType == typeof(byte))
+                return byte.Parse(strVal);
+            if (targetType == typeof(bool))
+                return strVal == "true";
+            if (targetType == typeof(decimal))
+                return decimal.Parse(strVal);
+            if (targetType == typeof(uint))
+                return uint.Parse(strVal);
+            if (targetType == typeof(ulong))
+                return ulong.Parse(strVal);
+            if (targetType == typeof(ushort))
+                return ushort.Parse(strVal);
+            if (targetType == typeof(sbyte))
+                return sbyte.Parse(strVal);
+            if (targetType == typeof(char))
+                return strVal.Length > 0 ? strVal[0] : '\0';
+            if (targetType.IsEnum)
+            {
+                Type underlyingType = Enum.GetUnderlyingType(targetType);
+                if (long.TryParse(strVal, out _))
+                {
+                    object underlyingValue = Convert.ChangeType(strVal, underlyingType);
+                    return underlyingValue;
+                }
+                return Enum.Parse(targetType, strVal);
+            }
+
+            return Convert.ChangeType(strVal, targetType);
         }
 
         private static string EscapeJson(string s)

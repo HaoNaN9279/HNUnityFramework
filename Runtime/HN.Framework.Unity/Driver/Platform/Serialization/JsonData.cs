@@ -53,6 +53,9 @@ namespace HN.Framework.Unity.Driver.Platform.Serialization
         /// <param name="nodeDataType">继承 JsonObject 的类型。</param>
         public JsonData(Type nodeDataType)
         {
+            if (nodeDataType == null)
+                return;
+
             obj = Activator.CreateInstance(nodeDataType) as JsonObject;
             if(obj == null)
                 return;
@@ -68,7 +71,7 @@ namespace HN.Framework.Unity.Driver.Platform.Serialization
         public void Serialize()
         {
             jsonText = SerializeToJson();
-            cachedJsonText = jsonText ?? string.Empty;
+            cachedJsonText = string.Empty;
         }
         
         /// <summary>
