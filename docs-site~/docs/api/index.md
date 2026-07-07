@@ -50,6 +50,11 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
 - **DebugHub** — Capability 层调试中枢，支持模块注册（RegisterModule）、命令执行（ExecuteCommand）、前缀搜索（SearchCommands）、ILogProvider 桥接（SetLogProvider）
 - **DebugModule** — 调试模块，将关联的日志通道和调试命令打包为一个逻辑模块
 - **DebugCommandRegistry** — 命令注册表查询层，支持精确查找和前缀搜索（Tab 自动补全）
+- **IScriptEngine** — 脚本引擎抽象接口，定义脚本执行、全局注册和函数调用的基本契约
+- **IScriptMod** — Mod 生命周期接口（OnLoad/OnEnable/OnDisable/OnUnload）
+- **ModState** — Mod 状态枚举（NotLoaded/Loaded/Enabled/Disabled/Error）
+- **ScriptModConfig** — Mod 配置数据模型（ModId/ModName/Version/ScriptPaths/Sandboxed）
+- **IHotUpdateEntry** — 热更新 DLL 入口接口，由热更程序集实现以注册模块到 GameWorld
 
 **Level.Logic — 逻辑层**
 
@@ -94,6 +99,8 @@ Unity 平台层，依赖 UnityEngine。
 - **UnityFormattersInitializer** — Unity 格式化器初始化器，提供 `RegisterAll()` 批量注册
 - **SheetElementTypeAttribute** 🚧 — 配置表元素类型标记（待实现）
 - **RuntimeDebugConsole** — UGUI 运行时调试控制台（`~` 键切换，命令输入/自动补全/历史）
+- **LuaModManager** — xLua Mod 脚本管理器，实现 IScriptEngine，提供沙箱隔离和 API 白名单机制
+- **HybridCLRAdapter** — HybridCLR 运行时适配器，负责加载热更新 DLL 和注册 AOT 补充元数据
 
 **Level.View — 视图层**
 
@@ -133,6 +140,13 @@ Unity 平台层，依赖 UnityEngine。
 - **AddressablesGroupsUpdater** — Addressables 分组更新器
 - **AddressablesAssetsGroupPresets** — 分组预设配置
 - **AddressablesAssetsGroupPresetsEditor** — 分组预设编辑器
+
+**Scripting — 热更新工具**
+
+- **HybridCLRBuildProcessor** — HybridCLR 构建管线处理器，在 Unity 构建过程中自动处理 AOT 元数据生成和原生库拷贝
+- **HybridCLRMetadataGenerator** — AOT 元数据生成器，封装 HybridCLR 的标准生成流程
+- **HybridCLRBuildSettings** — HybridCLR 构建配置 ScriptableObject（AOT 元数据 / 热更程序集 / 构建选项）
+- **HybridCLRNativeLibManager** — HybridCLR 原生库管理器，验证安装状态和拷贝原生库到构建输出
 
 **Utils — 编辑器工具**
 

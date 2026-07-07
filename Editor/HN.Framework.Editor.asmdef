@@ -3,7 +3,8 @@
     "rootNamespace":  "HN.Framework.Editor",
     "references":  [
         "HN.Framework.Core",
-        "HN.Framework.Unity"
+        "HN.Framework.Unity",
+        "HybridCLR.Editor"
                     ],
     "includePlatforms":  [
                              "Editor"

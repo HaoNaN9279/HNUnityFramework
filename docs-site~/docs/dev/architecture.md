@@ -213,6 +213,7 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 | D4 | HNRenderPipeline + ShaderLibrary | 🚧 Stub | |
 | C1 | MemoryPack 序列化模块 | ✅ | 二进制序列化，含 Core 包装器 + Unity 类型格式化器（16种） |
 | C2 | Debug 系统（Core + Unity） | ✅ | DebugHub（Capability 层）、DebugModule、DebugCommandRegistry、RuntimeDebugConsole |
+| C15 | 热更新与脚本系统（HybridCLR + xLua Mod） | ✅ | HybridCLRAdapter + LuaModManager，含 AOT 元数据加载、热更 DLL 加载、Mod 生命周期管理、沙箱隔离 |
 | S2 | ILogProvider / UnityLogProvider | ✅ | |
 | S3 | IAssetOperator + 三种实现 | ✅ | |
 | S5 | INetworkManager + FishNet 封装 | 🚧 Stub | |
