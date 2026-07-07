@@ -282,6 +282,80 @@ public interface ITickable
 
 框架内置的 `ObjectPoolManager`、`ProcedureManager`、`ControllerManager` 均已实现此接口，并在 `GameWorld.Tick()` 中自动调用。
 
+## HNRandom — 确定性伪随机数生成器
+
+`HNRandom` 是基于 xorshift128+ 算法的确定��伪随机数生成器，位于 `HN.Framework.Core.Driver.Common.Math` 命名空间。
+
+### 为什么需要 HNRandom？
+
+与 `System.Random` 不同，`HNRandom` 的实现在所有 .NET 版本和平台上完全一致：
+
+| 特性 | System.Random | HNRandom |
+|------|:------------:|:--------:|
+| 跨平台一致性 | ❌ 不保证 | ✅ 完全一致 |
+| 种子控制 | ✅ | ✅ |
+| 状态序列化 | ❌ | ✅ GetState/SetState |
+| 性能 | 中等 | 快速（xorshift128+） |
+| 统计质量 | 一般 | 优秀（通过 BigCrush） |
+
+适用场景：回放系统、网络同步随机数、自动化测试、地图种子生成。
+
+### 基本用法
+
+```csharp
+using HN.Framework.Core.Driver.Common.Math;
+
+// 使用指定种子创建（相同种子 → 相同序列）
+var rng = new HNRandom(12345UL);
+
+// 随机整数
+int value = rng.Next();                    // 0 ~ int.MaxValue
+int dice = rng.Next(1, 7);                 // 1 ~ 6
+int percentage = rng.Next(100);            // 0 ~ 99
+
+// 随机浮点数
+double d = rng.NextDouble();               // [0.0, 1.0)
+float f = rng.NextFloat();                 // [0.0f, 1.0f)
+
+// 原始 64 位随机数
+ulong raw = rng.NextUInt64();
+```
+
+### 确定性验证
+
+```csharp
+var rng1 = new HNRandom(42UL);
+var rng2 = new HNRandom(42UL);
+
+for (int i = 0; i < 100; i++)
+{
+    Debug.Assert(rng1.Next() == rng2.Next()); // 始终相等
+}
+```
+
+### 状态序列化
+
+用于保存/恢复随机数生成器状态（如存档系统）：
+
+```csharp
+var rng = new HNRandom(seed);
+
+// 消费一些随机数...
+for (int i = 0; i < 100; i++) rng.Next();
+
+// 保存状态
+var (s0, s1) = rng.GetState();
+// 将 s0, s1 序列化到存档...
+
+// 从存档恢复
+rng.SetState(s0, s1);
+// 之后的随机数序列与保存时完全一致
+```
+
+### 线程安全
+
+`HNRandom` 不是线程安全的。每个线程应使用独立实例。
+
 ## 迁移说明
 
 旧版本中框架入口为 `HNUnityFramework` 抽象类（MonoBehaviour），用户通过继承它并重写 `OnAwake` / `OnStart` 等虚方法来接入。该设计已废弃，被 `GameWorld` + `GameWorldDriver` 双组件模式取代：

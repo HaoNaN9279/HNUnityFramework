@@ -33,6 +33,7 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
 - **IDebugHub** — 调试中枢接口（RegisterChannel / RegisterCommand / Log）
 - **IDebugCommand** — 调试命令接口（Name / Description / Execute）
 - **DebugHub** — 调试中枢实现类（通道/命令注册表 + 环形日志缓冲）
+- **HNRandom** — 确定性伪随机数生成器，基于 xorshift128+ 算法，支持种子设置与状态序列化
 
 **Capability — 能力模块（接口定义）**
 

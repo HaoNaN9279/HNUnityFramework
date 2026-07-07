@@ -203,7 +203,8 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 | D2 | ReferencePool / PooledCollections | ✅ | 静态，不做迁移 |
 | D2 | `ObjectPool<T>` / PoolBase / PooledObjectBase | ✅ | |
 | D2 | IEventBus | 🚧 Stub | 接口定义 |
-| D2 | 定点数 / 确定性随机数 | 🚧 Stub | |
+| D2 | HNRandom（确定性随机数） | ✅ | xorshift128+ 算法，支持种子设置与状态序列化 |
+| D2 | HNFixedPoint（定点数） | 🚧 Stub | 可选模块，仅 lockstep 需要 |
 | D3 | Debug 基础设施（LogLevel/ILogChannel/LogEntry） | ✅ | 日志等级枚举、模块级日志通道、结构化日志条目 |
 | D3 | IDebugHub / IDebugCommand / DebugHub | ✅ | 调试中枢：通道/命令注册表 + 环形日志缓冲（100 条） |
 | D4 | GameWorldDriver | ✅ | |
