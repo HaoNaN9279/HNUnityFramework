@@ -8,7 +8,8 @@
         "Unity.InputSystem",
         "Unity.InputSystem.TestFramework",
         "FishNet.Runtime",
-        "GUID:3c1b0d1c2470401da464c2f78e21cbbe"
+        "GUID:3c1b0d1c2470401da464c2f78e21cbbe",
+        "LitMotion"
     ],
     "includePlatforms": [
         "Editor"
