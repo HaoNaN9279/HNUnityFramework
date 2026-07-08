@@ -1,4 +1,4 @@
-using HN.Framework.Capability.Core.Network;
+using HN.Framework.Core.Capability.Network;
 using HN.Framework.Core.Capability;
 using HN.Framework.Core.Capability.Debug;
 using HN.Framework.Core.Capability.Input;

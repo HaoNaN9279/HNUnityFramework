@@ -39,7 +39,9 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
 
 - **IAssetManager** — 资源管理器接口
 - **ILogProvider** — 日志提供者接口（支持 LogLevel 分级 + Channel 通道）
-- **INetworkManager** — 网络管理器接口
+- **INetworkManager** — 网络管理器接口，定义 IsServer/IsClient/IsHost、StartServer/StartClient/StopConnection、连接事件
+- **MessageBase** — 消息协议抽象基类，继承 IReference 支持 ReferencePool 池复用
+- **ConnectionMessages** — 连接消息类型（ClientConnected / ClientDisconnected / ServerReady）
 - **ISerializer** — 统一序列化接口，支持泛型和非泛型
 - **MemoryPackFormatterProvider** — 格式化器注册适配器，框架友好封装
 - **IStorageProvider** — 存储提供者接口
@@ -92,10 +94,11 @@ Unity 平台层，依赖 UnityEngine。
 
 **Capability — 能力模块（Unity 实现）**
 
-- **FishNetNetworkManager** 🚧 — FishNet 网络管理器（待实现）
-- **FishNetMessageBus** 🚧 — FishNet 消息总线（待实现）
-- **FishNetConnectionAdapter** 🚧 — FishNet 连接适配器（待实现）
-- **FishNetSerializerAdapter** 🚧 — FishNet 序列化适配器骨架，将 MemoryPack 注入 FishNet（完整实现由 C6 模块负责）
+- **FishNetNetworkManager** — FishNet 网络管理器实现，纯 C# 包装 FishNet.NetworkManager
+- **NetworkEntityView** — 网络实体视图基类，继承 FishNet.NetworkBehaviour
+- **FishNetMessageBus** — 网络消息总线，封装 FishNet Broadcast 系统
+- **FishNetConnectionAdapter** — 连接状态管理适配器
+- **FishNetSerializerAdapter** — MemoryPack 注入 FishNet 的自定义序列化器
 - **UnityFormatters** — Unity 类型格式化器集合，含 16 种内置类型
 - **UnityFormattersInitializer** — Unity 格式化器初始化器，提供 `RegisterAll()` 批量注册
 - **SheetElementTypeAttribute** 🚧 — 配置表元素类型标记（待实现）

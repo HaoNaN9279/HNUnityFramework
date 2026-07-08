@@ -10,7 +10,8 @@
         "Unity.Timeline",
         "Unity.InputSystem",
         "GUID:3c1b0d1c2470401da464c2f78e21cbbe",
-        "HN.Framework.Unity.Vendor.XLua"
+        "HN.Framework.Unity.Vendor.XLua",
+        "FishNet.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
