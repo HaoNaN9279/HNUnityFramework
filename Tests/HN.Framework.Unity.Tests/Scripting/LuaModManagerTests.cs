@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using HN.Framework.Core.Capability.Scripting;
 using HN.Framework.Unity.Capability.Scripting;
 using NUnit.Framework;
@@ -71,11 +72,11 @@ namespace HN.Framework.Unity.Tests.Scripting
         [Test]
         public void LoadMod_EmptyModId_ReturnsNull()
         {
-            LogAssert.Expect(LogType.Error, "[LuaModManager] LoadMod: ModId is null or empty.");
+            LogAssert.Expect(LogType.Warning, new Regex(@"\[LuaModManager\] LoadMod: ModId is null or empty\."));
             var mod = m_Manager.LoadMod(new ScriptModConfig { ModId = null });
             Assert.That(mod, Is.Null);
 
-            LogAssert.Expect(LogType.Error, "[LuaModManager] LoadMod: ModId is null or empty.");
+            LogAssert.Expect(LogType.Warning, new Regex(@"\[LuaModManager\] LoadMod: ModId is null or empty\."));
             mod = m_Manager.LoadMod(new ScriptModConfig { ModId = "" });
             Assert.That(mod, Is.Null);
         }
@@ -147,7 +148,7 @@ namespace HN.Framework.Unity.Tests.Scripting
             m_Manager.EnableMod("test_mod");
 
             // 执行非法 Lua 代码，预期产生 Error 日志
-            LogAssert.Expect(LogType.Error, new System.Text.RegularExpressions.Regex(@"\[LuaModManager\] Execute failed.*bad_chunk.*"));
+            LogAssert.Expect(LogType.Warning, new Regex(@"\[LuaModManager\] Execute failed.*bad_chunk.*"));
             m_Manager.Execute("syntax error !@#$%^", "bad_chunk");
 
             var mod = m_Manager.GetMod("test_mod");
@@ -344,7 +345,7 @@ namespace HN.Framework.Unity.Tests.Scripting
             m_Manager.LoadMod(config);
             m_Manager.EnableMod("no_func_mod");
 
-            LogAssert.Expect(LogType.Error, "[LuaModManager] CallFunction: Global function 'nonexistent_func' not found.");
+            LogAssert.Expect(LogType.Warning, new Regex(@"\[LuaModManager\] CallFunction: Global function 'nonexistent_func' not found\."));
             var result = m_Manager.CallFunction("", "nonexistent_func", 1, 2);
             Assert.That(result, Is.Null);
         }

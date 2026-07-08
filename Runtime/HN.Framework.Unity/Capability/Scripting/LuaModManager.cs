@@ -180,7 +180,7 @@ namespace HN.Framework.Unity.Capability.Scripting
 
             if (string.IsNullOrEmpty(config.ModId))
             {
-                UnityEngine.Debug.LogError("[LuaModManager] LoadMod: ModId is null or empty.");
+                UnityEngine.Debug.LogWarning("[LuaModManager] LoadMod: ModId is null or empty.");
                 return null;
             }
 
@@ -358,7 +358,7 @@ namespace HN.Framework.Unity.Capability.Scripting
                     activeMod.State = ModState.Error;
                 }
 
-                UnityEngine.Debug.LogError($"[LuaModManager] Execute failed (chunk: '{chunkName}'): {e.Message}");
+                UnityEngine.Debug.LogWarning($"[LuaModManager] Execute failed (chunk: '{chunkName}'): {e.Message}");
             }
         }
 
@@ -448,7 +448,7 @@ namespace HN.Framework.Unity.Capability.Scripting
                     {
                         if (func == null)
                         {
-                            UnityEngine.Debug.LogError(
+                            UnityEngine.Debug.LogWarning(
                                 $"[LuaModManager] CallFunction: Global function '{funcName}' not found.");
                             return null;
                         }

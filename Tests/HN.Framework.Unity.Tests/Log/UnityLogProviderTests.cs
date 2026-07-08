@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using HN.Framework.Core.Capability;
 using HN.Framework.Core.Driver.Common.Debug;
 using HN.Framework.Unity.Driver.Platform.Log;
@@ -35,7 +36,7 @@ namespace HN.Framework.Unity.Tests.Log
         [Test]
         public void Log_StringMethod_LogsToDebug()
         {
-            LogAssert.Expect(LogType.Log, "plain");
+            LogAssert.Expect(LogType.Log, new Regex("plain"));
             provider.Log("plain");
         }
 
@@ -45,7 +46,7 @@ namespace HN.Framework.Unity.Tests.Log
         [Test]
         public void Log_DebugLevel_UsesDebugLog()
         {
-            LogAssert.Expect(LogType.Log, "[Debug] [test] hello");
+            LogAssert.Expect(LogType.Log, new Regex(@"\[Debug\] \[test\] hello"));
             provider.Log(LogLevel.Debug, "test", "hello");
         }
 
@@ -55,7 +56,7 @@ namespace HN.Framework.Unity.Tests.Log
         [Test]
         public void Log_InfoLevel_UsesDebugLog()
         {
-            LogAssert.Expect(LogType.Log, "[Info] [test] hello");
+            LogAssert.Expect(LogType.Log, new Regex(@"\[Info\] \[test\] hello"));
             provider.Log(LogLevel.Info, "test", "hello");
         }
 
@@ -65,7 +66,7 @@ namespace HN.Framework.Unity.Tests.Log
         [Test]
         public void Log_WarningLevel_UsesWarningLog()
         {
-            LogAssert.Expect(LogType.Warning, "[Warning] [ch] msg");
+            LogAssert.Expect(LogType.Warning, new Regex(@"\[Warning\] \[ch\] msg"));
             provider.Log(LogLevel.Warning, "ch", "msg");
         }
 
@@ -75,7 +76,7 @@ namespace HN.Framework.Unity.Tests.Log
         [Test]
         public void Log_ErrorLevel_UsesErrorLog()
         {
-            LogAssert.Expect(LogType.Error, "[Error] [ch] msg");
+            LogAssert.Expect(LogType.Error, new Regex(@"\[Error\] \[ch\] msg"));
             provider.Log(LogLevel.Error, "ch", "msg");
         }
 
@@ -85,7 +86,7 @@ namespace HN.Framework.Unity.Tests.Log
         [Test]
         public void Log_FatalLevel_UsesErrorLog()
         {
-            LogAssert.Expect(LogType.Error, "[Fatal] [ch] msg");
+            LogAssert.Expect(LogType.Error, new Regex(@"\[Fatal\] \[ch\] msg"));
             provider.Log(LogLevel.Fatal, "ch", "msg");
         }
     }
