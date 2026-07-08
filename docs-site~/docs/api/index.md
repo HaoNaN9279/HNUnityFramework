@@ -51,6 +51,10 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
 - **IEventBus** — 事件总线接口，提供 `Subscribe<T>` / `Unsubscribe<T>` / `Publish<T>` / `HasSubscribers<T>` 方法
 - **EventBus** — 事件总线实现，线程安全，基于锁+快照模式
 - **DebugHub** — Capability 层调试中枢，支持模块注册（RegisterModule）、命令执行（ExecuteCommand）、前缀搜索（SearchCommands）、ILogProvider 桥接（SetLogProvider）
+- **IUIManager** — UI 管理器接口，定义 Push/Pop/Show/Hide 面板栈操作
+- **UILayer** — UI 7 层层级枚举（Background/Scene/UI/Popup/Toast/Guide/System）
+- **UIPanelState** — 面板状态枚举（Closed/Opening/Opened/Closing）
+- **RedDotNode** — 红点树节点，支持父子聚合计数与变更事件
 - **DebugModule** — 调试模块，将关联的日志通道和调试命令打包为一个逻辑模块
 - **DebugCommandRegistry** — 命令注册表查询层，支持精确查找和前缀搜索（Tab 自动补全）
 - **IScriptEngine** — 脚本引擎抽象接口，定义脚本执行、全局注册和函数调用的基本契约
@@ -105,6 +109,9 @@ Unity 平台层，依赖 UnityEngine。
 - **RuntimeDebugConsole** — UGUI 运行时调试控制台（`~` 键切换，命令输入/自动补全/历史）
 - **LuaModManager** — xLua Mod 脚本管理器，实现 IScriptEngine，提供沙箱隔离和 API 白名单机制
 - **HybridCLRAdapter** — HybridCLR 运行时适配器，负责加载热更新 DLL 和注册 AOT 补充元数据
+- **UIManager** — 7 层 Canvas 栈管理器，实现 IUIManager + ITickable + IDisposable
+- **UIPanel** — 面板基类（MonoBehaviour），生命周期 Closed→Opening→Opened→Closing 状态机
+- **UIAnimation** — LitMotion 封装静态工具类，提供 FadeIn/Out、SlideIn/Out、ScaleIn/Out 预设动画
 
 **Level.View — 视图层**
 

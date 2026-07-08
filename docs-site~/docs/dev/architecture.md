@@ -226,6 +226,10 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 | Level.Logic | Entity 系统 | 🚧 Stub | |
 | Level.View | ViewFactory / EntityView | 🚧 Stub | |
 | Level.View | PropertyBinder | partial ✅ | 属性绑定抽象类，提供 Bind/UnbindAll 方法 |
+| C13 | UI 系统 (Core 接口) | ✅ Phase 1 | UILayer/UIPanelState/IUIManager/RedDotNode |
+| C13 | UI 系统 (Unity 实现) | ✅ Phase 1 | UIManager/UIPanel/UIAnimation |
+| C13 | UI 系统 (扩展面板) | 📋 Phase 2 | UIDialog/UIToast/UIGuide/RedDotManager |
+| V1 | UI 运行时 | ✅ Phase 1 | Canvas 7层栈（内置于 UIManager） |
 
 > ✅ = 已实现  🚧 Stub = 骨架已创建待完整实现
 
