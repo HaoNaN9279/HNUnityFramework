@@ -18,6 +18,21 @@ namespace HN.Framework.Unity.Capability.UI
     {
         private const int LayerCount = 7;
 
+        /// <summary>
+        /// 将 UILayer 枚举值映射为连续的数组索引（0-6），因为 UILayer 的值是 SortOrder 而非索引。
+        /// </summary>
+        private static int LayerToIndex(UILayer layer) => layer switch
+        {
+            UILayer.Background => 0,
+            UILayer.Scene => 1,
+            UILayer.UI => 2,
+            UILayer.Popup => 3,
+            UILayer.Toast => 4,
+            UILayer.Guide => 5,
+            UILayer.System => 6,
+            _ => -1
+        };
+
         private readonly Transform? _container;
         private bool _initialized;
         private readonly Canvas?[] _layerCanvases;
@@ -46,6 +61,17 @@ namespace HN.Framework.Unity.Capability.UI
         }
 
         /// <summary>
+        /// 辅助方法：在 Play Mode 使用 Destroy（正常生命周期），Edit Mode 使用 DestroyImmediate。
+        /// </summary>
+        private static void DestroyObject(UnityEngine.Object obj)
+        {
+            if (Application.isPlaying)
+                UnityEngine.Object.Destroy(obj);
+            else
+                UnityEngine.Object.DestroyImmediate(obj);
+        }
+
+        /// <summary>
         /// 获取导航栈中当前面板的数量（仅供测试使用）。
         /// </summary>
         internal int PanelStackCount => _panelStack.Count;
@@ -65,7 +91,7 @@ namespace HN.Framework.Unity.Capability.UI
 
             foreach (UILayer layer in Enum.GetValues(typeof(UILayer)))
             {
-                int index = (int)layer;
+                int index = LayerToIndex(layer);
 
                 // 防御：确保 UILayer 值在合法范围内
                 if (index < 0 || index >= LayerCount)
@@ -112,13 +138,13 @@ namespace HN.Framework.Unity.Capability.UI
         {
             if (!_initialized)
             {
-                Debug.LogError($"[UIManager] Push('{panelPath}') called before Initialize().");
+                UnityEngine.Debug.LogError($"[UIManager] Push('{panelPath}') called before Initialize().");
                 return;
             }
 
             if (string.IsNullOrEmpty(panelPath))
             {
-                Debug.LogError("[UIManager] Push(): panelPath is null or empty.");
+                UnityEngine.Debug.LogError("[UIManager] Push(): panelPath is null or empty.");
                 return;
             }
 
@@ -126,7 +152,7 @@ namespace HN.Framework.Unity.Capability.UI
             var prefab = Resources.Load<GameObject>(panelPath);
             if (prefab == null)
             {
-                Debug.LogError($"[UIManager] Push(): Failed to load panel from Resources path '{panelPath}'.");
+                UnityEngine.Debug.LogError($"[UIManager] Push(): Failed to load panel from Resources path '{panelPath}'.");
                 return;
             }
 
@@ -134,20 +160,20 @@ namespace HN.Framework.Unity.Capability.UI
             var panel = instance.GetComponent<UIPanel>();
             if (panel == null)
             {
-                Debug.LogError($"[UIManager] Push(): Prefab at '{panelPath}' does not have a UIPanel component.");
-                UnityEngine.Object.Destroy(instance);
+                UnityEngine.Debug.LogError($"[UIManager] Push(): Prefab at '{panelPath}' does not have a UIPanel component.");
+                DestroyObject(instance);
                 return;
             }
 
             // Phase 1: 默认层为 UILayer.UI，Phase 2 将通过 PanelAttribute 指定
             UILayer layer = UILayer.UI;
-            int index = (int)layer;
+            int index = LayerToIndex(layer);
             Transform? layerRoot = _layerRoots[index];
 
             if (layerRoot == null)
             {
-                Debug.LogError($"[UIManager] Push(): Layer root for '{layer}' is null. Did Initialize() run?");
-                UnityEngine.Object.Destroy(instance);
+                UnityEngine.Debug.LogError($"[UIManager] Push(): Layer root for '{layer}' is null. Did Initialize() run?");
+                DestroyObject(instance);
                 return;
             }
 
@@ -160,7 +186,7 @@ namespace HN.Framework.Unity.Capability.UI
         {
             if (!_initialized)
             {
-                Debug.LogWarning("[UIManager] Pop() called before Initialize().");
+                UnityEngine.Debug.LogWarning("[UIManager] Pop() called before Initialize().");
                 return;
             }
 
@@ -179,27 +205,27 @@ namespace HN.Framework.Unity.Capability.UI
         {
             if (!_initialized)
             {
-                Debug.LogError($"[UIManager] Show('{panelPath}') called before Initialize().");
+                UnityEngine.Debug.LogError($"[UIManager] Show('{panelPath}') called before Initialize().");
                 return;
             }
 
             if (string.IsNullOrEmpty(panelPath))
             {
-                Debug.LogError("[UIManager] Show(): panelPath is null or empty.");
+                UnityEngine.Debug.LogError("[UIManager] Show(): panelPath is null or empty.");
                 return;
             }
 
             // 已显示的同路径面板不重复创建
             if (_nonStackPanels.ContainsKey(panelPath))
             {
-                Debug.LogWarning($"[UIManager] Show(): Panel '{panelPath}' is already shown.");
+                UnityEngine.Debug.LogWarning($"[UIManager] Show(): Panel '{panelPath}' is already shown.");
                 return;
             }
 
             var prefab = Resources.Load<GameObject>(panelPath);
             if (prefab == null)
             {
-                Debug.LogError($"[UIManager] Show(): Failed to load panel from Resources path '{panelPath}'.");
+                UnityEngine.Debug.LogError($"[UIManager] Show(): Failed to load panel from Resources path '{panelPath}'.");
                 return;
             }
 
@@ -207,19 +233,19 @@ namespace HN.Framework.Unity.Capability.UI
             var panel = instance.GetComponent<UIPanel>();
             if (panel == null)
             {
-                Debug.LogError($"[UIManager] Show(): Prefab at '{panelPath}' does not have a UIPanel component.");
-                UnityEngine.Object.Destroy(instance);
+                UnityEngine.Debug.LogError($"[UIManager] Show(): Prefab at '{panelPath}' does not have a UIPanel component.");
+                DestroyObject(instance);
                 return;
             }
 
             UILayer layer = UILayer.UI;
-            int index = (int)layer;
+            int index = LayerToIndex(layer);
             Transform? layerRoot = _layerRoots[index];
 
             if (layerRoot == null)
             {
-                Debug.LogError($"[UIManager] Show(): Layer root for '{layer}' is null.");
-                UnityEngine.Object.Destroy(instance);
+                UnityEngine.Debug.LogError($"[UIManager] Show(): Layer root for '{layer}' is null.");
+                DestroyObject(instance);
                 return;
             }
 
@@ -232,13 +258,13 @@ namespace HN.Framework.Unity.Capability.UI
         {
             if (!_initialized)
             {
-                Debug.LogWarning("[UIManager] Hide() called before Initialize().");
+                UnityEngine.Debug.LogWarning("[UIManager] Hide() called before Initialize().");
                 return;
             }
 
             if (string.IsNullOrEmpty(panelPath))
             {
-                Debug.LogError("[UIManager] Hide(): panelPath is null or empty.");
+                UnityEngine.Debug.LogError("[UIManager] Hide(): panelPath is null or empty.");
                 return;
             }
 
@@ -249,7 +275,7 @@ namespace HN.Framework.Unity.Capability.UI
             }
             else
             {
-                Debug.LogWarning($"[UIManager] Hide(): Panel '{panelPath}' is not currently shown.");
+                UnityEngine.Debug.LogWarning($"[UIManager] Hide(): Panel '{panelPath}' is not currently shown.");
             }
         }
 
@@ -264,7 +290,7 @@ namespace HN.Framework.Unity.Capability.UI
         /// <returns>对应的 Canvas 组件；若层无效则返回 null。</returns>
         public Canvas? GetLayerCanvas(UILayer layer)
         {
-            int index = (int)layer;
+            int index = LayerToIndex(layer);
             if (index < 0 || index >= LayerCount)
                 return null;
 
@@ -278,7 +304,7 @@ namespace HN.Framework.Unity.Capability.UI
         /// <returns>层的根 Transform；若层无效则返回 null。</returns>
         internal Transform? GetLayerRoot(UILayer layer)
         {
-            int index = (int)layer;
+            int index = LayerToIndex(layer);
             if (index < 0 || index >= LayerCount)
                 return null;
 

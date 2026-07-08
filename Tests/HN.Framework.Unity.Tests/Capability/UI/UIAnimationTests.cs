@@ -34,7 +34,7 @@ namespace HN.Framework.Unity.Tests.Capability.UI
         {
             if (_go != null)
             {
-                Object.DestroyImmediate(_go);
+                UnityEngine.Object.DestroyImmediate(_go);
                 _go = null;
             }
 

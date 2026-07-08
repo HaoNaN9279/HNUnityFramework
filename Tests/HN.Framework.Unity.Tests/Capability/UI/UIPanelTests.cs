@@ -34,13 +34,13 @@ namespace HN.Framework.Unity.Tests.Capability.UI
         {
             if (_panelGo != null)
             {
-                Object.DestroyImmediate(_panelGo);
+                UnityEngine.Object.DestroyImmediate(_panelGo);
                 _panelGo = null;
             }
 
             if (_parentGo != null)
             {
-                Object.DestroyImmediate(_parentGo);
+                UnityEngine.Object.DestroyImmediate(_parentGo);
                 _parentGo = null;
             }
 
