@@ -3,6 +3,7 @@ using HN.Framework.Core.Driver;
 using HN.Framework.Core.Capability;
 using HN.Framework.Core.Driver.Common;
 using HN.Framework.Unity.Capability.Input;
+using HN.Framework.Unity.Capability.UI;
 using HN.Framework.Unity.Driver.Platform;
 using HN.Framework.Unity.Capability.Asset;
 using HN.Framework.Unity.Driver.Platform.Log;
@@ -33,6 +34,11 @@ namespace HN.Framework.Unity.Driver.Platform
             var emptyInputAsset = InputActionAsset.FromJson("{\"maps\":[],\"controlSchemes\":[]}");
             World.InputManager = new InputManager(emptyInputAsset);
 
+            // 创建 UIManager，初始化 7 层 Canvas
+            var uiManager = new UIManager();
+            uiManager.Initialize();
+            World.UIManager = uiManager;
+
             OnRegisterGameModules(World);
             World.Initialize();
         }
@@ -40,11 +46,12 @@ namespace HN.Framework.Unity.Driver.Platform
         protected virtual void OnRegisterGameModules(GameWorld world) { }
 
         /// <summary>
-        /// 销毁时释放 InputManager 资源。
+        /// 销毁时释放 InputManager 和 UIManager 资源。
         /// </summary>
         protected virtual void OnDestroy()
         {
             (World?.InputManager as IDisposable)?.Dispose();
+            (World?.UIManager as IDisposable)?.Dispose();
         }
 
         protected virtual void Update()

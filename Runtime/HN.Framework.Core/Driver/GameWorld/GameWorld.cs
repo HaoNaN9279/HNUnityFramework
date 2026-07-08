@@ -2,6 +2,7 @@ using HN.Framework.Core.Capability.Network;
 using HN.Framework.Core.Capability;
 using HN.Framework.Core.Capability.Debug;
 using HN.Framework.Core.Capability.Input;
+using HN.Framework.Core.Capability.UI;
 using HN.Framework.Core.Driver.Common;
 using HN.Framework.Core.Capability.Event;
 using HN.Framework.Core.Level.Logic;
@@ -39,6 +40,12 @@ namespace HN.Framework.Core.Driver
         /// </summary>
         public IInputManager? InputManager { get; set; }
 
+        /// <summary>
+        /// UI 管理器。可通过属性替换以支持自定义实现。
+        /// 仅当实现 ITickable 时才由 GameWorld 调用 Tick/LateTick。
+        /// </summary>
+        public IUIManager? UIManager { get; set; }
+
         public GameWorld()
         {
             PoolManager = new ObjectPoolManager();
@@ -62,6 +69,7 @@ namespace HN.Framework.Core.Driver
             AssetManager?.Tick();
             // InputManager 是事件驱动的，Tick 仅当它实现 ITickable 时才生效
             (InputManager as ITickable)?.Tick();
+            (UIManager as ITickable)?.Tick();
         }
 
         public void LateTick()
@@ -71,6 +79,7 @@ namespace HN.Framework.Core.Driver
             ControllerManager.LateTick();
             AssetManager?.LateTick();
             (InputManager as ITickable)?.LateTick();
+            (UIManager as ITickable)?.LateTick();
         }
     }
 }
