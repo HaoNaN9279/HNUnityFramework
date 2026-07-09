@@ -4,7 +4,7 @@ using System;
 using LitMotion;
 using UnityEngine;
 
-namespace HN.Framework.Unity.Capability.UI
+namespace HN.Framework.Unity.Level.View.UI
 {
     /// <summary>
     /// 滑动方向枚举，用于 SlideIn/SlideOut 动画。

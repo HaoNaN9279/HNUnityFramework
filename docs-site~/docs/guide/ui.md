@@ -44,7 +44,7 @@ namespace HN.Framework.Core.Capability.UI
 
 ```csharp
 using HN.Framework.Core.Capability.UI;
-using HN.Framework.Unity.Capability.UI;
+using HN.Framework.Unity.Level.View.UI;
 
 // 通过 GameWorld 获取 UIManager
 IUIManager ui = GameWorld.Instance.UIManager;
@@ -89,15 +89,17 @@ ui.Hide<HudPanel>();
            │ 动画完成
            ▼
       ┌──────────┐
-      │  Closed   │
-      └──────────┘
+       │  Closed   │
+       └──────────┘
 ```
+
+OnEnterAnimation/OnExitAnimation 与 UIAnimation 预设动画集成，支持 Fade/Slide/Scale 等过渡效果。详见下方「UIAnimation 预设动画」章节。
 
 自定义面板时，重写以下虚方法：
 
 ```csharp
 using HN.Framework.Core.Capability.UI;
-using HN.Framework.Unity.Capability.UI;
+using HN.Framework.Unity.Level.View.UI;
 
 public class MyPanel : UIPanel
 {
@@ -148,7 +150,7 @@ public class MyPanel : UIPanel
 `UIAnimation` 是一个封装 LitMotion 的静态工具类，提供常用 UI 转场动画：
 
 ```csharp
-using HN.Framework.Unity.Capability.UI;
+using HN.Framework.Unity.Level.View.UI;
 using UnityEngine;
 
 public class AnimatedPanel : UIPanel
@@ -186,6 +188,91 @@ public class AnimatedPanel : UIPanel
 
 动画基于 LitMotion 实现（零 GC 分配，Burst 兼容），底层使用 `LMotion.Create` API。
 
+## UIDialog 模态弹窗
+
+UIDialog 是一个模态弹窗基类，继承 UIPanel，提供确认/取消回调机制。
+
+### 基本用法
+
+```csharp
+using HN.Framework.Unity.Level.View.UI;
+
+// 通过 UIManager 显示对话框
+ui.ShowDialog("Prefabs/Dialog/ConfirmDialog", 
+    onConfirm: () => Debug.Log("Confirmed!"),
+    onCancel: () => Debug.Log("Cancelled!"));
+```
+
+### 自定义对话框
+
+```csharp
+public class MyDialog : UIDialog
+{
+    protected override void OnConfirmClicked()
+    {
+        // 自定义逻辑
+        base.OnConfirmClicked();
+    }
+}
+```
+
+**特性**：自动阻挡下层交互（blocksRaycasts = true）、半透明遮罩、按钮事件自动注册/注销
+
+## UIToast 自动提示
+
+UIToast 是自动消失的提示面板，短暂显示通知消息。
+
+```csharp
+// 显示 3 秒的 Toast
+ui.ShowToast("保存成功", duration: 3f);
+```
+
+**特性**：不阻挡下层交互、支持 FadeIn/FadeOut 动画、自动排队（最多 3 个同时显示，超出排队）
+
+## UIGuide 教程引导
+
+UIGuide 是步骤驱动的新手引导覆盖层。
+
+```csharp
+// 定义引导步骤
+var steps = new GuideStep[]
+{
+    new GuideStep("step1", "MissionButton", "点击任务按钮", 
+        highlightSizeWidth: 150, highlightSizeHeight: 60),
+    new GuideStep("step2", "ShopButton", "进入商店"),
+};
+
+// 开始引导
+ui.StartGuide("MainGuide", onCompleted: () => Debug.Log("Guide completed"));
+
+// 停止引导
+ui.StopGuide();
+```
+
+GuideStep 数据模型（定义在 Core 层）包含：StepId, TargetName, Description, HighlightOffsetX/Y, HighlightSizeWidth/Height。
+
+## RedDotManager 红点管理
+
+RedDotManager 是红点系统的运行时管理器，基于路径式注册。
+
+```csharp
+var manager = new RedDotManager();
+
+// 注册路径（自动创建中间节点）
+var node = manager.Register("Mail/System/Unread");
+
+// 设置计数
+manager.SetCount("Mail/System/Unread", 5);
+
+// 获取聚合计数
+int count = manager.GetCount("Mail");   // 返回 5（自动聚合）
+
+// 监听变化
+manager.Subscribe("Mail", newCount => UpdateUI(newCount));
+```
+
+API：Register/Unregister/GetNode/SetCount/GetCount/Subscribe/Unsubscribe/Clear
+
 ## RedDotNode 红点树
 
 `RedDotNode` 是红点系统的数据模型，以树形结构组织，支持父子节点自动聚合计数：
@@ -222,12 +309,22 @@ RedDotNode 树状结构：
 - OnCountChanged 事件在节点或其子节点 Count 变化时触发
 ```
 
+## Addressables 异步加载
+
+Phase 2 增加了 Addressables 异步加载面板的支持，替代 Resources.Load。
+
+```csharp
+// 异步加载并入栈
+ui.PushAsync("Prefabs/Panel/ShopPanel");
+
+// 异步加载并显示（模态）
+ui.ShowAsync("Prefabs/Panel/HudPanel");
+
+// 旧 API 标记为 Obsolete 但仍保留兼容
+```
+
+**注意**：`PushAsync`/`ShowAsync` 会先通过 Addressables 加载面板资源，再执行显示流程。如果 Addressables 不可用，会自动回退到 Resources.Load。
+
 ## 下一步
 
-Phase 1 已完成 7 层 Canvas 栈管理器、面板生命周期和基础动画。Phase 2 计划实现：
-
-- **UIDialog** — 模态弹框，阻挡下层交互，支持确认/取消回调
-- **UIToast** — 自动消失的短暂提示，支持时长和动画配置
-- **UIGuide** — 新手引导覆盖层，步骤驱动，高亮区域
-- **RedDotManager** — 红点管理器运行时，支持路径注册和批量查询
-- **Addressables 面板加载** — 支持 Addressables 异步加载面板 Prefab
+Phase 2 已完成：UIDialog 模态弹窗、UIToast 自动提示、UIGuide 教程引导、RedDotManager 红点管理器、Addressables 面板加载、动画集成。后续版本将专注于性能优化和编辑器扩展。

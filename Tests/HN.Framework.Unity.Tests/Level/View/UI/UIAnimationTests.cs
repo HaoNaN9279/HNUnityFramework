@@ -1,12 +1,12 @@
 #nullable enable
 
 using System;
-using HN.Framework.Unity.Capability.UI;
+using HN.Framework.Unity.Level.View.UI;
 using LitMotion;
 using NUnit.Framework;
 using UnityEngine;
 
-namespace HN.Framework.Unity.Tests.Capability.UI
+namespace HN.Framework.Unity.Tests.Level.View.UI
 {
     /// <summary>
     /// UIAnimation 静态工具类的 EditMode 单元测试。

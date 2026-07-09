@@ -3,7 +3,7 @@ using HN.Framework.Core.Driver;
 using HN.Framework.Core.Capability;
 using HN.Framework.Core.Driver.Common;
 using HN.Framework.Unity.Capability.Input;
-using HN.Framework.Unity.Capability.UI;
+using HN.Framework.Unity.Level.View.UI;
 using HN.Framework.Unity.Driver.Platform;
 using HN.Framework.Unity.Capability.Asset;
 using HN.Framework.Unity.Driver.Platform.Log;

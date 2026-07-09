@@ -1,11 +1,11 @@
 #nullable enable
 
 using HN.Framework.Core.Capability.UI;
-using HN.Framework.Unity.Capability.UI;
+using HN.Framework.Unity.Level.View.UI;
 using NUnit.Framework;
 using UnityEngine;
 
-namespace HN.Framework.Unity.Tests.Capability.UI
+namespace HN.Framework.Unity.Tests.Level.View.UI
 {
     /// <summary>
     /// UIPanel 基类的 EditMode 单元测试，覆盖生命周期状态机与组件初始化。

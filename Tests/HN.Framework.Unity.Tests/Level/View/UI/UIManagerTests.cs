@@ -1,13 +1,13 @@
 #nullable enable
 
 using HN.Framework.Core.Capability.UI;
-using HN.Framework.Unity.Capability.UI;
+using HN.Framework.Unity.Level.View.UI;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace HN.Framework.Unity.Tests.Capability.UI
+namespace HN.Framework.Unity.Tests.Level.View.UI
 {
     /// <summary>
     /// UIManager 的 EditMode 单元测试，覆盖 Canvas 层级创建、栈式导航和生命周期管理。
