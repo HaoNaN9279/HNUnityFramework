@@ -1,6 +1,7 @@
 using System;
 using HN.Framework.Core.Driver;
 using HN.Framework.Core.Capability;
+using HN.Framework.Core.Capability.Localization;
 using HN.Framework.Core.Driver.Common;
 using HN.Framework.Unity.Capability.Input;
 using HN.Framework.Unity.Level.View.UI;
@@ -38,6 +39,9 @@ namespace HN.Framework.Unity.Driver.Platform
             var uiManager = new UIManager();
             uiManager.Initialize();
             World.UIManager = uiManager;
+
+            // LocaleProvider 由项目代码通过 World.LocaleProvider 注入
+            // 或通过 OnRegisterGameModules 自定义初始化
 
             OnRegisterGameModules(World);
             World.Initialize();

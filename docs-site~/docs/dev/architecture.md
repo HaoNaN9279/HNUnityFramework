@@ -224,12 +224,14 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 | Level.Logic | MVC | ✅ | |
 | Level.Logic | HFSM | ✅ | |
 | Level.Logic | Entity 系统 | 🚧 Stub | |
+| Level.Logic | **Sheet** | ✅ | 配置表运行时查询系统（ISheetManager + IConfigTable + AssetRef\<T\> + ConfigLoader） |
 | Level.View | ViewFactory / EntityView | 🚧 Stub | |
 | Level.View | PropertyBinder | partial ✅ | 属性绑定抽象类，提供 Bind/UnbindAll 方法 |
 | C13 | UI 系统 (Core 接口) | ✅ Phase 1 | UILayer/UIPanelState/IUIManager/RedDotNode/DialogResult/ToastConfig/GuideStep |
 | C13 | UI 系统 (Unity 实现) | ✅ Phase 2 | UIManager/UIPanel/UIAnimation/UIDialog/UIToast/UIGuide/RedDotManager |
 | C13 | UI 系统 (扩展面板) | ✅ Phase 2 | UIDialog/UIToast/UIGuide/RedDotManager |
 | V1 | UI 运行时 | ✅ Phase 2 | ✅ Phase 2（独立 Level.View.UI 目录 + Addressables + 动画集成） |
+| E7 | Sheet Editor | ✅ | Phase 1（Excel 编辑 + AssetRefCell + SheetGrid） |
 
 > ✅ = 已实现  🚧 Stub = 骨架已创建待完整实现
 

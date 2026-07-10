@@ -4,6 +4,7 @@
     "references": [
         "HN.Framework.Core",
         "HN.Framework.Unity",
+        "HN.Framework.Editor",
         "Unity.TextMeshPro",
         "Unity.InputSystem",
         "Unity.InputSystem.TestFramework",

@@ -15,8 +15,9 @@
     "allowUnsafeCode":  false,
     "overrideReferences":  false,
     "precompiledReferences":  [
-
-                              ],
+                                   "ClosedXML.dll",
+                                   "DocumentFormat.OpenXml.dll"
+                               ],
     "autoReferenced":  true,
     "defineConstraints":  [
 

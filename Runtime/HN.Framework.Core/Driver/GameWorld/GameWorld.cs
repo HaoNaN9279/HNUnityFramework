@@ -2,6 +2,7 @@ using HN.Framework.Core.Capability.Network;
 using HN.Framework.Core.Capability;
 using HN.Framework.Core.Capability.Debug;
 using HN.Framework.Core.Capability.Input;
+using HN.Framework.Core.Capability.Localization;
 using HN.Framework.Core.Capability.UI;
 using HN.Framework.Core.Driver.Common;
 using HN.Framework.Core.Capability.Event;
@@ -45,6 +46,12 @@ namespace HN.Framework.Core.Driver
         /// 仅当实现 ITickable 时才由 GameWorld 调用 Tick/LateTick。
         /// </summary>
         public IUIManager? UIManager { get; set; }
+
+        /// <summary>
+        /// 本地化提供程序，负责多语言字符串查询和语言区域切换。
+        /// 由 GameWorldDriver 在初始化时注入，或由外部代码设置为自定义实现。
+        /// </summary>
+        public ILocaleProvider? LocaleProvider { get; set; }
 
         public GameWorld()
         {

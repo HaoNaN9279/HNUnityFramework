@@ -71,7 +71,12 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
 - **MVC**: `Controller` / `ControllerUnit` / `ControllerManager` / `Model` / `ModelUnit` / `IReadOnlyModel<T>` / `ReadOnlyModel<T>`
 - **HFSM**: `HFSM` / `HFSMState` / `HFSMTransition` / `HFSMCompoundState`
 - **Entity** 🚧 — 实体系统（待实现）
-- **Sheet** 🚧 — 配置表运行时查询（待实现）
+- **Sheet** ✅ — 配置表运行时查询系统
+  - `ISheetManager` — 配置表管理器，支持表注册和查询
+  - `IConfigTable<TKey, TRow>` — 泛型配置表接口（Get/TryGet/GetAll/Count）
+  - `ConfigTable<TKey, TRow>` — 默认实现，O(1) 字典查表
+  - `AssetRef<T>` — MemoryPack 可序列化的资产引用，存 Addressables Label
+  - `ConfigLoader` — MemoryPack 反序列化工具类
 
 #### HN.Framework.Unity
 
@@ -108,7 +113,10 @@ Unity 平台层，依赖 UnityEngine。
 - **FishNetSerializerAdapter** — MemoryPack 注入 FishNet 的自定义序列化器
 - **UnityFormatters** — Unity 类型格式化器集合，含 16 种内置类型
 - **UnityFormattersInitializer** — Unity 格式化器初始化器，提供 `RegisterAll()` 批量注册
-- **SheetElementTypeAttribute** 🚧 — 配置表元素类型标记（待实现）
+- **SheetManager** — ISheetManager 实现，支持二进制数据加载
+- **ISheetRegistrar** — 由 Luban 生成的 Tables 实现，自动注册所有表
+- **LubanTablesAdapter** — 泛型辅助类，LoadTables<TTables>
+- **AssetRefExtensions** — AssetRef<T> 的 Addressables 加载扩展
 - **RuntimeDebugConsole** — UGUI 运行时调试控制台（`~` 键切换，命令输入/自动补全/历史）
 - **LuaModManager** — xLua Mod 脚本管理器，实现 IScriptEngine，提供沙箱隔离和 API 白名单机制
 - **HybridCLRAdapter** — HybridCLR 运行时适配器，负责加载热更新 DLL 和注册 AOT 补充元数据
@@ -142,13 +150,13 @@ Unity 平台层，依赖 UnityEngine。
 
 **Sheet — 配置表工具**
 
-- **Sheet** — 配置表数据定义
-- **SheetEditor** — 配置表编辑器
-- **SheetImporter** — 配置表导入器
-- **SheetImporterEditor** — 导入器编辑器
-- **SheetFieldTypeAttribute** — 字段类型标记
-- **SheetFieldTypeEditor** — 字段类型编辑器
-- **SheetFieldTypeDrawer** — 字段类型绘图器
+- **SheetEditorWindow** — 统一配置表编辑器窗口（HNFramework/Sheet Editor 菜单）
+- **TableModel/ColumnDef/RowData/CellData** — 统一数据模型
+- **SchemaProvider** — Excel schema 解析器（字段名+类型标注→列定义）
+- **ExcelSourceParser** — Excel (.xlsx) 文件解析器
+- **ExcelSerializer** — 编辑后写回 .xlsx
+- **SheetGrid** — UI Toolkit 网格视图（冻结表头/列宽拖拽/类型分发）
+- **AssetRefCell** — 资产引用单元格（64×64 缩略图/拖拽替换/右键菜单）
 
 **ObjectPool — 对象池调试**
 
