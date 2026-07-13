@@ -5,7 +5,7 @@
         "HN.Framework.Core",
         "Unity.Addressables",
         "Unity.ResourceManager",
-        "Unity.Cinemachine",
+        "Cinemachine",
         "Unity.TextMeshPro",
         "Unity.Timeline",
         "Unity.InputSystem",

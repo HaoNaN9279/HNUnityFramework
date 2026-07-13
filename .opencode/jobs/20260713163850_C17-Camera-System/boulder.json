@@ -1,0 +1,84 @@
+﻿{
+  "plan": "C17 — 摄像机管理系统",
+  "plan_file": ".opencode/jobs/20260713163850_C17-Camera-System/plan.md",
+  "created_at": "2026-07-13T16:39:00",
+  "completed_at": "2026-07-13T17:20:00",
+  "phases": [
+    {
+      "wave": 1,
+      "name": "Core 层 Camera 模块",
+      "jobs": [
+        {
+          "id": "T1",
+          "subject": "Core 层：CameraPreset + CameraShakeProfile + ICameraManager + GameWorld 属性",
+          "status": "completed",
+          "verification": {
+            "compile": "pass"
+          },
+          "completed_at": "2026-07-13T16:40:00"
+        }
+      ]
+    },
+    {
+      "wave": 2,
+      "name": "Unity 层 Camera 模块",
+      "jobs": [
+        {
+          "id": "T2",
+          "subject": "Unity 层：CameraHandle + CameraShake + CameraManager + GameWorldDriver 集成",
+          "status": "completed",
+          "verification": {
+            "compile": "pass"
+          },
+          "completed_at": "2026-07-13T16:42:00"
+        }
+      ]
+    },
+    {
+      "wave": 3,
+      "name": "测试 + 运行验证",
+      "jobs": [
+        {
+          "id": "T3",
+          "subject": "测试：asmdef 修改 + CameraManagerTests + 运行测试",
+          "status": "completed",
+          "verification": {
+            "compile": "pass",
+            "tests": "681 pass, 3 pre-existing failures, CameraManagerTests all pass"
+          },
+          "completed_at": "2026-07-13T17:10:00"
+        }
+      ]
+    },
+    {
+      "wave": 4,
+      "name": "文档更新",
+      "jobs": [
+        {
+          "id": "T4",
+          "subject": "更新 API 文档",
+          "status": "completed",
+          "verification": {},
+          "completed_at": "2026-07-13T17:20:00"
+        },
+        {
+          "id": "T5",
+          "subject": "更新能力层指南",
+          "status": "completed",
+          "verification": {},
+          "completed_at": "2026-07-13T17:20:00"
+        },
+        {
+          "id": "T6",
+          "subject": "更新架构文档",
+          "status": "completed",
+          "verification": {},
+          "completed_at": "2026-07-13T17:20:00"
+        }
+      ]
+    }
+  ],
+  "current_wave": -1,
+  "status": "completed",
+  "failures": []
+}

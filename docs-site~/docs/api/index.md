@@ -64,6 +64,9 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
 - **IScriptMod** — Mod 生命周期接口（OnLoad/OnEnable/OnDisable/OnUnload）
 - **ModState** — Mod 状态枚举（NotLoaded/Loaded/Enabled/Disabled/Error）
 - **ScriptModConfig** — Mod 配置数据模型（ModId/ModName/Version/ScriptPaths/Sandboxed）
+- **ICameraManager** — 摄像机管理器接口，定义摄像机预设注册/激活/混合/振动等操作（基于 Cinemachine）
+- **CameraPreset** — 摄像机预设数据模型（FOV/近远裁面/优先级/混合时间），实现 `IReference`
+- **CameraShakeProfile** — 摄像机振动配置数据模型（振幅/频率/时长/衰减类型），实现 `IReference`
 - **IHotUpdateEntry** — 热更新 DLL 入口接口，由热更程序集实现以注册模块到 GameWorld
 
 **Level.Logic — 逻辑层**
@@ -127,6 +130,9 @@ Unity 平台层，依赖 UnityEngine。
 - **UIToast** — 自动消失提示面板，FadeIn/Out 动画，排队机制
 - **UIGuide** — 步骤驱动引导覆盖层，NextStep/PrevStep 导航
 - **RedDotManager** — 红点树路径式注册管理器，Subscribe/Unsubscribe 监听
+- **CameraManager** — 摄像机管理器，Cinemachine Brain 包装器，实现 ICameraManager + IDisposable
+- **CameraHandle** — 运行时 VCam 引用管理，包装 CinemachineVirtualCameraBase，提供 Follow/LookAt 绑定和预设切换
+- **CameraShake** — 摄像机振动控制器，通过 CinemachineBasicMultiChannelPerlin 实现 Perlin 噪声振动
 
 **Level.View — 视图层**
 

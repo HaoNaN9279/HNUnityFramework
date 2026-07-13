@@ -4,6 +4,7 @@ using HN.Framework.Core.Capability.Debug;
 using HN.Framework.Core.Capability.Input;
 using HN.Framework.Core.Capability.Localization;
 using HN.Framework.Core.Capability.Physics;
+using HN.Framework.Core.Capability.Camera;
 using HN.Framework.Core.Capability.UI;
 using HN.Framework.Core.Driver.Common;
 using HN.Framework.Core.Capability.Event;
@@ -60,6 +61,13 @@ namespace HN.Framework.Core.Driver
         /// 仅当实现 ITickable 时才由 GameWorld 调用 Tick/LateTick。
         /// </summary>
         public IPhysicsWorld? PhysicsWorld { get; set; }
+
+        /// <summary>
+        /// 摄像机管理器，负责管理和切换虚拟摄像机。
+        /// CameraManager 包装 Cinemachine Brain，由 GameWorldDriver 在初始化时注入。
+        /// CameraManager 不实现 ITickable，Cinemachine 自管理生命周期。
+        /// </summary>
+        public ICameraManager? CameraManager { get; set; }
 
         public GameWorld()
         {

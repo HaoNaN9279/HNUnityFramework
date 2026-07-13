@@ -10,6 +10,8 @@ using HN.Framework.Unity.Level.View.UI;
 using HN.Framework.Unity.Driver.Platform;
 using HN.Framework.Unity.Capability.Asset;
 using HN.Framework.Unity.Driver.Platform.Log;
+using HN.Framework.Unity.Capability.Camera;
+using Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -48,6 +50,14 @@ namespace HN.Framework.Unity.Driver.Platform
             // 创建 PhysX 物理世界（默认 3D 模式）
             World.PhysicsWorld = new PhysXWorld(PhysicsDimension.D3);
 
+            // 创建摄像机管理器，自动查找场景中的 CinemachineBrain
+            var brain = FindObjectOfType<CinemachineBrain>();
+            if (brain != null)
+            {
+                var cameraManager = new CameraManager(brain);
+                World.CameraManager = cameraManager;
+            }
+
             OnRegisterGameModules(World);
             World.Initialize();
         }
@@ -62,6 +72,7 @@ namespace HN.Framework.Unity.Driver.Platform
             (World?.InputManager as IDisposable)?.Dispose();
             (World?.UIManager as IDisposable)?.Dispose();
             (World?.PhysicsWorld as IDisposable)?.Dispose();
+            (World?.CameraManager as IDisposable)?.Dispose();
         }
 
         protected virtual void Update()
