@@ -1,0 +1,122 @@
+{
+  "plan": "C16 — 物理系统抽象层",
+  "created_at": "2026-07-13T14:58:00",
+  "phases": [
+    {
+      "wave": 1,
+      "name": "P1: 批量创建Core层Physics文件",
+      "jobs": [
+        {
+          "id": "P1",
+          "subject": "创建 PhysicsTypes.cs / PhysicsVector3.cs / PhysicsQuaternion.cs / RaycastHit.cs / CollisionEvent.cs / ShapeDefinition.cs / IBody.cs / IPhysicsWorld.cs",
+          "status": "completed",
+          "verification": {
+            "create": "pass",
+            "compile": "pass"
+          },
+          "completed_at": "2026-07-13T15:25:00"
+        }
+      ]
+    },
+    {
+      "wave": 2,
+      "name": "P2: 批量创建Core层测试文件",
+      "jobs": [
+        {
+          "id": "P2",
+          "subject": "创建 7 个 Core Physics 测试文件",
+          "status": "completed",
+          "verification": {
+            "create": "pass",
+            "compile": "pass"
+          },
+          "completed_at": "2026-07-13T15:32:00"
+        }
+      ]
+    },
+    {
+      "wave": 3,
+      "name": "P3: 运行Core层测试",
+      "jobs": [
+        {
+          "id": "P3",
+          "subject": "运行 Core Physics 测试并验证全部通过",
+          "status": "in_progress",
+          "verification": {},
+          "completed_at": null
+        }
+      ]
+    },
+    {
+      "wave": 4,
+      "name": "P4: 创建Unity层文件 + GameWorld集成",
+      "jobs": [
+        {
+          "id": "P4",
+          "subject": "创建 UnityBody.cs + PhysXWorld.cs + 修改 GameWorld.cs / GameWorldDriver.cs",
+          "status": "completed",
+          "verification": {
+            "create": "pass",
+            "compile": "pass"
+          },
+          "completed_at": "2026-07-13T15:45:00"
+        }
+      ]
+    },
+    {
+      "wave": 5,
+      "name": "P5a: 创建Unity层测试文件",
+      "jobs": [
+        {
+          "id": "P5a",
+          "subject": "创建 UnityBodyTests.cs + PhysXWorldTests.cs",
+          "status": "completed",
+          "verification": {
+            "create": "pass",
+            "compile": "pass"
+          },
+          "completed_at": "2026-07-13T15:53:00"
+        }
+      ]
+    },
+    {
+      "wave": 6,
+      "name": "P5b: 运行Unity层测试",
+      "jobs": [
+        {
+          "id": "P5b",
+          "subject": "运行 Unity Physics 测试并验证全部通过",
+          "status": "in_progress",
+          "verification": {},
+          "completed_at": null
+        }
+      ]
+    },
+    {
+      "wave": 7,
+      "name": "P6: 文档更新",
+      "jobs": [
+        {
+          "id": "P6a",
+          "subject": "更新架构文档",
+          "status": "completed",
+          "verification": {
+            "updated": "C16 状态从 📋 改为 ✅，目录结构已更新"
+          },
+          "completed_at": "2026-07-13T15:55:00"
+        },
+        {
+          "id": "P6b",
+          "subject": "创建API文档",
+          "status": "completed",
+          "verification": {
+            "created": "docs/api/physics.md"
+          },
+          "completed_at": "2026-07-13T15:55:00"
+        }
+      ]
+    }
+  ],
+  "current_wave": 7,
+  "failures": []
+}

@@ -3,6 +3,7 @@ using HN.Framework.Core.Capability;
 using HN.Framework.Core.Capability.Debug;
 using HN.Framework.Core.Capability.Input;
 using HN.Framework.Core.Capability.Localization;
+using HN.Framework.Core.Capability.Physics;
 using HN.Framework.Core.Capability.UI;
 using HN.Framework.Core.Driver.Common;
 using HN.Framework.Core.Capability.Event;
@@ -53,6 +54,13 @@ namespace HN.Framework.Core.Driver
         /// </summary>
         public ILocaleProvider? LocaleProvider { get; set; }
 
+        /// <summary>
+        /// 物理世界接口，负责管理所有物理刚体的生命周期以及执行物理查询。
+        /// 由 GameWorldDriver 在初始化时注入，或由外部代码设置为自定义实现。
+        /// 仅当实现 ITickable 时才由 GameWorld 调用 Tick/LateTick。
+        /// </summary>
+        public IPhysicsWorld? PhysicsWorld { get; set; }
+
         public GameWorld()
         {
             PoolManager = new ObjectPoolManager();
@@ -77,6 +85,7 @@ namespace HN.Framework.Core.Driver
             // InputManager 是事件驱动的，Tick 仅当它实现 ITickable 时才生效
             (InputManager as ITickable)?.Tick();
             (UIManager as ITickable)?.Tick();
+            (PhysicsWorld as ITickable)?.Tick();
         }
 
         public void LateTick()
@@ -87,6 +96,7 @@ namespace HN.Framework.Core.Driver
             AssetManager?.LateTick();
             (InputManager as ITickable)?.LateTick();
             (UIManager as ITickable)?.LateTick();
+            (PhysicsWorld as ITickable)?.LateTick();
         }
     }
 }

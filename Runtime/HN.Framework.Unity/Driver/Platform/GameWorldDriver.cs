@@ -2,8 +2,10 @@ using System;
 using HN.Framework.Core.Driver;
 using HN.Framework.Core.Capability;
 using HN.Framework.Core.Capability.Localization;
+using HN.Framework.Core.Capability.Physics;
 using HN.Framework.Core.Driver.Common;
 using HN.Framework.Unity.Capability.Input;
+using HN.Framework.Unity.Capability.Physics;
 using HN.Framework.Unity.Level.View.UI;
 using HN.Framework.Unity.Driver.Platform;
 using HN.Framework.Unity.Capability.Asset;
@@ -43,6 +45,9 @@ namespace HN.Framework.Unity.Driver.Platform
             // LocaleProvider 由项目代码通过 World.LocaleProvider 注入
             // 或通过 OnRegisterGameModules 自定义初始化
 
+            // 创建 PhysX 物理世界（默认 3D 模式）
+            World.PhysicsWorld = new PhysXWorld(PhysicsDimension.D3);
+
             OnRegisterGameModules(World);
             World.Initialize();
         }
@@ -56,6 +61,7 @@ namespace HN.Framework.Unity.Driver.Platform
         {
             (World?.InputManager as IDisposable)?.Dispose();
             (World?.UIManager as IDisposable)?.Dispose();
+            (World?.PhysicsWorld as IDisposable)?.Dispose();
         }
 
         protected virtual void Update()
