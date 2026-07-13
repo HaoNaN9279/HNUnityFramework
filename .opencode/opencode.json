@@ -8,6 +8,7 @@
     }
   },
   "instructions": [
+    ".opencode/rules/*.md",
     ".opencode/rules/game-dev_unity/*.md"
   ],
   "skills": {
