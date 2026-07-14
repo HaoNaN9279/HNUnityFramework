@@ -1,0 +1,129 @@
+//=======================================================================
+// FixedCurveKey.cs
+//=======================================================================
+// MIT License, Copyright (c) 2024¨Cpresent David Oravsky (mrdav30)
+// See LICENSE file in the project root for full license information.
+//=======================================================================
+
+using System;
+
+namespace FixedMathSharp;
+
+/// <summary>
+/// Represents a keyframe in a <see cref="FixedCurve"/>, defining a value at a specific time.
+/// </summary>
+[Serializable]
+public partial struct FixedCurveKey : IEquatable<FixedCurveKey>
+{
+    #region Fields
+
+    /// <summary>The time at which this keyframe occurs.</summary>
+    public Fixed64 Time;
+
+    /// <summary>The value of the curve at this keyframe.</summary>
+    public Fixed64 Value;
+
+    /// <summary>The incoming tangent for cubic interpolation.</summary>
+    public Fixed64 InTangent;
+
+    /// <summary>The outgoing tangent for cubic interpolation.</summary>
+    public Fixed64 OutTangent;
+
+    #endregion
+
+    #region Constructors
+
+    /// <summary>
+    /// Creates a keyframe with a specified time and value.
+    /// </summary>
+    public FixedCurveKey(Fixed64 time, Fixed64 value)
+        : this(time, value, Fixed64.Zero, Fixed64.Zero) { }
+
+    /// <summary>
+    /// Creates a keyframe with a specified time and value, using integer parameters for convenience.
+    /// </summary>
+    public FixedCurveKey(int time, int value)
+        : this(new(time), new(value), Fixed64.Zero, Fixed64.Zero) { }
+
+    /// <summary>
+    /// Creates a keyframe with optional tangents for cubic interpolation.
+    /// </summary>
+    public FixedCurveKey(Fixed64 time, Fixed64 value, Fixed64 inTangent, Fixed64 outTangent)
+    {
+        Time = time;
+        Value = value;
+        InTangent = inTangent;
+        OutTangent = outTangent;
+    }
+
+    /// <summary>
+    /// Creates a keyframe with optional tangents for cubic interpolation, using integer parameters for convenience.
+    /// </summary>
+    public FixedCurveKey(int time, int value, int inTangent, int outTangent)
+        : this(new Fixed64(time), new Fixed64(value), new Fixed64(inTangent), new Fixed64(outTangent)) { }
+
+    /// <summary>
+    /// Creates a keyframe with a specified time and value.
+    /// </summary>
+    /// <remarks>
+    /// Values are converted through <see cref="Fixed64.FromDouble(double)"/>, so non-finite values
+    /// throw <see cref="ArgumentOutOfRangeException"/> and finite values outside the Q32.32 range
+    /// throw <see cref="OverflowException"/>.
+    /// </remarks>
+    public static FixedCurveKey FromDouble(double time, double value) =>
+        new(Fixed64.FromDouble(time), Fixed64.FromDouble(value));
+
+    /// <summary>
+    /// Creates a keyframe with optional tangents for cubic interpolation.
+    /// </summary>
+    /// <remarks>
+    /// Values are converted through <see cref="Fixed64.FromDouble(double)"/>, so non-finite values
+    /// throw <see cref="ArgumentOutOfRangeException"/> and finite values outside the Q32.32 range
+    /// throw <see cref="OverflowException"/>.
+    /// </remarks>
+    public static FixedCurveKey FromDouble(double time, double value, double inTangent, double outTangent) =>
+        new(Fixed64.FromDouble(time),
+            Fixed64.FromDouble(value),
+            Fixed64.FromDouble(inTangent),
+            Fixed64.FromDouble(outTangent));
+
+    #endregion
+
+    #region Equality
+
+    /// <inheritdoc/>
+    public bool Equals(FixedCurveKey other) =>
+        Time == other.Time &&
+        Value == other.Value &&
+        InTangent == other.InTangent &&
+        OutTangent == other.OutTangent;
+
+    /// <inheritdoc/>
+    public override bool Equals(object? obj) => obj is FixedCurveKey other && Equals(other);
+
+    /// <inheritdoc/>
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            int hash = 17;
+            hash = (hash * 31) + Time.GetHashCode();
+            hash = (hash * 31) + Value.GetHashCode();
+            hash = (hash * 31) + InTangent.GetHashCode();
+            hash = (hash * 31) + OutTangent.GetHashCode();
+            return hash;
+        }
+    }
+
+    /// <summary>
+    /// Determines whether two FixedCurveKey instances are equal.
+    /// </summary>
+    public static bool operator ==(FixedCurveKey left, FixedCurveKey right) => left.Equals(right);
+
+    /// <summary>
+    /// Determines whether two FixedCurveKey instances are not equal.
+    /// </summary>
+    public static bool operator !=(FixedCurveKey left, FixedCurveKey right) => !(left == right);
+
+    #endregion
+}

@@ -14,6 +14,9 @@ namespace HN.Framework.Unity.Capability.Serialization
         /// </summary>
         public static void RegisterAll()
         {
+            // 首先注册 Core 层格式化器（FixedMathSharp 定点数类型）
+            FormattersInitializer.RegisterAll();
+
             MemoryPackFormatterProvider.Register(new Vector2Formatter());
             MemoryPackFormatterProvider.Register(new Vector3Formatter());
             MemoryPackFormatterProvider.Register(new Vector4Formatter());

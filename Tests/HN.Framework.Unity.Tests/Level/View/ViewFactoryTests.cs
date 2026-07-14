@@ -1,6 +1,8 @@
 using HN.Framework.Unity.Level.View;
 using NUnit.Framework;
+using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.TestTools;
 
 namespace HN.Framework.Unity.Tests.Level.View
 {
@@ -103,6 +105,8 @@ namespace HN.Framework.Unity.Tests.Level.View
         {
             var prefab = new GameObject("NoViewPrefab");
             prefab.hideFlags = HideFlags.HideAndDontSave;
+
+            LogAssert.Expect(LogType.Error, new Regex(@"\[ViewFactory\].*NoViewPrefab"));
 
             var view = _factory.CreateView(prefab, Vector3.zero, Quaternion.identity, 1);
 

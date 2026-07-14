@@ -15,11 +15,28 @@ namespace HN.Framework.Core.Tests.Level.Logic.Sheet
         [SetUp]
         public void SetUp()
         {
+            global::MemoryPack.MemoryPackFormatterProvider.Register(new AssetRefIntFormatter());
         }
 
         [TearDown]
         public void TearDown()
         {
+        }
+
+        /// <summary>
+        /// AssetRef&lt;int&gt; 的手动 MemoryPack 格式化器。
+        /// </summary>
+        private sealed class AssetRefIntFormatter : global::MemoryPack.MemoryPackFormatter<AssetRef<int>>
+        {
+            public override void Serialize<TBufferWriter>(ref global::MemoryPack.MemoryPackWriter<TBufferWriter> writer, scoped ref AssetRef<int> value)
+            {
+                writer.WriteString(value.Label);
+            }
+
+            public override void Deserialize(ref global::MemoryPack.MemoryPackReader reader, scoped ref AssetRef<int> value)
+            {
+                value.Label = reader.ReadString() ?? string.Empty;
+            }
         }
 
         [Test]

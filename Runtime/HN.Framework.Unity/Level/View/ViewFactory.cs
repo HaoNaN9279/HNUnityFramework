@@ -60,7 +60,10 @@ namespace HN.Framework.Unity.Level.View
             if (view == null)
             {
                 Debug.LogError($"[ViewFactory] Prefab '{prefab.name}' does not have an EntityView component attached.");
-                Object.Destroy(go);
+                if (Application.isPlaying)
+                    Object.Destroy(go);
+                else
+                    Object.DestroyImmediate(go);
                 return null;
             }
             view.Initialize(0, entityDefId);
@@ -75,7 +78,10 @@ namespace HN.Framework.Unity.Level.View
         {
             if (view == null) return;
             view.Deinitialize();
-            Object.Destroy(view.gameObject);
+            if (Application.isPlaying)
+                Object.Destroy(view.gameObject);
+            else
+                Object.DestroyImmediate(view.gameObject);
         }
 
         // TODO: CreateViewAsync — 异步加载创建路径，待 IAssetManager 支持返回 GameObject 后实现

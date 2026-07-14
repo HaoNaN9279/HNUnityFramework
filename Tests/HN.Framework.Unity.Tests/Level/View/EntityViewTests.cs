@@ -1,3 +1,5 @@
+using System;
+using HN.Framework.Core.Level.Logic;
 using HN.Framework.Unity.Level.View;
 using HN.Framework.Unity.Level.View.Binding;
 using NUnit.Framework;
@@ -28,7 +30,7 @@ namespace HN.Framework.Unity.Tests.Level.View
             }
             if (_go != null)
             {
-                Object.DestroyImmediate(_go);
+                UnityEngine.Object.DestroyImmediate(_go);
             }
         }
 
@@ -93,18 +95,38 @@ namespace HN.Framework.Unity.Tests.Level.View
         [Test]
         public void Deinitialize_CallsUnbindAll_OnBinder()
         {
+            var mockBinder = new MockPropertyBinder();
             var testView = _go.AddComponent<TestEntityView>();
+            testView.BindData(mockBinder);
             testView.Initialize(1, 10);
 
             Assert.That(testView.BinderWasBound, Is.True);
 
             testView.Deinitialize();
 
-            Assert.That(testView.UnbindWasCalled, Is.True);
+            Assert.That(mockBinder.UnbindAllCalled, Is.True);
         }
 
         /// <summary>
-        /// 测试用 EntityView 子类，跟踪生命周期方法调用。
+        /// Mock that tracks whether UnbindAll was called.
+        /// </summary>
+        private sealed class MockPropertyBinder : PropertyBinder
+        {
+            public bool UnbindAllCalled { get; private set; }
+
+            public override void Bind<T>(IReadOnlyModel<T> source, Action<T> onValueChanged)
+            {
+                // No-op for test
+            }
+
+            public override void UnbindAll()
+            {
+                UnbindAllCalled = true;
+            }
+        }
+
+        /// <summary>
+        /// Testable EntityView subclass for monitoring lifecycle callbacks.
         /// </summary>
         private class TestEntityView : EntityView
         {
@@ -112,6 +134,12 @@ namespace HN.Framework.Unity.Tests.Level.View
             public System.Action? OnDespawnedAction { get; set; }
             public bool BinderWasBound { get; private set; }
             public bool UnbindWasCalled { get; private set; }
+
+            public override void BindData(PropertyBinder binderInstance)
+            {
+                BinderWasBound = true;
+                base.BindData(binderInstance);
+            }
 
             protected override void OnSpawned()
             {

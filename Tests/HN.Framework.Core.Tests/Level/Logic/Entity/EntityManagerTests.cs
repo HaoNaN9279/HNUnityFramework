@@ -126,6 +126,7 @@ namespace HN.Framework.Core.Tests.Level.Logic.Entity
             var bus = new EventBus();
             var manager = new EntityManager(bus);
             var entity = manager.Spawn(50);
+            var entityId = entity.EntityId;
 
             uint receivedId = 0;
             bus.Subscribe<EntityDespawnedEvent>(evt =>
@@ -133,9 +134,9 @@ namespace HN.Framework.Core.Tests.Level.Logic.Entity
                 receivedId = evt.EntityId;
             });
 
-            manager.Despawn(entity.EntityId);
+            manager.Despawn(entityId);
 
-            Assert.That(receivedId, Is.EqualTo(entity.EntityId));
+            Assert.That(receivedId, Is.EqualTo(entityId));
         }
 
         [Test]

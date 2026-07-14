@@ -34,6 +34,9 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
 - **IDebugCommand** — 调试命令接口（Name / Description / Execute）
 - **DebugHub** — 调试中枢实现类（通道/命令注册表 + 环形日志缓冲）
 - **HNRandom** — 确定性伪随机数生成器，基于 xorshift128+ 算法，支持种子设置与状态序列化
+- **HNFixedPoint** — 定点数类型别名（映射到 FixedMathSharp.Fixed64），提供与自研方案兼容的 API
+- **FixedMathSharpFormatters** — FixedMathSharp 定点数类型自定义 MemoryPack 格式化器（含 Fixed64、Vector2d/3d/4d、FixedQuaternion、Fixed4x4、FixedBoundBox、FixedBoundSphere 共 8 个格式化器）
+- **FormattersInitializer** — Core 层格式化器初始化器，提供 RegisterAll() 批量注册 FixedMathSharp 格式化器
 
 **Capability — 能力模块（接口定义）**
 
