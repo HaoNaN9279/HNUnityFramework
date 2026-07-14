@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using FixedMathSharp;
 using global::MemoryPack;
 using global::MemoryPack.Internal;
 
@@ -23,6 +25,8 @@ namespace HN.Framework.Core.Capability.Network.Messages
             MemoryPackFormatterProvider.Register(new ClientConnectedMessageFormatter());
             MemoryPackFormatterProvider.Register(new ClientDisconnectedMessageFormatter());
             MemoryPackFormatterProvider.Register(new ServerReadyMessageFormatter());
+            MemoryPackFormatterProvider.Register(new FrameInputMessageFormatter());
+            MemoryPackFormatterProvider.Register(new FrameDataMessageFormatter());
         }
 
         [Preserve]
@@ -92,6 +96,129 @@ namespace HN.Framework.Core.Capability.Network.Messages
                 }
                 value = new ServerReadyMessage();
             }
+        }
+
+        [Preserve]
+        private sealed class FrameInputMessageFormatter : MemoryPackFormatter<FrameInputMessage>
+        {
+            public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref FrameInputMessage? value)
+            {
+                if (value == null) { writer.WriteNullObjectHeader(); return; }
+                writer.WriteObjectHeader(2);
+                writer.WriteValue(value.ClientId);
+                WriteFrameInput(ref writer, value.Input);
+            }
+
+            public override void Deserialize(ref MemoryPackReader reader, ref FrameInputMessage? value)
+            {
+                if (!reader.TryReadObjectHeader(out byte count))
+                {
+                    value = null;
+                    return;
+                }
+                int clientId = 0;
+                FrameInput input = default;
+                if (count >= 1) clientId = reader.ReadValue<int>();
+                if (count >= 2) input = ReadFrameInput(ref reader);
+                value = new FrameInputMessage(clientId, input);
+            }
+        }
+
+        [Preserve]
+        private sealed class FrameDataMessageFormatter : MemoryPackFormatter<FrameDataMessage>
+        {
+            public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref FrameDataMessage? value)
+            {
+                if (value == null) { writer.WriteNullObjectHeader(); return; }
+                writer.WriteObjectHeader(3);
+                writer.WriteUnmanaged(value.FrameNumber);
+                writer.WriteValue(value.Checksum);
+
+                // 手动序列化 FrameInput 数组
+                if (value.Inputs == null)
+                {
+                    writer.WriteUnmanaged(0);
+                }
+                else
+                {
+                    writer.WriteUnmanaged(value.Inputs.Length);
+                    for (int i = 0; i < value.Inputs.Length; i++)
+                    {
+                        WriteFrameInput(ref writer, value.Inputs[i]);
+                    }
+                }
+            }
+
+            public override void Deserialize(ref MemoryPackReader reader, ref FrameDataMessage? value)
+            {
+                if (!reader.TryReadObjectHeader(out byte count))
+                {
+                    value = null;
+                    return;
+                }
+                ulong frameNumber = 0;
+                ulong checksum = 0;
+                FrameInput[] inputs = null;
+                if (count >= 1) reader.ReadUnmanaged(out frameNumber);
+                if (count >= 2) checksum = reader.ReadValue<ulong>();
+                if (count >= 3)
+                {
+                    int length = 0;
+                    reader.ReadUnmanaged(out length);
+                    inputs = new FrameInput[length];
+                    for (int i = 0; i < length; i++)
+                    {
+                        inputs[i] = ReadFrameInput(ref reader);
+                    }
+                }
+                value = new FrameDataMessage(frameNumber, inputs, checksum);
+            }
+        }
+
+        /// <summary>
+        /// 辅助方法：写入 FrameInput 到 MemoryPack 流。
+        /// [ulong FrameNumber, int actionsCount, (string key, long rawValue)[]...]
+        /// </summary>
+        private static void WriteFrameInput<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, FrameInput input)
+            where TBufferWriter : class, System.Buffers.IBufferWriter<byte>
+        {
+            writer.WriteUnmanaged(input.FrameNumber);
+
+            if (input.Actions == null)
+            {
+                writer.WriteUnmanaged(0);
+                return;
+            }
+
+            writer.WriteUnmanaged(input.Actions.Count);
+            foreach (var kvp in input.Actions)
+            {
+                writer.WriteValue(kvp.Key);
+                writer.WriteUnmanaged(kvp.Value.m_rawValue);
+            }
+        }
+
+        /// <summary>
+        /// 辅助方法：从 MemoryPack 流读取 FrameInput。
+        /// </summary>
+        private static FrameInput ReadFrameInput(ref MemoryPackReader reader)
+        {
+            ulong frameNumber = 0;
+            reader.ReadUnmanaged(out frameNumber);
+
+            int count = 0;
+            reader.ReadUnmanaged(out count);
+
+            var actions = new Dictionary<string, Fixed64>(count);
+            for (int i = 0; i < count; i++)
+            {
+                string key = reader.ReadString();
+                long rawValue;
+                reader.ReadUnmanaged(out rawValue);
+                actions[key] = new Fixed64(rawValue);
+            }
+
+            return new FrameInput(frameNumber) { Actions = actions };
         }
     }
 }
