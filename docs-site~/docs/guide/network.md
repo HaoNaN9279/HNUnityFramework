@@ -131,6 +131,98 @@ public class PlayerNetworkView : NetworkEntityView
 
 **Host 模式说明：** `ApplySyncValue` 在内部调用 `SyncedModel<T>.SetValue()`，后者有值相等检查，Host 模式下重复写入不会触发额外事件。
 
+### 帧同步（Lockstep） ✅
+
+> 固定逻辑帧率 + 客户端输入 ServerRpc + 服务端确定性 Tick(`FixedMathSharp`) + 校验和比对。
+
+帧同步与状态同步并列于 C6.1 模块，适用于 RTS、格斗等需要确定性回放的场景。
+
+#### 架构
+
+```
+Core 层：
+  IFrameSyncManager       — 帧同步管理器接口（继承 ITickable）
+  FrameInput              — [MemoryPackable] 帧输入数据结构
+  FrameInputBuffer        — 帧输入环形缓冲区
+  IChecksumProvider       — 可插拔校验和接口
+  XorChecksumProvider     — 默认 XOR 校验和实现
+  LockstepManager         — IFrameSyncManager 核心实现（固定帧率驱动 + 输入缓冲 + 校验和）
+  FrameInputMessage       — 客户端→服务端帧输入消息（MsgId=100）
+  FrameDataMessage        — 服务端→客户端帧数据广播消息（MsgId=101）
+
+Unity 层：
+  LockstepNetworkDriver   — 帧同步网络驱动（纯 C#，通过 FishNetMessageBus 收发）
+  GameWorld.FrameSyncManager — GameWorld 注入属性，Tick 首位驱动
+```
+
+#### 接口说明
+
+```csharp
+public interface IFrameSyncManager : ITickable
+{
+    ulong CurrentFrame { get; }          // 当前逻辑帧号
+    int FrameRate { get; set; }          // 帧率（默认 15，可动态修改）
+    int BufferSize { get; set; }         // 缓冲大小（默认 3，可动态修改）
+    bool IsEnabled { get; set; }         // 启用/禁用
+
+    void SubmitInput(int clientId, FrameInput input);
+    bool TryGetInput(ulong frameNumber, out FrameInput input);
+    ulong GetChecksum(ulong frameNumber);
+    void RegisterChecksum(ulong frameNumber, ulong checksum);
+
+    event Action<ulong> OnFrameStart;    // 每帧开始时触发
+}
+```
+
+#### 使用示例
+
+```csharp
+// GameWorldDriver 或 GameEntry 中初始化（默认）
+protected override void InitializeFrameSync()
+{
+    var lockstepManager = new LockstepManager(frameRate: 15, bufferSize: 3);
+    var messageBus = new FishNetMessageBus();
+    var driver = new LockstepNetworkDriver(lockstepManager, messageBus);
+    driver.Initialize();
+    World.FrameSyncManager = lockstepManager;
+}
+
+// 在确定性 Tick 中使用
+private void OnFrameStart(ulong frameNumber)
+{
+    // 获取该帧所有客户端的输入
+    if (World.FrameSyncManager.TryGetInput(frameNumber, out FrameInput input))
+    {
+        // 使用 FixedMathSharp 执行确定性状态更新
+        foreach (var kvp in input.Actions)
+        {
+            var actionName = kvp.Key;
+            var actionValue = kvp.Value; // Fixed64
+            // 更新游戏状态...
+        }
+    }
+}
+```
+
+#### 帧同步与状态同步的选择
+
+| 特性 | 状态同步 (SyncVar) | 帧同步 (Lockstep) |
+|------|:------------------:|:-----------------:|
+| 同步方式 | 自动同步状态字段 | 同步输入，确定性地计算状态 |
+| 带宽消耗 | 随同步字段量增加 | 仅传输输入，非常低 |
+| 反作弊 | 服务端权威 | 校验和检测不同步 |
+| 回放支持 | 需额外记录状态 | 天然支持（回放输入即可） |
+| 适用场景 | MMO/FPS/ARPG | RTS/格斗/竞速 |
+| 数值类型 | float（FishNet 默认） | Fixed64（FixedMathSharp） |
+
+#### 默认配置
+
+| 参数 | 默认值 | 说明 |
+|------|:------:|------|
+| `FrameRate` | 15 | 逻辑帧率（tick/s），游戏逻辑在此频率下运行 |
+| `BufferSize` | 3 | 帧输入缓冲容量，客户端可提前发送的帧数 |
+| `MaxCatchUpFrames` | 9 | 追帧保护上限（BufferSize × 3），防止死亡螺旋 |
+
 ### Phase 2 待开发
 
 - C6.2 客户端预测：FishNet Prediction API

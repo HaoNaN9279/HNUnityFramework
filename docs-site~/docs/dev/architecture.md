@@ -218,7 +218,7 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 | C17 | 摄像机管理系统 | ✅ | ICameraManager + CameraManager(Cinemachine全量) + CameraHandle + CameraShake |
 | S2 | ILogProvider / UnityLogProvider | ✅ | |
 | S3 | IAssetOperator + 三种实现 | ✅ | |
-| S5 | INetworkManager + FishNet 封装 | 🚧 Stub | |
+| S5 | INetworkManager + FishNet 封装 + C6.1 帧同步 | ✅ 帧同步已完成 | |
 | S6 | IEventBus / EventBus | ✅ | 线程安全事件总线（lock+snapshot），由 GameWorld 持有 |
 | S7 | ProcedureManager / ProcedureState | ✅ | 静态单例已消除 |
 | S9 | IStorageProvider | ✅ | 接口定义 |
