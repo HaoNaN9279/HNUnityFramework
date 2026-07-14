@@ -152,6 +152,12 @@ Unity 平台层，依赖 UnityEngine。
 - **CameraManager** — 摄像机管理器，Cinemachine Brain 包装器，实现 ICameraManager + IDisposable
 - **CameraHandle** — 运行时 VCam 引用管理，包装 CinemachineVirtualCameraBase，提供 Follow/LookAt 绑定和预设切换
 - **CameraShake** — 摄像机振动控制器，通过 CinemachineBasicMultiChannelPerlin 实现 Perlin 噪声振动
+- **LocaleManager** — 本地化管理器，实现 ILocaleProvider，管理多语言 StringTable、语言切换和 OnLocaleChanged 事件分发
+- **ILocaleDataLoader** — 本地化数据加载接口，支持可注入的数据源（Addressables / Resources / 自定义）
+- **AddressableStringTableLoader** — ILocaleDataLoader 的 Addressables 实现，加载 JSON 格式字符串表
+- **LocaleSelector** — 语言选择器，管理可用语言列表和 PlayerPrefs 持久化偏好
+- **TextLocalizer** — MonoBehaviour 组件，挂载到 TMP_Text 上自动响应语言切换更新文本
+- **AssetLocalizer** — 静态工具类，按语言拼接路径加载本地化资源
 
 **Level.View — 视图层**
 

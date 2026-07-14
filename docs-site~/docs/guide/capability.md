@@ -17,3 +17,4 @@ CapabilityModule 位于 DriverLayer 与 Level 之间，提供跨关卡复用的�
 | `IStorageProvider` | ✅ | 存储服务接口。提供 `Save` / `Load` / `Delete` 方法，接口已定义 |
 | `IEventBus` | ✅ | 事件总线接口。支持 Subscribe/Unsubscribe/Publish/HasSubscribers，线程安全 |
 | `ICameraManager` | ✅ | 摄像机管理器接口。Cinemachine Brain 桥接，支持预设注册/激活/混合/振动 |
+| `ILocaleProvider` | ✅ | 本地化提供程序接口（多语言字符串查询、语言区域切换、变更事件）。已实现 LocaleManager，注入 GameWorld.LocaleProvider |

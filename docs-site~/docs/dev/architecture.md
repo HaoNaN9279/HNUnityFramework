@@ -200,7 +200,7 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 | D4 | GlobalSettings | ✅ | ScriptableObject 全局配置 |
 | C1 | MemoryPack 序列化模块 | ✅ | 二进制序列化 + Unity 格式化器 |
 | C2 | Debug 系统（Core + Unity） | ✅ | DebugHub + RuntimeDebugConsole + InputDebugger |
-| C3 | 本地化系统（Core） | ✅ | Core 层已完成，Unity 层待实现 |
+| C3 | 本地化系统 | ✅ | Core + Unity 层全部已完成（LocaleManager / TextLocalizer / LocaleSelector / AssetLocalizer） |
 | C4 | IAssetManager + AssetManager | ✅ | 资源管理核心 |
 | C5 | ILogProvider / UnityLogProvider | ✅ | 日志接口（待扩展） |
 | C6 | 网络系统（FishNet 封装） | ✅ | INetworkManager + 帧同步 + 预测与校验 |

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using HN.Framework.Core.Capability.Network;
 using HN.Framework.Core.Driver;
 using HN.Framework.Core.Capability;
@@ -13,6 +14,7 @@ using HN.Framework.Unity.Driver.Platform;
 using HN.Framework.Unity.Capability.Asset;
 using HN.Framework.Unity.Driver.Platform.Log;
 using HN.Framework.Unity.Capability.Camera;
+using HN.Framework.Unity.Capability.Localization;
 using Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -38,6 +40,11 @@ namespace HN.Framework.Unity.Driver.Platform
         /// </summary>
         private LockstepNetworkDriver m_lockstepDriver;
 
+        /// <summary>
+        /// 本地化管理器引用，用于生命周期管理。
+        /// </summary>
+        private LocaleManager? _localeManager;
+
         protected virtual void Awake()
         {
             World = new GameWorld();
@@ -61,8 +68,19 @@ namespace HN.Framework.Unity.Driver.Platform
             uiManager.Initialize();
             World.UIManager = uiManager;
 
-            // LocaleProvider 由项目代码通过 World.LocaleProvider 注入
-            // 或通过 OnRegisterGameModules 自定义初始化
+            // 创建 LocaleManager，注入默认语言和可用语言列表
+            // 项目代码可通过重写 OnRegisterGameModules 或直接替换 World.LocaleProvider 自定义
+            var defaultLocales = new List<Core.Capability.Localization.Locale>
+            {
+                Core.Capability.Localization.Locale.zhCN,
+                Core.Capability.Localization.Locale.enUS,
+                Core.Capability.Localization.Locale.jaJP,
+                Core.Capability.Localization.Locale.koKR,
+                Core.Capability.Localization.Locale.zhTW,
+            };
+            var localeLoader = new AddressableStringTableLoader();
+            _localeManager = new LocaleManager(localeLoader, defaultLocales, Core.Capability.Localization.Locale.zhCN);
+            World.LocaleProvider = _localeManager;
 
             // 创建 PhysX 物理世界（默认 3D 模式）
             World.PhysicsWorld = new PhysXWorld(PhysicsDimension.D3);
@@ -109,6 +127,7 @@ namespace HN.Framework.Unity.Driver.Platform
             (World?.UIManager as IDisposable)?.Dispose();
             (World?.PhysicsWorld as IDisposable)?.Dispose();
             (World?.CameraManager as IDisposable)?.Dispose();
+            _localeManager?.Dispose();
         }
 
         protected virtual void Update()

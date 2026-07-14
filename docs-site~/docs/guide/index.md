@@ -39,6 +39,7 @@ HNUnityFramework 采用三层架构设计，自底向上分为**驱动层 (Drive
 
 - **[资源管理 (AssetManager)](./asset-manager)** — `IAssetManager` 统一资源接口，`AddressablesOperator` Addressables 加载器
 - **日志** — `ILogProvider` / `UnityLogProvider` 日志接口与 Unity 实现
+- **[本地化 (C3)](./localization)** — 多语言字符串查询、TextLocalizer 自动文本更新、AssetLocalizer 按语言加载资源
 - **网络 (✅)** — `INetworkManager` 网络服务接口（C6.1 状态同步 + 帧同步 + C6.2 客户端预测已完成，详见[网络指南](./network)）
 - **存储** — `IStorageProvider` 持久化存储接口
 - **[流程管理 (Procedure)](./procedure)** — `ProcedureManager` 事件驱动的游戏流程控制
