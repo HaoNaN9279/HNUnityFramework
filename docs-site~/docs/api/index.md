@@ -47,6 +47,9 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
 - **SyncCollectionOperation** — 同步集合操作类型枚举（Add/Remove/Insert/Set/Clear）
 - **SyncCollectionChange\<T\>** — 同步列表变更事件参数（Operation/Index/Item/OldItem）
 - **SyncDictChange\<TKey, TValue\>** — 同步字典变更事件参数（Operation/Key/Value）
+- **PredictionInputBase** — 预测输入基类（MemoryPackable + IReference）
+- **PredictionReconcileData\<T\>** — 调和数据泛型结构体
+- **IPredictedEntity** — 预测实体接口（Simulate/Reconcile/GetLastProcessedTick）
 - **MessageBase** — 消息协议抽象基类，继承 IReference 支持 ReferencePool 池复用
 - **ConnectionMessages** — 连接消息类型（ClientConnected / ClientDisconnected / ServerReady）
 - **ISerializer** — 统一序列化接口，支持泛型和非泛型
@@ -127,6 +130,9 @@ Unity 平台层，依赖 UnityEngine。
 - **FishNetMessageBus** — 网络消息总线，封装 FishNet Broadcast 系统
 - **FishNetConnectionAdapter** — 连接状态管理适配器
 - **FishNetSerializerAdapter** — MemoryPack 注入 FishNet 的自定义序列化器
+- **PredictedNetworkEntityView** — 支持客户端预测的网络实体视图基类
+- **PredictionManagerAdapter** — FishNet PredictionManager 封装
+- **LagCompensationAdapter** — FishNet ColliderRollback 封装
 - **UnityFormatters** — Unity 类型格式化器集合，含 16 种内置类型
 - **UnityFormattersInitializer** — Unity 格式化器初始化器，提供 `RegisterAll()` 批量注册
 - **SheetManager** — ISheetManager 实现，支持二进制数据加载

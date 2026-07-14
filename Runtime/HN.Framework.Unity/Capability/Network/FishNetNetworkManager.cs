@@ -1,9 +1,12 @@
 using System;
 using FishNet.Managing;
+using FishNet.Managing.Predicting;
 using FishNet.Managing.Server;
 using FishNet.Managing.Client;
+using FishNet.Managing.Timing;
 using FishNet.Transporting;
 using HN.Framework.Core.Capability.Network;
+using HN.Framework.Unity.Capability.Network.Prediction;
 
 namespace HN.Framework.Unity.Capability.Network
 {
@@ -14,6 +17,13 @@ namespace HN.Framework.Unity.Capability.Network
     public class FishNetNetworkManager : INetworkManager
     {
         private NetworkManager _fishNetManager;
+        private PredictionManagerAdapter m_predictionAdapter;
+
+        /// <summary>
+        /// 预测管理器适配器，提供预测状态、调和事件等统一 API。
+        /// 仅在 FishNet NetworkManager 挂载了 PredictionManager 组件时可用；否则为 null。
+        /// </summary>
+        public PredictionManagerAdapter PredictionAdapter => m_predictionAdapter;
 
         /// <summary>
         /// 是否有客户端连接时触发，参数为连接的客户端 ID。
@@ -45,6 +55,7 @@ namespace HN.Framework.Unity.Capability.Network
 
         /// <summary>
         /// 使用指定的 FishNet NetworkManager 初始化包装器，并订阅连接事件。
+        /// 若 NetworkManager 上挂载了 PredictionManager 组件，则自动创建预测适配器。
         /// </summary>
         /// <param name="manager">场景中已存在的 FishNet.NetworkManager 实例。</param>
         /// <exception cref="ArgumentNullException">当 manager 为 null 时抛出。</exception>
@@ -55,9 +66,37 @@ namespace HN.Framework.Unity.Capability.Network
 
             _fishNetManager = manager;
 
+            // 若 NetworkManager 上挂载了 PredictionManager 组件，则创建预测适配器
+            var predictionManager = manager.GetComponent<PredictionManager>();
+            if (predictionManager != null)
+            {
+                var timeManager = manager.TimeManager;
+                if (timeManager != null)
+                    m_predictionAdapter = new PredictionManagerAdapter(predictionManager, timeManager);
+            }
+
             // 订阅服务端远程连接事件，用于通知新客户端连接/断开
             if (_fishNetManager.ServerManager != null)
                 _fishNetManager.ServerManager.OnRemoteConnectionState += OnServerRemoteConnectionState;
+        }
+
+        /// <summary>
+        /// 获取当前网络 Tick 信息。
+        /// 若网络管理器尚未初始化，则返回 (0, 0, 0)。
+        /// </summary>
+        /// <returns>
+        /// 元组包含：
+        /// <c>tick</c> — 当前网络 Tick 编号；
+        /// <c>rtt</c> — 往返时间（毫秒）；
+        /// <c>tickRate</c> — 当前 Tick 速率。
+        /// </returns>
+        public (uint tick, long rtt, ushort tickRate) GetNetworkTickInfo()
+        {
+            if (_fishNetManager?.TimeManager == null)
+                return (0, 0, 0);
+
+            var tm = _fishNetManager.TimeManager;
+            return (tm.Tick, tm.RoundTripTime, tm.TickRate);
         }
 
         /// <summary>
@@ -83,7 +122,7 @@ namespace HN.Framework.Unity.Capability.Network
         }
 
         /// <summary>
-        /// 断开当前所有连接（同时停止服务端和客户端）。
+        /// 断开当前所有连接（同时停止服务端和客户端），并释放预测适配器资源。
         /// </summary>
         public void StopConnection()
         {
@@ -94,6 +133,8 @@ namespace HN.Framework.Unity.Capability.Network
                 _fishNetManager.ServerManager.StopConnection(true);
             if (_fishNetManager.ClientManager != null)
                 _fishNetManager.ClientManager.StopConnection();
+
+            m_predictionAdapter?.Dispose();
         }
 
         /// <summary>

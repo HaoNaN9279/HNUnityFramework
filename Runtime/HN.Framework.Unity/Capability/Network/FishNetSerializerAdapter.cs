@@ -1,5 +1,6 @@
 using System;
 using FishNet.Serializing;
+using HN.Framework.Core.Capability.Network.Prediction;
 using HN.Framework.Core.Driver.Common.Serialization;
 using HN.Framework.Unity.Capability.Serialization;
 using UnityEngine;
@@ -22,6 +23,9 @@ namespace HN.Framework.Unity.Capability.Network
         {
             // 先确保 Unity 类型的 MemoryPack 格式化器已注册
             UnityFormattersInitializer.RegisterAll();
+
+            // 注册预测类型格式化器
+            PredictionInputFormatter.Register();
 
             // 再将这些类型注册到 FishNet 的泛型序列化管道
             RegisterAllKnownTypes();
@@ -50,6 +54,9 @@ namespace HN.Framework.Unity.Capability.Network
             RegisterType<LayerMask>();
             RegisterType<AnimationCurve>();
             RegisterType<Gradient>();
+
+            // 注册预测相关类型
+            RegisterType<PredictionReconcileData<byte>>();
         }
 
         /// <summary>

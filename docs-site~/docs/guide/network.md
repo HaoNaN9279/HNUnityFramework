@@ -223,8 +223,70 @@ private void OnFrameStart(ulong frameNumber)
 | `BufferSize` | 3 | 帧输入缓冲容量，客户端可提前发送的帧数 |
 | `MaxCatchUpFrames` | 9 | 追帧保护上限（BufferSize × 3），防止死亡螺旋 |
 
+### C6.2 客户端预测与服务器校验 ✅
+
+**状态**：✅ 已完成
+
+**设计定位**：封装 FishNet Prediction API，不自建预测引擎。框架基类采用辅助方法模式（不直接贴 `[Replicate]`/`[Reconcile]`），由业务子类声明具体方法后调用。
+
+**框架封装层** (`HN.Framework.Unity.Capability.Network.Prediction`)：
+
+| 类型 | 说明 |
+|------|------|
+| `PredictedNetworkEntityView` | 继承 `NetworkEntityView`，内建输入历史缓冲区（容量 = TickRate × 5），提供 6 个辅助方法 |
+| `PredictionManagerAdapter` | 封装 FishNet PredictionManager，暴露 IsReconciling/OnPreReconcile 等 API |
+| `LagCompensationAdapter` | 封装 FishNet RollbackManager，提供 RollbackRaycast/RollbackOverlapSphere 等方法 |
+
+**辅助方法清单**（基类 PredictedNetworkEntityView 提供）：
+
+| 方法 | 用途 |
+|------|------|
+| `CreateReplicateData<T>(tick)` | 从 ReferencePool 获取输入实例 |
+| `ReleaseReplicateData<T>(data)` | 归还到对象池 |
+| `StoreReplicateInput(input)` | 存入历史缓冲区，满时自动淘汰 |
+| `GetReconcileInputs(from, to)` | 按 Tick 范围检索历史输入 |
+| `ApplyReconcileState<T>(data)` | 应用服务端权威状态 |
+| `GetNetworkTickInfo()` | 获取 (tick, rtt, tickRate) 时序信息 |
+
+**Core 层数据模型** (`HN.Framework.Core.Capability.Network.Prediction`)：
+
+| 类型 | 说明 |
+|------|------|
+| `PredictionInputBase` | 抽象基类，MemoryPackable + IReference |
+| `PredictionReconcileData<T>` | 泛型结构体，服务端权威状态快照 |
+| `IPredictedEntity` | 预测实体接口 |
+
+**使用示例**：
+
+```csharp
+// 业务子类示例
+public class PlayerPredictedView : PredictedNetworkEntityView
+{
+    [Replicate]
+    private void OnReplicate(PlayerInput input, ReplicateState state, Channel channel)
+    {
+        var data = CreateReplicateData<PlayerInput>(input.Tick);
+        data.MoveDirection = input.MoveDirection;
+        SimulateMovement(data);
+        StoreReplicateInput(data);
+    }
+
+    [Reconcile]
+    private void OnReconcile(PlayerState state, Channel channel)
+    {
+        ApplyReconcileState(state);
+        var pendingInputs = GetReconcileInputs(state.ClientTick, state.ServerTick);
+        foreach (var input in pendingInputs)
+            SimulateMovement(input);
+    }
+}
+```
+
+**集成方式**：
+- `FishNetNetworkManager.PredictionAdapter` 属性访问预测管理器
+- `GameWorld.NetworkManager` 可通过 FishNetNetworkManager 的 PredictionAdapter 获取预测状态
+
 ### Phase 2 待开发
 
-- C6.2 客户端预测：FishNet Prediction API
 - C6.3 实体权限：EntityManager ↔ FishNet Spawn 集成
 - NetworkTransform / NetworkAnimator 框架封装
