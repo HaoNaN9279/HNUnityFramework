@@ -40,6 +40,12 @@ namespace HN.Framework.Core.Driver
         public IStorageProvider StorageProvider { get; set; }
 
         /// <summary>
+        /// 帧同步管理器。启用后在 Tick 循环的最优先位置驱动逻辑帧 Tick。
+        /// 由 GameWorldDriver 在初始化时注入，或由外部代码设置为自定义实现。
+        /// </summary>
+        public IFrameSyncManager? FrameSyncManager { get; set; }
+
+        /// <summary>
         /// 输入管理器。可通过属性替换以支持自定义实现。
         /// InputManager 是事件驱动的，因此无需 Tick 驱动；仅当实现 ITickable 时才由 GameWorld 调用 Tick/LateTick。
         /// </summary>
@@ -89,6 +95,8 @@ namespace HN.Framework.Core.Driver
 
         public void Tick()
         {
+            // 帧同步在 Tick 首位驱动，确保逻辑帧先于其他所有模块更新
+            (FrameSyncManager as ITickable)?.Tick();
             PoolManager.Tick();
             ProcedureManager.Tick();
             ControllerManager.Tick();
@@ -101,6 +109,7 @@ namespace HN.Framework.Core.Driver
 
         public void LateTick()
         {
+            (FrameSyncManager as ITickable)?.LateTick();
             PoolManager.LateTick();
             ProcedureManager.LateTick();
             ControllerManager.LateTick();
