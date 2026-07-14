@@ -35,7 +35,7 @@ namespace HN.Framework.Unity.Tests.Serialization
         /// </summary>
         public sealed class TestUnityDataFormatter : MemoryPackFormatter<TestUnityData>
         {
-            public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref TestUnityData? value)
+            public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref TestUnityData? value)
             {
                 if (value == null) return;
 
@@ -45,7 +45,7 @@ namespace HN.Framework.Unity.Tests.Serialization
                 writer.WriteValue(value.Scale);
             }
 
-            public override void Deserialize(ref MemoryPackReader reader, scoped ref TestUnityData? value)
+            public override void Deserialize(ref MemoryPackReader reader, ref TestUnityData? value)
             {
                 value ??= new TestUnityData();
                 value.Position = reader.ReadValue<Vector3>();

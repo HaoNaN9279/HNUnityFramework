@@ -10,12 +10,12 @@ namespace HN.Framework.Unity.Capability.Serialization
     [Preserve]
     public sealed class Vector2Formatter : MemoryPackFormatter<Vector2>
     {
-        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref Vector2 value)
+        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref Vector2 value)
         {
             writer.WriteUnmanaged(value.x, value.y);
         }
 
-        public override void Deserialize(ref MemoryPackReader reader, scoped ref Vector2 value)
+        public override void Deserialize(ref MemoryPackReader reader, ref Vector2 value)
         {
             reader.ReadUnmanaged(out float x, out float y);
             value = new Vector2(x, y);
@@ -28,12 +28,12 @@ namespace HN.Framework.Unity.Capability.Serialization
     [Preserve]
     public sealed class Vector3Formatter : MemoryPackFormatter<Vector3>
     {
-        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref Vector3 value)
+        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref Vector3 value)
         {
             writer.WriteUnmanaged(value.x, value.y, value.z);
         }
 
-        public override void Deserialize(ref MemoryPackReader reader, scoped ref Vector3 value)
+        public override void Deserialize(ref MemoryPackReader reader, ref Vector3 value)
         {
             reader.ReadUnmanaged(out float x, out float y, out float z);
             value = new Vector3(x, y, z);
@@ -46,12 +46,12 @@ namespace HN.Framework.Unity.Capability.Serialization
     [Preserve]
     public sealed class Vector4Formatter : MemoryPackFormatter<Vector4>
     {
-        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref Vector4 value)
+        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref Vector4 value)
         {
             writer.WriteUnmanaged(value.x, value.y, value.z, value.w);
         }
 
-        public override void Deserialize(ref MemoryPackReader reader, scoped ref Vector4 value)
+        public override void Deserialize(ref MemoryPackReader reader, ref Vector4 value)
         {
             reader.ReadUnmanaged(out float x, out float y, out float z, out float w);
             value = new Vector4(x, y, z, w);
@@ -64,12 +64,12 @@ namespace HN.Framework.Unity.Capability.Serialization
     [Preserve]
     public sealed class Vector2IntFormatter : MemoryPackFormatter<Vector2Int>
     {
-        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref Vector2Int value)
+        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref Vector2Int value)
         {
             writer.WriteUnmanaged(value.x, value.y);
         }
 
-        public override void Deserialize(ref MemoryPackReader reader, scoped ref Vector2Int value)
+        public override void Deserialize(ref MemoryPackReader reader, ref Vector2Int value)
         {
             reader.ReadUnmanaged(out int x, out int y);
             value = new Vector2Int(x, y);
@@ -82,12 +82,12 @@ namespace HN.Framework.Unity.Capability.Serialization
     [Preserve]
     public sealed class Vector3IntFormatter : MemoryPackFormatter<Vector3Int>
     {
-        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref Vector3Int value)
+        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref Vector3Int value)
         {
             writer.WriteUnmanaged(value.x, value.y, value.z);
         }
 
-        public override void Deserialize(ref MemoryPackReader reader, scoped ref Vector3Int value)
+        public override void Deserialize(ref MemoryPackReader reader, ref Vector3Int value)
         {
             reader.ReadUnmanaged(out int x, out int y, out int z);
             value = new Vector3Int(x, y, z);
@@ -100,12 +100,12 @@ namespace HN.Framework.Unity.Capability.Serialization
     [Preserve]
     public sealed class QuaternionFormatter : MemoryPackFormatter<Quaternion>
     {
-        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref Quaternion value)
+        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref Quaternion value)
         {
             writer.WriteUnmanaged(value.x, value.y, value.z, value.w);
         }
 
-        public override void Deserialize(ref MemoryPackReader reader, scoped ref Quaternion value)
+        public override void Deserialize(ref MemoryPackReader reader, ref Quaternion value)
         {
             reader.ReadUnmanaged(out float x, out float y, out float z, out float w);
             value = new Quaternion(x, y, z, w);
@@ -118,12 +118,12 @@ namespace HN.Framework.Unity.Capability.Serialization
     [Preserve]
     public sealed class ColorFormatter : MemoryPackFormatter<Color>
     {
-        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref Color value)
+        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref Color value)
         {
             writer.WriteUnmanaged(value.r, value.g, value.b, value.a);
         }
 
-        public override void Deserialize(ref MemoryPackReader reader, scoped ref Color value)
+        public override void Deserialize(ref MemoryPackReader reader, ref Color value)
         {
             reader.ReadUnmanaged(out float r, out float g, out float b, out float a);
             value = new Color(r, g, b, a);
@@ -136,12 +136,12 @@ namespace HN.Framework.Unity.Capability.Serialization
     [Preserve]
     public sealed class Color32Formatter : MemoryPackFormatter<Color32>
     {
-        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref Color32 value)
+        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref Color32 value)
         {
             writer.WriteUnmanaged(value.r, value.g, value.b, value.a);
         }
 
-        public override void Deserialize(ref MemoryPackReader reader, scoped ref Color32 value)
+        public override void Deserialize(ref MemoryPackReader reader, ref Color32 value)
         {
             reader.ReadUnmanaged(out byte r, out byte g, out byte b, out byte a);
             value = new Color32(r, g, b, a);
@@ -154,13 +154,13 @@ namespace HN.Framework.Unity.Capability.Serialization
     [Preserve]
     public sealed class BoundsFormatter : MemoryPackFormatter<Bounds>
     {
-        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref Bounds value)
+        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref Bounds value)
         {
             writer.WriteUnmanaged(value.center.x, value.center.y, value.center.z);
             writer.WriteUnmanaged(value.size.x, value.size.y, value.size.z);
         }
 
-        public override void Deserialize(ref MemoryPackReader reader, scoped ref Bounds value)
+        public override void Deserialize(ref MemoryPackReader reader, ref Bounds value)
         {
             reader.ReadUnmanaged(out float cx, out float cy, out float cz);
             reader.ReadUnmanaged(out float sx, out float sy, out float sz);
@@ -174,14 +174,14 @@ namespace HN.Framework.Unity.Capability.Serialization
     [Preserve]
     public sealed class BoundsIntFormatter : MemoryPackFormatter<BoundsInt>
     {
-        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref BoundsInt value)
+        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref BoundsInt value)
         {
             var pos = value.position;
             var size = value.size;
             writer.WriteUnmanaged(pos.x, pos.y, pos.z, size.x, size.y, size.z);
         }
 
-        public override void Deserialize(ref MemoryPackReader reader, scoped ref BoundsInt value)
+        public override void Deserialize(ref MemoryPackReader reader, ref BoundsInt value)
         {
             reader.ReadUnmanaged(out int px, out int py, out int pz, out int sx, out int sy, out int sz);
             value = new BoundsInt(new Vector3Int(px, py, pz), new Vector3Int(sx, sy, sz));
@@ -194,12 +194,12 @@ namespace HN.Framework.Unity.Capability.Serialization
     [Preserve]
     public sealed class RectFormatter : MemoryPackFormatter<Rect>
     {
-        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref Rect value)
+        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref Rect value)
         {
             writer.WriteUnmanaged(value.x, value.y, value.width, value.height);
         }
 
-        public override void Deserialize(ref MemoryPackReader reader, scoped ref Rect value)
+        public override void Deserialize(ref MemoryPackReader reader, ref Rect value)
         {
             reader.ReadUnmanaged(out float x, out float y, out float w, out float h);
             value = new Rect(x, y, w, h);
@@ -212,12 +212,12 @@ namespace HN.Framework.Unity.Capability.Serialization
     [Preserve]
     public sealed class RectIntFormatter : MemoryPackFormatter<RectInt>
     {
-        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref RectInt value)
+        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref RectInt value)
         {
             writer.WriteUnmanaged(value.x, value.y, value.width, value.height);
         }
 
-        public override void Deserialize(ref MemoryPackReader reader, scoped ref RectInt value)
+        public override void Deserialize(ref MemoryPackReader reader, ref RectInt value)
         {
             reader.ReadUnmanaged(out int x, out int y, out int w, out int h);
             value = new RectInt(x, y, w, h);
@@ -230,7 +230,7 @@ namespace HN.Framework.Unity.Capability.Serialization
     [Preserve]
     public sealed class Matrix4x4Formatter : MemoryPackFormatter<Matrix4x4>
     {
-        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref Matrix4x4 value)
+        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref Matrix4x4 value)
         {
             writer.WriteUnmanaged(value.m00, value.m01, value.m02, value.m03);
             writer.WriteUnmanaged(value.m10, value.m11, value.m12, value.m13);
@@ -238,7 +238,7 @@ namespace HN.Framework.Unity.Capability.Serialization
             writer.WriteUnmanaged(value.m30, value.m31, value.m32, value.m33);
         }
 
-        public override void Deserialize(ref MemoryPackReader reader, scoped ref Matrix4x4 value)
+        public override void Deserialize(ref MemoryPackReader reader, ref Matrix4x4 value)
         {
             reader.ReadUnmanaged(out float m00, out float m01, out float m02, out float m03);
             reader.ReadUnmanaged(out float m10, out float m11, out float m12, out float m13);
@@ -258,12 +258,12 @@ namespace HN.Framework.Unity.Capability.Serialization
     [Preserve]
     public sealed class LayerMaskFormatter : MemoryPackFormatter<LayerMask>
     {
-        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref LayerMask value)
+        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref LayerMask value)
         {
             writer.WriteUnmanaged(value.value);
         }
 
-        public override void Deserialize(ref MemoryPackReader reader, scoped ref LayerMask value)
+        public override void Deserialize(ref MemoryPackReader reader, ref LayerMask value)
         {
             reader.ReadUnmanaged(out int v);
             value = new LayerMask { value = v };
@@ -278,7 +278,7 @@ namespace HN.Framework.Unity.Capability.Serialization
     [Preserve]
     public sealed class AnimationCurveFormatter : MemoryPackFormatter<AnimationCurve>
     {
-        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref AnimationCurve value)
+        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref AnimationCurve value)
         {
             if (value == null)
             {
@@ -299,7 +299,7 @@ namespace HN.Framework.Unity.Capability.Serialization
             writer.WriteUnmanaged((int)value.preWrapMode, (int)value.postWrapMode);
         }
 
-        public override void Deserialize(ref MemoryPackReader reader, scoped ref AnimationCurve value)
+        public override void Deserialize(ref MemoryPackReader reader, ref AnimationCurve value)
         {
             reader.ReadUnmanaged(out int keyCount);
             if (keyCount == 0)
@@ -336,7 +336,7 @@ namespace HN.Framework.Unity.Capability.Serialization
     [Preserve]
     public sealed class GradientFormatter : MemoryPackFormatter<Gradient>
     {
-        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref Gradient value)
+        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref Gradient value)
         {
             if (value == null)
             {
@@ -360,7 +360,7 @@ namespace HN.Framework.Unity.Capability.Serialization
             }
         }
 
-        public override void Deserialize(ref MemoryPackReader reader, scoped ref Gradient value)
+        public override void Deserialize(ref MemoryPackReader reader, ref Gradient value)
         {
             reader.ReadUnmanaged(out int colorKeyCount);
             var colorKeys = new GradientColorKey[colorKeyCount];

@@ -30,14 +30,14 @@ namespace HN.Framework.Core.Tests.Level.Logic.Sheet
         /// </summary>
         private sealed class TestConfigRowFormatter : global::MemoryPack.MemoryPackFormatter<TestConfigRow>
         {
-            public override void Serialize<TBufferWriter>(ref global::MemoryPack.MemoryPackWriter<TBufferWriter> writer, scoped ref TestConfigRow? value)
+            public override void Serialize<TBufferWriter>(ref global::MemoryPack.MemoryPackWriter<TBufferWriter> writer, ref TestConfigRow? value)
             {
                 if (value == null) { writer.WriteNullObjectHeader(); return; }
                 writer.WriteValue(value.Id);
                 writer.WriteValue(value.Name);
             }
 
-            public override void Deserialize(ref global::MemoryPack.MemoryPackReader reader, scoped ref TestConfigRow? value)
+            public override void Deserialize(ref global::MemoryPack.MemoryPackReader reader, ref TestConfigRow? value)
             {
                 value ??= new TestConfigRow();
                 value.Id = reader.ReadValue<int>();
@@ -50,7 +50,7 @@ namespace HN.Framework.Core.Tests.Level.Logic.Sheet
         /// </summary>
         private sealed class TestConfigRowArrayFormatter : global::MemoryPack.MemoryPackFormatter<TestConfigRow[]>
         {
-            public override void Serialize<TBufferWriter>(ref global::MemoryPack.MemoryPackWriter<TBufferWriter> writer, scoped ref TestConfigRow[]? value)
+            public override void Serialize<TBufferWriter>(ref global::MemoryPack.MemoryPackWriter<TBufferWriter> writer, ref TestConfigRow[]? value)
             {
                 if (value == null) { writer.WriteNullCollectionHeader(); return; }
                 writer.WriteCollectionHeader(value.Length);
@@ -60,7 +60,7 @@ namespace HN.Framework.Core.Tests.Level.Logic.Sheet
                 }
             }
 
-            public override void Deserialize(ref global::MemoryPack.MemoryPackReader reader, scoped ref TestConfigRow[]? value)
+            public override void Deserialize(ref global::MemoryPack.MemoryPackReader reader, ref TestConfigRow[]? value)
             {
                 if (!reader.TryReadCollectionHeader(out int length))
                 {

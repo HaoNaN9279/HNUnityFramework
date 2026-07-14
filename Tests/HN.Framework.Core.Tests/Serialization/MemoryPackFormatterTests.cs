@@ -104,11 +104,11 @@ namespace HN.Framework.Core.Tests.Serialization
         /// </summary>
         private sealed class TestDataFormatter : MemoryPackFormatter<TestData>
         {
-            public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref TestData value)
+            public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref TestData value)
             {
             }
 
-            public override void Deserialize(ref MemoryPackReader reader, scoped ref TestData value)
+            public override void Deserialize(ref MemoryPackReader reader, ref TestData value)
             {
             }
         }
@@ -120,12 +120,12 @@ namespace HN.Framework.Core.Tests.Serialization
         /// </summary>
         private sealed class FakeInterfaceFormatter : IMemoryPackFormatter<int>
         {
-            public void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref int value)
+            public void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref int value)
                 where TBufferWriter : class, IBufferWriter<byte>
             {
             }
 
-            public void Deserialize(ref MemoryPackReader reader, scoped ref int value)
+            public void Deserialize(ref MemoryPackReader reader, ref int value)
             {
             }
         }

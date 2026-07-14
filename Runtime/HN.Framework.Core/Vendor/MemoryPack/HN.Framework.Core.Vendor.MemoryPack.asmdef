@@ -5,8 +5,9 @@
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": true,
-    "overrideReferences": false,
+    "overrideReferences": true,
     "precompiledReferences": [
+        "MemoryPack.dll",
         "System.Runtime.CompilerServices.Unsafe.dll",
         "System.Collections.Immutable.dll"
     ],

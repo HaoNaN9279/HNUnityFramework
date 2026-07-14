@@ -325,13 +325,13 @@ namespace HN.Framework.Core.Tests.Serialization
     /// </summary>
     public sealed class CompositeTestDataFormatter : MemoryPackFormatter<CompositeTestData>
     {
-        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref CompositeTestData value)
+        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref CompositeTestData value)
         {
             writer.WriteUnmanaged(value.Position.X.m_rawValue, value.Position.Y.m_rawValue, value.Position.Z.m_rawValue);
             writer.WriteUnmanaged(value.Health.m_rawValue);
         }
 
-        public override void Deserialize(ref MemoryPackReader reader, scoped ref CompositeTestData value)
+        public override void Deserialize(ref MemoryPackReader reader, ref CompositeTestData value)
         {
             if (value == null)
             {

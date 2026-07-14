@@ -28,14 +28,14 @@ namespace HN.Framework.Core.Capability.Network.Messages
         [Preserve]
         private sealed class ClientConnectedMessageFormatter : MemoryPackFormatter<ClientConnectedMessage>
         {
-            public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref ClientConnectedMessage? value)
+            public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref ClientConnectedMessage? value)
             {
                 if (value == null) { writer.WriteNullObjectHeader(); return; }
                 writer.WriteObjectHeader(1);
                 writer.WriteValue(value.ClientId);
             }
 
-            public override void Deserialize(ref MemoryPackReader reader, scoped ref ClientConnectedMessage? value)
+            public override void Deserialize(ref MemoryPackReader reader, ref ClientConnectedMessage? value)
             {
                 if (!reader.TryReadObjectHeader(out byte count))
                 {
@@ -51,7 +51,7 @@ namespace HN.Framework.Core.Capability.Network.Messages
         [Preserve]
         private sealed class ClientDisconnectedMessageFormatter : MemoryPackFormatter<ClientDisconnectedMessage>
         {
-            public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref ClientDisconnectedMessage? value)
+            public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref ClientDisconnectedMessage? value)
             {
                 if (value == null) { writer.WriteNullObjectHeader(); return; }
                 writer.WriteObjectHeader(2);
@@ -59,7 +59,7 @@ namespace HN.Framework.Core.Capability.Network.Messages
                 writer.WriteValue(value.Reason);
             }
 
-            public override void Deserialize(ref MemoryPackReader reader, scoped ref ClientDisconnectedMessage? value)
+            public override void Deserialize(ref MemoryPackReader reader, ref ClientDisconnectedMessage? value)
             {
                 if (!reader.TryReadObjectHeader(out byte count))
                 {
@@ -77,13 +77,13 @@ namespace HN.Framework.Core.Capability.Network.Messages
         [Preserve]
         private sealed class ServerReadyMessageFormatter : MemoryPackFormatter<ServerReadyMessage>
         {
-            public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, scoped ref ServerReadyMessage? value)
+            public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref ServerReadyMessage? value)
             {
                 if (value == null) { writer.WriteNullObjectHeader(); return; }
                 writer.WriteObjectHeader(0);
             }
 
-            public override void Deserialize(ref MemoryPackReader reader, scoped ref ServerReadyMessage? value)
+            public override void Deserialize(ref MemoryPackReader reader, ref ServerReadyMessage? value)
             {
                 if (!reader.TryReadObjectHeader(out _))
                 {
