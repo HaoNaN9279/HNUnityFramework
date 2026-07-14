@@ -1,0 +1,172 @@
+﻿{
+    "plan":  "C6.1 状态同步机制",
+    "plan_path":  ".opencode/jobs/20260714103641_C6.1-状态同步机制/plan.md",
+    "created_at":  "2026-07-14T10:41:00",
+    "phases":  [
+                   {
+                       "wave":  1,
+                       "jobs":  [
+                                    {
+                                        "id":  "T1",
+                                        "subject":  "创建 Core 层 SyncedModel\u003cT\u003e",
+                                        "status":  "completed",
+                                        "verification":  {
+                                                             "build":  "pass",
+                                                             "lsp_diagnostics":  "pass"
+                                                         },
+                                        "started_at":  "2026-07-14T10:41:00",
+                                        "completed_at":  "2026-07-14T10:42:00"
+                                    },
+                                    {
+                                        "id":  "T2",
+                                        "subject":  "创建 Core 层 SyncCollection 数据结构",
+                                        "status":  "completed",
+                                        "verification":  {
+                                                             "build":  "pass",
+                                                             "lsp_diagnostics":  "pass"
+                                                         },
+                                        "started_at":  "2026-07-14T10:41:00",
+                                        "completed_at":  "2026-07-14T10:42:00"
+                                    }
+                                ]
+                   },
+                   {
+                       "wave":  2,
+                       "jobs":  [
+                                    {
+                                        "id":  "T4",
+                                        "subject":  "扩展 NetworkEntityView 同步基础设施",
+                                        "status":  "completed",
+                                        "verification":  {
+                                                             "build":  "pass",
+                                                             "lsp_diagnostics":  "pass"
+                                                         }
+                                    },
+                                    {
+                                        "id":  "T5",
+                                        "subject":  "创建 FishNetSyncedList\u003cT\u003e Unity 包装器",
+                                        "status":  "completed",
+                                        "verification":  {
+                                                             "build":  "pass",
+                                                             "lsp_diagnostics":  "pass"
+                                                         }
+                                    },
+                                    {
+                                        "id":  "T6",
+                                        "subject":  "创建 FishNetSyncedDictionary Unity 包装器",
+                                        "status":  "completed",
+                                        "verification":  {
+                                                             "build":  "pass",
+                                                             "lsp_diagnostics":  "pass"
+                                                         }
+                                    },
+                                    {
+                                        "id":  "T3",
+                                        "subject":  "创建 Core 层 SyncedModelTests",
+                                        "status":  "completed",
+                                        "verification":  {
+                                                             "build":  "pass",
+                                                             "lsp_diagnostics":  "pass"
+                                                         }
+                                    },
+                                    {
+                                        "id":  "T7",
+                                        "subject":  "创建 SyncCollectionTests",
+                                        "status":  "completed",
+                                        "verification":  {
+                                                             "build":  "pass",
+                                                             "lsp_diagnostics":  "pass"
+                                                         }
+                                    }
+                                ]
+                   },
+                   {
+                       "wave":  3,
+                       "jobs":  [
+                                    {
+                                        "id":  "T8",
+                                        "subject":  "创建 NetworkEntityViewSyncTests",
+                                        "status":  "completed",
+                                        "verification":  {
+                                                             "lsp_diagnostics":  "pass",
+                                                             "build":  "pass",
+                                                             "tests":  "pass"
+                                                         }
+                                    },
+                                    {
+                                        "id":  "T9",
+                                        "subject":  "创建 FishNetSyncedListTests",
+                                        "status":  "completed",
+                                        "verification":  {
+                                                             "lsp_diagnostics":  "pass",
+                                                             "build":  "pass",
+                                                             "tests":  "pass"
+                                                         }
+                                    },
+                                    {
+                                        "id":  "T10",
+                                        "subject":  "创建 FishNetSyncedDictionaryTests",
+                                        "status":  "completed",
+                                        "verification":  {
+                                                             "lsp_diagnostics":  "pass",
+                                                             "build":  "pass",
+                                                             "tests":  "pass"
+                                                         }
+                                    },
+                                    {
+                                        "id":  "T11",
+                                        "subject":  "运行 Core 层测试并修复",
+                                        "status":  "completed",
+                                        "verification":  {
+                                                             "lsp_diagnostics":  "pass",
+                                                             "build":  "pass",
+                                                             "tests":  "pass"
+                                                         }
+                                    },
+                                    {
+                                        "id":  "T12",
+                                        "subject":  "运行 Unity 层网络测试并修复",
+                                        "status":  "completed",
+                                        "verification":  {
+                                                             "lsp_diagnostics":  "pass",
+                                                             "build":  "pass",
+                                                             "tests":  "pass"
+                                                         }
+                                    }
+                                ]
+                   },
+                   {
+                       "wave":  4,
+                       "jobs":  [
+                                    {
+                                        "id":  "T13",
+                                        "subject":  "更新 network.md 使用指南",
+                                        "status":  "completed",
+                                        "verification":  {
+                                                             "lsp_diagnostics":  "pass"
+                                                         }
+                                    },
+                                    {
+                                        "id":  "T14",
+                                        "subject":  "更新 API 索引文档",
+                                        "status":  "completed",
+                                        "verification":  {
+                                                             "lsp_diagnostics":  "pass"
+                                                         }
+                                    },
+                                    {
+                                        "id":  "T15",
+                                        "subject":  "更新架构文档 SyncVar API 描述",
+                                        "status":  "completed",
+                                        "verification":  {
+                                                             "lsp_diagnostics":  "pass"
+                                                         }
+                                    }
+                                ]
+                   }
+               ],
+    "current_wave":  4,
+    "failures":  [
+
+                 ]
+}

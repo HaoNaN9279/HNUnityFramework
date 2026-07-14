@@ -40,6 +40,10 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
 - **IAssetManager** — 资源管理器接口
 - **ILogProvider** — 日志提供者接口（支持 LogLevel 分级 + Channel 通道）
 - **INetworkManager** — 网络管理器接口，定义 IsServer/IsClient/IsHost、StartServer/StartClient/StopConnection、连接事件
+- **SyncedModel\<T\>** — 同步数据模型，实现 IReadOnlyModel\<T\>，支持服务端写入、脏标记追踪、线程安全的值变更通知
+- **SyncCollectionOperation** — 同步集合操作类型枚举（Add/Remove/Insert/Set/Clear）
+- **SyncCollectionChange\<T\>** — 同步列表变更事件参数（Operation/Index/Item/OldItem）
+- **SyncDictChange\<TKey, TValue\>** — 同步字典变更事件参数（Operation/Key/Value）
 - **MessageBase** — 消息协议抽象基类，继承 IReference 支持 ReferencePool 池复用
 - **ConnectionMessages** — 连接消息类型（ClientConnected / ClientDisconnected / ServerReady）
 - **ISerializer** — 统一序列化接口，支持泛型和非泛型
@@ -114,7 +118,9 @@ Unity 平台层，依赖 UnityEngine。
 **Capability — 能力模块（Unity 实现）**
 
 - **FishNetNetworkManager** — FishNet 网络管理器实现，纯 C# 包装 FishNet.NetworkManager
-- **NetworkEntityView** — 网络实体视图基类，继承 FishNet.NetworkBehaviour
+- **NetworkEntityView** — 网络实体视图基类，继承 FishNet.NetworkBehaviour，提供 RegisterSyncedModel/UnregisterSyncedModel/ApplySyncValue 同步基础设施
+- **FishNetSyncedList\<T\>** — 同步列表包装器，继承 FishNet SyncList\<T\>，提供框架统一的 OnCollectionChanged 事件
+- **FishNetSyncedDictionary\<TKey, TValue\>** — 同步字典包装器，继承 FishNet SyncDictionary，提供框架统一的 OnCollectionChanged 事件
 - **FishNetMessageBus** — 网络消息总线，封装 FishNet Broadcast 系统
 - **FishNetConnectionAdapter** — 连接状态管理适配器
 - **FishNetSerializerAdapter** — MemoryPack 注入 FishNet 的自定义序列化器
