@@ -1,0 +1,139 @@
+﻿{
+    "plan":  "D2.6 FixedMathSharp 开发",
+    "created_at":  "2026-07-14T11:36:43",
+    "waves":  [
+                  {
+                      "wave":  1,
+                      "name":  "Vendor 源码准备",
+                      "jobs":  [
+                                   {
+                                       "id":  "T1.1",
+                                       "subject":  "下载 FixedMathSharp 上游源码",
+                                       "status":  "completed",
+                                       "verification":  null,
+                                       "completed_at":  "2026-07-14T11:47:51"
+                                   },
+                                   {
+                                       "id":  "T1.2",
+                                       "subject":  "创建 Vendor asmdef + 获取 GUID",
+                                       "status":  "completed",
+                                       "verification":  "GUID: 644ddb74a15b97f4d9f2aa9d9cba1cb3",
+                                       "completed_at":  "2026-07-14T11:47:51"
+                                   },
+                                   {
+                                       "id":  "T1.3",
+                                       "subject":  "创建 HNFixedPoint.cs 占位",
+                                       "status":  "completed",
+                                       "verification":  null,
+                                       "completed_at":  "2026-07-14T11:47:51"
+                                   }
+                               ]
+                  },
+                  {
+                      "wave":  2,
+                      "name":  "MemoryPack 批量剥离",
+                      "jobs":  [
+                                   {
+                                       "id":  "T2.1",
+                                       "subject":  "批量剥离 8 文件 MemoryPack",
+                                       "status":  "completed",
+                                       "verification":  null,
+                                       "completed_at":  "2026-07-14T12:10:52"
+                                   },
+                                   {
+                                       "id":  "T2.2",
+                                       "subject":  "编译验证 Vendor 程序集",
+                                       "status":  "completed",
+                                       "verification":  null,
+                                       "completed_at":  "2026-07-14T12:10:52"
+                                   }
+                               ]
+                  },
+                  {
+                      "wave":  3,
+                      "name":  "格式化器实现",
+                      "jobs":  [
+                                   {
+                                       "id":  "T3.1",
+                                       "subject":  "创建 FixedMathSharpFormatters.cs",
+                                       "status":  "completed",
+                                       "verification":  null,
+                                       "completed_at":  "2026-07-14T12:29:09"
+                                   },
+                                   {
+                                       "id":  "T3.2",
+                                       "subject":  "创建 FormattersInitializer.cs",
+                                       "status":  "completed",
+                                       "verification":  null,
+                                       "completed_at":  "2026-07-14T12:29:09"
+                                   },
+                                   {
+                                       "id":  "T3.3",
+                                       "subject":  "更新 Core asmdef 引用",
+                                       "status":  "completed",
+                                       "verification":  null,
+                                       "completed_at":  "2026-07-14T12:29:09"
+                                   },
+                                   {
+                                       "id":  "T3.4",
+                                       "subject":  "集成 Unity 层初始化",
+                                       "status":  "completed",
+                                       "verification":  null,
+                                       "completed_at":  "2026-07-14T12:29:09"
+                                   }
+                               ]
+                  },
+                  {
+                      "wave":  4,
+                      "name":  "测试",
+                      "jobs":  [
+                                   {
+                                       "id":  "T4.1",
+                                       "subject":  "创建 FixedMathSharpFormattersTests.cs",
+                                       "status":  "completed",
+                                       "verification":  null,
+                                       "completed_at":  "2026-07-14T12:36:46"
+                                   },
+                                   {
+                                       "id":  "T4.2",
+                                       "subject":  "更新 Core Tests asmdef",
+                                       "status":  "completed",
+                                       "verification":  null,
+                                       "completed_at":  "2026-07-14T12:36:46"
+                                   }
+                               ]
+                  },
+                  {
+                      "wave":  5,
+                      "name":  "验证与文档",
+                      "jobs":  [
+                                   {
+                                       "id":  "T5.1",
+                                       "subject":  "运行 Core Tests",
+                                       "status":  "completed",
+                                       "verification":  "17/17 FixedMathSharp tests passed; 4 pre-existing failures unrelated",
+                                       "completed_at":  "2026-07-14T12:37:54"
+                                   },
+                                   {
+                                       "id":  "T5.2",
+                                       "subject":  "更新 API 文档",
+                                       "status":  "completed",
+                                       "verification":  null,
+                                       "completed_at":  "2026-07-14T12:37:54"
+                                   },
+                                   {
+                                       "id":  "T5.3",
+                                       "subject":  "更新架构文档",
+                                       "status":  "completed",
+                                       "verification":  null,
+                                       "completed_at":  "2026-07-14T12:37:54"
+                                   }
+                               ]
+                  }
+              ],
+    "current_wave":  -1,
+    "failures":  [
+
+                 ],
+    "fixedmathsharp_vendor_guid":  "644ddb74a15b97f4d9f2aa9d9cba1cb3"
+}

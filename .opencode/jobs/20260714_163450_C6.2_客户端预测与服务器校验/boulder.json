@@ -1,0 +1,37 @@
+{
+  "plan": "C6.2 客户端预测与服务器校验",
+  "plan_path": ".opencode/jobs/20260714_163450_C6.2_客户端预测与服务器校验/plan.md",
+  "created_at": "2026-07-14T16:34:50",
+  "completed_at": "2026-07-14T16:52:00",
+  "phases": [
+    {
+      "wave": 0,
+      "jobs": [
+        { "id": "T1", "subject": "Core 层预测数据模型", "status": "completed", "verification": { "validate_script": "pass", "errors": 0, "warnings": 0 }, "completed_at": "2026-07-14T16:36:00" },
+        { "id": "T2", "subject": "Core 层 IPredictedEntity 接口", "status": "completed", "verification": { "validate_script": "pass", "errors": 0, "warnings": 0 }, "completed_at": "2026-07-14T16:36:00" },
+        { "id": "T3", "subject": "Unity 层 PredictedNetworkEntityView 基类", "status": "completed", "verification": { "lsp_fix": "RingBuffer→List, InstanceFinder→NetworkManager", "validate_script": "pass", "errors": 0, "warnings": 0 }, "completed_at": "2026-07-14T16:47:00" },
+        { "id": "T4", "subject": "Unity 层 PredictionManagerAdapter", "status": "completed", "verification": { "validate_script": "pass", "errors": 0, "warnings": 0 }, "completed_at": "2026-07-14T16:36:00" },
+        { "id": "T5", "subject": "Unity 层 LagCompensationAdapter", "status": "completed", "verification": { "validate_script": "pass", "errors": 0, "warnings": 0 }, "completed_at": "2026-07-14T16:36:00" }
+      ]
+    },
+    {
+      "wave": 1,
+      "jobs": [
+        { "id": "T6", "subject": "FishNetNetworkManager 扩展", "status": "completed", "verification": { "validate_script": "pass", "errors": 0, "warnings": 0 }, "completed_at": "2026-07-14T16:38:00" },
+        { "id": "T7", "subject": "PredictionInput MemoryPack 格式化器", "status": "completed", "verification": { "validate_script": "pass", "errors": 0, "warnings": 0 }, "completed_at": "2026-07-14T16:38:00" }
+      ]
+    },
+    {
+      "wave": 2,
+      "jobs": [
+        { "id": "T8A", "subject": "预测核心逻辑单元测试 (EditMode)", "status": "completed", "verification": { "validate_script": "pass", "errors": 0, "warnings": 0, "tests_passed": "415/415" }, "completed_at": "2026-07-14T16:50:00" },
+        { "id": "T8B", "subject": "预测流程集成测试 (PlayMode)", "status": "completed", "verification": { "validate_script": "pass", "errors": 0, "warnings": 0, "tests_passed": "415/415" }, "completed_at": "2026-07-14T16:50:00" },
+        { "id": "T9", "subject": "Lag Compensation 集成测试", "status": "completed", "verification": { "validate_script": "pass", "errors": 0, "warnings": 0, "tests_passed": "415/415" }, "completed_at": "2026-07-14T16:40:00" },
+        { "id": "T10", "subject": "更新架构文档", "status": "completed", "verification": { "final_architecture": "updated", "dev_priority": "updated" }, "completed_at": "2026-07-14T16:42:00" },
+        { "id": "T11", "subject": "更新 docs-site 文档", "status": "completed", "verification": { "network_guide": "updated", "api_index": "updated", "dev_architecture": "updated", "guide_index": "updated" }, "completed_at": "2026-07-14T16:52:00" }
+      ]
+    }
+  ],
+  "current_wave": 2,
+  "failures": []
+}

@@ -1,0 +1,71 @@
+﻿{
+  "plan": "C# 9.0 迁移 — Vendor DLL 化",
+  "created_at": "2026-07-14T14:38:00",
+  "completed_at": "2026-07-14T15:05:00",
+  "phases": [
+    {
+      "wave": 1,
+      "description": "准备 DLL 产出 + 引用分析",
+      "status": "completed",
+      "jobs": [
+        {
+          "id": "W1-T1",
+          "subject": "从 NuGet 获取 MemoryPack v1.21.4 DLL",
+          "status": "completed",
+          "verification": {"dll_exists": true, "api_validated": true, "size_bytes": 197632},
+          "completed_at": "2026-07-14T14:40:00"
+        },
+        {
+          "id": "W1-T2",
+          "subject": "自编译 FixedMathSharp DLL",
+          "status": "completed",
+          "verification": {"dll_exists": true, "compile_success": true, "types_verified": 41, "size_bytes": 152576},
+          "completed_at": "2026-07-14T14:42:00"
+        },
+        {
+          "id": "W1-T3",
+          "subject": "验证 asmdef 引用关系",
+          "status": "completed",
+          "verification": {"references_mapped": true, "output": "4 direct refs found: Core, Unity, Core.Tests, Unity.Tests"},
+          "completed_at": "2026-07-14T14:40:00"
+        }
+      ]
+    },
+    {
+      "wave": 2,
+      "description": "替换/清理 HN 自有代码和 Vendor",
+      "status": "completed",
+      "jobs": [
+        {"id": "W2-T1", "subject": "替换 scoped ref → ref (8文件)", "status": "completed", "verification": {"total_replacements": 66, "zero_remaining": true}},
+        {"id": "W2-T2", "subject": "MemoryPack DLL 替换", "status": "completed", "verification": "asmdef updated, 57 source .cs files removed, csc.rsp removed"},
+        {"id": "W2-T3", "subject": "FixedMathSharp DLL 替换", "status": "completed", "verification": "asmdef updated, 61 source .cs files removed, csc.rsp removed"},
+        {"id": "W2-T4", "subject": "移除 4 个 csc.rsp", "status": "completed", "verification": "Core, Unity, Core.Tests, Unity.Tests csc.rsp removed"},
+        {"id": "W2-T5", "subject": "验证 Vendor csc.rsp 状态", "status": "completed", "verification": "0 remaining project-wide"}
+      ]
+    },
+    {
+      "wave": 3,
+      "description": "Unity 编译 + 测试",
+      "status": "completed",
+      "jobs": [
+        {"id": "W3-T1", "subject": "Unity 编译 + 修复", "status": "completed", "verification": "zero errors after DLL path fix + test asmdef precompiledReferences"},
+        {"id": "W3-T2", "subject": "运行 EditMode 测试", "status": "completed", "verification": "Core.Tests 381/381 passed, Unity.Tests 412/412 passed"}
+      ]
+    },
+    {
+      "wave": 4,
+      "description": "更新 docs-site 文档",
+      "status": "completed",
+      "jobs": [
+        {"id": "W4-T1", "subject": "更新 architecture.md", "status": "completed", "verification": "MemoryPack/FixedMathSharp descriptions updated"},
+        {"id": "W4-T2", "subject": "更新 serialize.md", "status": "completed", "verification": "vendored → DLL 引用"},
+        {"id": "W4-T3", "subject": "更新 hot-update-scripting.md", "status": "completed", "verification": "C# 9.0 note added"},
+        {"id": "W4-T4", "subject": "更新 network.md", "status": "completed", "verification": "C# 9.0 note added"},
+        {"id": "W4-T5", "subject": "更新 ui.md", "status": "completed", "verification": "C# 9.0 note added"},
+        {"id": "W4-T6", "subject": "更新 api/index.md", "status": "completed", "verification": "MemoryPack/FixedMathSharp/HybridCLR/xLua updated"}
+      ]
+    }
+  ],
+  "current_wave": 4,
+  "failures": []
+}
