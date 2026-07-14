@@ -50,7 +50,7 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 | **DriverLayer** | GameWorld、基础类库（HNLogicTime、ReferencePool、ITickable 等）、平台抽象层 | — |
 | **CapabilityModule** | 服务接口定义 + 通用实现（ProcedureManager、ObjectPoolManager） | 游戏特定实现（GameNetworkService 等）→ Scripts |
 | **Level.LogicModule** | MVC 框架、HFSM、Entity 基类、Sheet 属性 | 具体玩法逻辑（Task/Battle/Shop）→ Scripts |
-| **Level.ViewModule** | ViewFactory 基类、EntityView 基类、PropertyBinder | 视图代码 → Scripts；Prefab 装配 → Design |
+| **Level.ViewModule** | ViewFactory 实例类、EntityView 具体类、PropertyBinder、DefaultPropertyBinder | 视图代码 → Scripts；Prefab 装配 → Design |
 
 ## 四仓库菱形依赖
 

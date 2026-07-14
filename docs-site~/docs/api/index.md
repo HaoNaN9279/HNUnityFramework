@@ -73,7 +73,11 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
 
 - **MVC**: `Controller` / `ControllerUnit` / `ControllerManager` / `Model` / `ModelUnit` / `IReadOnlyModel<T>` / `ReadOnlyModel<T>`
 - **HFSM**: `HFSM` / `HFSMState` / `HFSMTransition` / `HFSMCompoundState`
-- **Entity** 🚧 — 实体系统（待实现）
+- **Entity** ✅ — 实体系统
+  - `Entity` — 纯数据实体基类，MemoryPack 可序列化，实现 IReference
+  - `EntityManager` — 实体生命周期管理器（Spawn/Despawn/GetEntity）
+  - `EntitySpawnedEvent` — 实体生成事件
+  - `EntityDespawnedEvent` — 实体销毁事件
 - **Sheet** ✅ — 配置表运行时查询系统
   - `ISheetManager` — 配置表管理器，支持表注册和查询
   - `IConfigTable<TKey, TRow>` — 泛型配置表接口（Get/TryGet/GetAll/Count）
@@ -140,6 +144,9 @@ Unity 平台层，依赖 UnityEngine。
 - **ViewFactory** 🚧 — 视图工厂基类（待实现）
 - **EntityView** 🚧 — 实体视图基类（待实现）
 - **PropertyBinder** — 属性绑定抽象类，提供 Bind/UnbindAll 方法
+- **DefaultPropertyBinder** — PropertyBinder 默认实现，基于 Dictionary 管理绑定关系
+- **ViewFactory** — 视图工厂，支持同步 CreateView/ReleaseView 和预制体缓存
+- **EntityView** — 实体视图基类（MonoBehaviour），提供 OnSpawned/OnDespawned 生命周期
 
 ### Editor
 

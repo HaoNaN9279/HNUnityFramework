@@ -9,6 +9,7 @@ using HN.Framework.Core.Capability.UI;
 using HN.Framework.Core.Driver.Common;
 using HN.Framework.Core.Capability.Event;
 using HN.Framework.Core.Level.Logic;
+using HN.Framework.Core.Level.Logic.Entity;
 
 namespace HN.Framework.Core.Driver
 {
@@ -19,6 +20,7 @@ namespace HN.Framework.Core.Driver
         public ProcedureManager ProcedureManager { get; }
         public ControllerManager ControllerManager { get; }
         public EventBus EventBus { get; }
+        public EntityManager EntityManager { get; }
 
         public Capability.Debug.DebugHub DebugHub { get; }
 
@@ -76,6 +78,7 @@ namespace HN.Framework.Core.Driver
             ControllerManager = new ControllerManager();
             EventBus = new EventBus();
             DebugHub = new Capability.Debug.DebugHub();
+            EntityManager = new EntityManager(EventBus);
         }
 
         public void Initialize()
