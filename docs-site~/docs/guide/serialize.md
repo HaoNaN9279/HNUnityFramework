@@ -264,14 +264,14 @@ using HN.Framework.Unity.Capability.Serialization;
 UnityFormattersInitializer.RegisterAll();
 ```
 
-`RegisterAll` 内部会调用 `MemoryPackFormatterProvider.Register<T>()` 逐一注册每个格式化器，同时委托给 vendor MemoryPack 的全局注册表。
+`RegisterAll` 内部会调用 `MemoryPackFormatterProvider.Register<T>()` 逐一注册每个格式化器，同时委托给 MemoryPack 的全局注册表。
 
 ### IL2CPP 兼容性与 Source Generator 限制
 
 - **IL2CPP 环境**：MemoryPack 依赖运行时反射进行序列化。在 IL2CPP 下，建议使用 Source Generator 生成序列化代码以避免 AOT 问题。
-- **Source Generator 模式**：需为每个可序列化类型添加 `[MemoryPackable]` 属性并将类标记为 `partial`。生成代码由 MemoryPack 的 `csgen` 工具自动完成。
+- **Source Generator 模式**：需为每个可序列化类型添加 `[MemoryPackable]` 属性并将类标记为 `partial`。生成代码由 MemoryPack 的 `csgen` 工具自动完成。`MemoryPack.Generator.dll` 源码生成器保留在 `Vendor/MemoryPack/Analyzers/` 下。
 - **Unity 类型格式化器**：`UnityFormatters` 中的 16 种格式化器为手动编写，不依赖 Source Generator，在 IL2CPP 下正常工作。
-- **vendored 版本**：项目使用 MemoryPack v1.21.4，以独立 asmdef 形式 vendored 在 `Runtime/HN.Framework.Core/Vendor/MemoryPack/` 下，不通过 NuGet 管理。
+- **DLL 引用**：项目使用 MemoryPack v1.21.4，以 DLL 形式引用（从 NuGet 获取），位于 `Runtime/HN.Framework.Core/Vendor/MemoryPack/MemoryPack.dll`，不通过 NuGetForUnity 管理。
 
 ### 性能对比
 

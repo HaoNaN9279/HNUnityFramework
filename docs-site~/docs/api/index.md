@@ -26,7 +26,7 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
 - **PooledCollections** — `PooledList<T>`、`PooledDictionary<K,V>` 等 16 种池化集合
 - **Json** — JSON 序列化/反序列化工具
 - **JsonObject** — 动态 JSON 对象
-- **MemoryPackSerializer** — 二进制序列化包装器，封装 vendored MemoryPack API
+- **MemoryPackSerializer** — 二进制序列化包装器，封装 MemoryPack API（DLL 引用 v1.21.4，NuGet）
 - **LogLevel** — 日志等级枚举（Debug/Info/Warning/Error/Fatal）
 - **ILogChannel** — 模块级日志通道接口（Name / Enabled）
 - **LogEntry** — 结构化日志条目（Timestamp, Channel, Level, Message, Context）
@@ -34,7 +34,7 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
 - **IDebugCommand** — 调试命令接口（Name / Description / Execute）
 - **DebugHub** — 调试中枢实现类（通道/命令注册表 + 环形日志缓冲）
 - **HNRandom** — 确定性伪随机数生成器，基于 xorshift128+ 算法，支持种子设置与状态序列化
-- **HNFixedPoint** — 定点数类型别名（映射到 FixedMathSharp.Fixed64），提供与自研方案兼容的 API
+- **HNFixedPoint** — 定点数类型别名（映射到 FixedMathSharp.Fixed64），提供与自研方案兼容的 API（FixedMathSharp 为 DLL 引用，自编译 .NET Standard 2.1）
 - **FixedMathSharpFormatters** — FixedMathSharp 定点数类型自定义 MemoryPack 格式化器（含 Fixed64、Vector2d/3d/4d、FixedQuaternion、Fixed4x4、FixedBoundBox、FixedBoundSphere 共 8 个格式化器）
 - **FormattersInitializer** — Core 层格式化器初始化器，提供 RegisterAll() 批量注册 FixedMathSharp 格式化器
 
@@ -134,8 +134,8 @@ Unity 平台层，依赖 UnityEngine。
 - **LubanTablesAdapter** — 泛型辅助类，LoadTables<TTables>
 - **AssetRefExtensions** — AssetRef<T> 的 Addressables 加载扩展
 - **RuntimeDebugConsole** — UGUI 运行时调试控制台（`~` 键切换，命令输入/自动补全/历史）
-- **LuaModManager** — xLua Mod 脚本管理器，实现 IScriptEngine，提供沙箱隔离和 API 白名单机制
-- **HybridCLRAdapter** — HybridCLR 运行时适配器，负责加载热更新 DLL 和注册 AOT 补充元数据
+- **LuaModManager** — xLua Mod 脚本管理器，实现 IScriptEngine，提供沙箱隔离和 API 白名单机制（源码集成，C# 9.0）
+- **HybridCLRAdapter** — HybridCLR 运行时适配器，负责加载热更新 DLL 和注册 AOT 补充元数据（源码集成，C# 9.0）
 - **UIManager** — 7 层 Canvas + Addressables 异步加载 + Toast 队列管理 + 引导系统，实现 IUIManager + ITickable + IDisposable
 - **UIPanel** — 面板基类（MonoBehaviour），生命周期 Closed→Opening→Opened→Closing 状态机，动画集成（OnEnterAnimation/OnExitAnimation）+ Pause/Resume 导航栈
 - **UIAnimation** — LitMotion 封装静态工具类，提供 FadeIn/Out、SlideIn/Out、ScaleIn/Out 预设动画

@@ -199,12 +199,12 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 | 架构层 | 模块 | 状态 | 说明 |
 |--------|------|:----:|------|
 | D1 | GameWorld | ✅ | 已从静态单例迁移 |
-| D2 | 基础类库（Interfaces/HNLogicTime/Serialization） | ✅ | 手写 JSON 序列化器 + MemoryPack 二进制序列化包装器 |
+| D2 | 基础类库（Interfaces/HNLogicTime/Serialization） | ✅ | 手写 JSON 序列化器 + MemoryPack 二进制序列化包装器（DLL 引用 v1.21.4，NuGet） |
 | D2 | ReferencePool / PooledCollections | ✅ | 静态，不做迁移 |
 | D2 | `ObjectPool<T>` / PoolBase / PooledObjectBase | ✅ | |
 | D2 | IEventBus | 🚧 Stub | 接口定义 |
 | D2 | HNRandom（确定性随机数） | ✅ | xorshift128+ 算法，支持种子设置与状态序列化 |
-| D2 | HNFixedPoint（定点数） | ✅ | FixedMathSharp (vendored Lean) + MemoryPack formatters，仅 lockstep 需要 |
+| D2 | HNFixedPoint（定点数） | ✅ | FixedMathSharp（DLL 引用，自编译 .NET Standard 2.1）+ MemoryPack formatters，仅 lockstep 需要 |
 | D3 | Debug 基础设施（LogLevel/ILogChannel/LogEntry） | ✅ | 日志等级枚举、模块级日志通道、结构化日志条目 |
 | D3 | IDebugHub / IDebugCommand / DebugHub | ✅ | 调试中枢：通道/命令注册表 + 环形日志缓冲（100 条） |
 | D4 | GameWorldDriver | ✅ | |
@@ -212,7 +212,7 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 | D4 | GameObjectPool / `PooledObject<T>` | ✅ | |
 | D4 | UnityLogProvider / UnityTimeProvider / UnityCoroutineProvider | ✅ | |
 | D4 | HNRenderPipeline + ShaderLibrary | 🚧 Stub | |
-| C1 | MemoryPack 序列化模块 | ✅ | 二进制序列化，含 Core 包装器 + Unity 类型格式化器（16种） |
+| C1 | MemoryPack 序列化模块 | ✅ | 二进制序列化（DLL 引用 NuGet v1.21.4），含 Core 包装器 + Unity 类型格式化器（16种）+ MemoryPack.Generator.dll 源码生成器 |
 | C2 | Debug 系统（Core + Unity） | ✅ | DebugHub（Capability 层）、DebugModule、DebugCommandRegistry、RuntimeDebugConsole |
 | C15 | 热更新与脚本系统（HybridCLR + xLua Mod） | ✅ | HybridCLRAdapter + LuaModManager，含 AOT 元数据加载、热更 DLL 加载、Mod 生命周期管理、沙箱隔离 |
 | C17 | 摄像机管理系统 | ✅ | ICameraManager + CameraManager(Cinemachine全量) + CameraHandle + CameraShake |

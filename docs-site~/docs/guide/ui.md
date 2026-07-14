@@ -186,7 +186,7 @@ public class AnimatedPanel : UIPanel
 | `ScaleIn(target, duration)` | 缩放 0→1 | target: RectTransform |
 | `ScaleOut(target, duration)` | 缩放 1→0 | target: RectTransform |
 
-动画基于 LitMotion 实现（零 GC 分配，Burst 兼容），底层使用 `LMotion.Create` API。
+动画基于 LitMotion 实现（零 GC 分配，Burst 兼容，源码集成 C# 9.0），底层使用 `LMotion.Create` API。
 
 ## UIDialog 模态弹窗
 

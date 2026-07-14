@@ -9,6 +9,8 @@ HNUnityFramework 采用**双引擎策略**实现热更新和脚本扩展：
 - **HybridCLR** — C# 代码热更新（性能关键路径，逻辑修复、玩法更新）
 - **xLua** — Lua Mod 脚本系统（用户自定义 Mod，沙箱隔离）
 
+> 当前项目中 HybridCLR 和 xLua 均为源码集成方式（C# 9.0 兼容），以独立 asmdef 组织，不通过 DLL 管理。
+
 ## 架构定位
 
 | 系统 | 定位 | 适用场景 |

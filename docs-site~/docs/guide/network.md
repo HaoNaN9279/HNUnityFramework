@@ -64,7 +64,7 @@ MessageBase 是抽象基类，标记 `[MemoryPackable]`，实现 `IReference` �
 
 ## Phase 1 功能清单
 
-- FishNet v4.7.2 源码集成
+- FishNet v4.7.2 源码集成（C# 9.0 兼容）
 - INetworkManager 接口定义与服务端/客户端启停
 - MessageBase 消息协议与 ConnectionMessages 类型
 - FishNetNetworkManager 包装 FishNet.NetworkManager
