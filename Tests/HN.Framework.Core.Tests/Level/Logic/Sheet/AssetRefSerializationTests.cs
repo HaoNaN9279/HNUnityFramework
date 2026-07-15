@@ -3,6 +3,7 @@
 using NUnit.Framework;
 using HN.Framework.Core.Driver.Common.Serialization;
 using HN.Framework.Core.Level.Logic.Sheet;
+using HN.Framework.Core.Capability.Serialization;
 
 namespace HN.Framework.Core.Tests.Level.Logic.Sheet
 {
@@ -15,28 +16,12 @@ namespace HN.Framework.Core.Tests.Level.Logic.Sheet
         [SetUp]
         public void SetUp()
         {
-            global::MemoryPack.MemoryPackFormatterProvider.Register(new AssetRefIntFormatter());
+            AssetRefFormatters.RegisterAll();
         }
 
         [TearDown]
         public void TearDown()
         {
-        }
-
-        /// <summary>
-        /// AssetRef&lt;int&gt; 的手动 MemoryPack 格式化器。
-        /// </summary>
-        private sealed class AssetRefIntFormatter : global::MemoryPack.MemoryPackFormatter<AssetRef<int>>
-        {
-            public override void Serialize<TBufferWriter>(ref global::MemoryPack.MemoryPackWriter<TBufferWriter> writer, ref AssetRef<int> value)
-            {
-                writer.WriteString(value.Label);
-            }
-
-            public override void Deserialize(ref global::MemoryPack.MemoryPackReader reader, ref AssetRef<int> value)
-            {
-                value.Label = reader.ReadString() ?? string.Empty;
-            }
         }
 
         [Test]
@@ -95,6 +80,40 @@ namespace HN.Framework.Core.Tests.Level.Logic.Sheet
 
             Assert.That(defaultRef.Equals(empty), Is.True);
             Assert.That(defaultRef == empty, Is.True);
+        }
+
+        [Test]
+        public void Serialize_Deserialize_Roundtrip_StringType()
+        {
+            var original = new AssetRef<string> { Label = "path/to/asset" };
+
+            byte[] data = MemoryPackSerializer.Serialize(original);
+            var result = MemoryPackSerializer.Deserialize<AssetRef<string>>(data);
+
+            Assert.That(result.Label, Is.EqualTo("path/to/asset"));
+        }
+
+        [Test]
+        public void Serialize_Deserialize_EmptyLabel()
+        {
+            var original = new AssetRef<int> { Label = string.Empty };
+
+            byte[] data = MemoryPackSerializer.Serialize(original);
+            var result = MemoryPackSerializer.Deserialize<AssetRef<int>>(data);
+
+            Assert.That(result.Label, Is.EqualTo(string.Empty));
+            Assert.That(result.IsValid, Is.False);
+        }
+
+        [Test]
+        public void Serialize_Deserialize_NullLabel()
+        {
+            var original = new AssetRef<int> { Label = null };
+
+            byte[] data = MemoryPackSerializer.Serialize(original);
+            var result = MemoryPackSerializer.Deserialize<AssetRef<int>>(data);
+
+            Assert.That(result.Label, Is.EqualTo(string.Empty));
         }
     }
 }
