@@ -253,23 +253,42 @@ public partial class PlayerData
 | `AnimationCurve` | `AnimationCurveFormatter` | 动画曲线 |
 | `Gradient` | `GradientFormatter` | 渐变 |
 
-### 格式化器初始化
+### Core 层手动格式化器
 
-在 GameWorld 初始化阶段调用 `UnityFormattersInitializer.RegisterAll()` 批量注册所有 Unity 类型格式化器：
+除 Unity 类型格式化器外，框架还为以下 Core 层类型提供了手动 `MemoryPackFormatter<T>` 实现，确保 IL2CPP/AOT 环境下的兼容性：
 
-```csharp
-using HN.Framework.Unity.Capability.Serialization;
+| 类型 | 格式化器 | 文件路径 | 说明 |
+|------|---------|----------|------|
+| `Entity` | `EntityFormatter` | `Level/Logic/Entity/EntityFormatters.cs` | 实体数据模型（EntityId/EntityDefId/OwnerClientId） |
+| `AssetRef<T>` | `AssetRefFormatter<T>` | `Level/Logic/Sheet/AssetRefFormatters.cs` | 开放泛型，通过 `RegisterGenericType` 注册，仅序列化 Label |
+| `FrameInput` | `FrameInputFormatter` | `Capability/Network/FrameInputFormatters.cs` | 帧输入数据（FrameNumber + Actions 字典） |
+| `PredictionReconcileData<T>` | `PredictionReconcileDataFormatter<T>` | `Capability/Network/Prediction/PredictionInputFormatter.cs` | 开放泛型，T : unmanaged，序列化三个字段 |
+| `PredictionInputBase` | `PredictionInputBaseFormatter` | 同上 | 抽象基类，仅序列化 Tick 字段；反序列化需具体子类 |
 
-// 建议在 GameWorld 初始化阶段调用
-UnityFormattersInitializer.RegisterAll();
+所有 Core 层格式化器在 `FormattersInitializer.RegisterAll()` 中统一注册。应用程序启动时调用 `UnityFormattersInitializer.RegisterAll()` 即可一次性注册全部格式化器（Core + Unity）。
+
+### 格式化器初始化流程
+
+```
+UnityFormattersInitializer.RegisterAll()
+  ├── FormattersInitializer.RegisterAll()
+  │   ├── FixedMathSharp 定点数格式化器 (8 种)
+  │   ├── EntityFormatters.RegisterAll()
+  │   ├── AssetRefFormatters.RegisterAll()
+  │   ├── FrameInputFormatters.RegisterAll()
+  │   ├── MessageFormatters.RegisterAll()
+  │   ├── GameplayTagFormatters.RegisterAll()
+  │   └── PredictionInputFormatter.Register()
+  └── Unity 类型格式化器 (16 种)
 ```
 
 `RegisterAll` 内部会调用 `MemoryPackFormatterProvider.Register<T>()` 逐一注册每个格式化器，同时委托给 MemoryPack 的全局注册表。
 
 ### IL2CPP 兼容性与 Source Generator 限制
 
-- **IL2CPP 环境**：MemoryPack 依赖运行时反射进行序列化。在 IL2CPP 下，建议使用 Source Generator 生成序列化代码以避免 AOT 问题。
-- **Source Generator 模式**：需为每个可序列化类型添加 `[MemoryPackable]` 属性并将类标记为 `partial`。生成代码由 MemoryPack 的 `csgen` 工具自动完成。`MemoryPack.Generator.dll` 源码生成器保留在 `Vendor/MemoryPack/Analyzers/` 下。
+- **IL2CPP 环境**：MemoryPack 依赖运行时反射进行序列化。在 IL2CPP 下，需要通过手动编写 `MemoryPackFormatter<T>` 来替代 Source Generator。
+- **手动格式化器覆盖**：框架已为所有标记 `[MemoryPackable]` 的内部类型提供手动格式化器，包括 `Entity`、`AssetRef<T>`、`FrameInput`、`PredictionReconcileData<T>`、`PredictionInputBase` 以及所有 Unity 内置类型（Vector3/Quaternion 等 16 种）和 FixedMathSharp 定点数类型（8 种），确保 IL2CPP 环境下的完全兼容。
+- **Source Generator 模式**：`MemoryPack.Generator.dll` 源码生成器保留在 `Vendor/MemoryPack/Analyzers/` 下。如需启用，需在 asmdef 中配置 Roslyn 源码生成器支持。
 - **Unity 类型格式化器**：`UnityFormatters` 中的 16 种格式化器为手动编写，不依赖 Source Generator，在 IL2CPP 下正常工作。
 - **DLL 引用**：项目使用 MemoryPack v1.21.4，以 DLL 形式引用（从 NuGet 获取），位于 `Runtime/HN.Framework.Core/Vendor/MemoryPack/MemoryPack.dll`，不通过 NuGetForUnity 管理。
 
