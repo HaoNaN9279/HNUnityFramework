@@ -54,6 +54,41 @@ namespace HN.Framework.Unity.Capability.Network
         public bool IsHost => IsServer && IsClient;
 
         /// <summary>
+        /// 获取本地客户端在服务端分配的唯一连接 ID。
+        /// 未连接时返回 -1。
+        /// </summary>
+        public int LocalClientId
+        {
+            get
+            {
+                if (_fishNetManager?.ClientManager?.Connection != null)
+                    return _fishNetManager.ClientManager.Connection.ClientId;
+                return -1;
+            }
+        }
+
+        /// <summary>
+        /// 获取当前所有已连接客户端的 ID 列表。
+        /// 仅服务端有效，客户端返回空列表。
+        /// </summary>
+        public System.Collections.Generic.IReadOnlyList<int> ConnectedClientIds
+        {
+            get
+            {
+                if (_fishNetManager?.ServerManager?.Clients != null)
+                {
+                    var list = new System.Collections.Generic.List<int>();
+                    foreach (var kvp in _fishNetManager.ServerManager.Clients)
+                    {
+                        list.Add(kvp.Value.ClientId);
+                    }
+                    return list;
+                }
+                return System.Array.Empty<int>();
+            }
+        }
+
+        /// <summary>
         /// 使用指定的 FishNet NetworkManager 初始化包装器，并订阅连接事件。
         /// 若 NetworkManager 上挂载了 PredictionManager 组件，则自动创建预测适配器。
         /// </summary>
@@ -151,6 +186,25 @@ namespace HN.Framework.Unity.Capability.Network
         public void Disconnect()
         {
             StopConnection();
+        }
+
+        /// <summary>
+        /// 根据客户端 ID 查找对应的 FishNet NetworkConnection。
+        /// 遍历 ServerManager.Clients 查找匹配项。
+        /// </summary>
+        /// <param name="clientId">客户端 ID。</param>
+        /// <returns>对应的 NetworkConnection，未找到时返回 null。</returns>
+        public FishNet.Connection.NetworkConnection GetConnection(int clientId)
+        {
+            if (_fishNetManager?.ServerManager?.Clients == null)
+                return null;
+
+            foreach (var kvp in _fishNetManager.ServerManager.Clients)
+            {
+                if (kvp.Value.ClientId == clientId)
+                    return kvp.Value;
+            }
+            return null;
         }
 
         /// <summary>

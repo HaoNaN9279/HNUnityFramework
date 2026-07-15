@@ -203,7 +203,7 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 | C3 | 本地化系统 | ✅ | Core + Unity 层全部已完成（LocaleManager / TextLocalizer / LocaleSelector / AssetLocalizer） |
 | C4 | IAssetManager + AssetManager | ✅ | 资源管理核心 |
 | C5 | ILogProvider / UnityLogProvider | ✅ | 日志接口（待扩展） |
-| C6 | 网络系统（FishNet 封装） | ✅ | INetworkManager + 帧同步 + 预测与校验 |
+| C6 | 网络系统（FishNet 封装） | ✅ | INetworkManager + 帧同步 + 预测与校验 + 实体权限与生命周期 |
 | C7 | EventBus | ✅ | 线程安全事件总线 |
 | C8 | IStorageProvider | ✅ | 存储接口 |
 | C9 | ProcedureManager | ✅ | 流程状态机 |

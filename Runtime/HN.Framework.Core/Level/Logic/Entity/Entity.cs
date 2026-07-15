@@ -16,13 +16,22 @@ namespace HN.Framework.Core.Level.Logic.Entity
         [MemoryPackOrder(1)]
         public int EntityDefId { get; private set; }
 
+        [MemoryPackOrder(2)]
+        public int OwnerClientId { get; internal set; } = -1;
+
+        /// <summary>
+        /// 是否由某个客户端或服务器所拥有（-1 = 无 owner，0 = server，>0 = client）。
+        /// </summary>
+        public bool IsOwned => OwnerClientId >= 0;
+
         /// <summary>
         /// 初始化实体数据。仅供 EntityManager 调用。
         /// </summary>
-        internal void Initialize(uint id, int defId)
+        internal void Initialize(uint id, int defId, int ownerClientId = -1)
         {
             EntityId = id;
             EntityDefId = defId;
+            OwnerClientId = ownerClientId;
         }
 
         /// <summary>
@@ -32,6 +41,7 @@ namespace HN.Framework.Core.Level.Logic.Entity
         {
             EntityId = 0;
             EntityDefId = 0;
+            OwnerClientId = -1;
         }
     }
 }

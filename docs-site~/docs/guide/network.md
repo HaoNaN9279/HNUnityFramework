@@ -286,7 +286,32 @@ public class PlayerPredictedView : PredictedNetworkEntityView
 - `FishNetNetworkManager.PredictionAdapter` 属性访问预测管理器
 - `GameWorld.NetworkManager` 可通过 FishNetNetworkManager 的 PredictionAdapter 获取预测状态
 
-### Phase 2 待开发
+### C6.3 网络实体权限与生命周期 ✅
 
-- C6.3 实体权限：EntityManager ↔ FishNet Spawn 集成
-- NetworkTransform / NetworkAnimator 框架封装
+> **状态**：✅ 已完成
+
+**设计定位**：将 Core 层 Entity 的网络所有权与生命周期桥接到 FishNet 网络层。
+
+**架构：**
+
+```
+Core 层：
+  Entity.OwnerClientId     — 实体所有者客户端 ID（-1=无 owner，0=server，>0=client）
+  EntityManager API：
+    SpawnWithOwner(defId, ownerId)  — 生成指定所有者的实体
+    HasAuthority(entityId, clientId) — 权限判定（server 永远有权限）
+    TransferOwnership(entityId, newOwnerId) — 转移所有权
+    RemoveOwnership(entityId)       — 移除所有权
+    GetOwnedEntities(clientId)      — 查询指定客户端拥有的所有实体
+  EntityOwnershipTransferredEvent  — 所有权转移事件
+
+Unity 层（NetworkEntityLifecycleBridge）：
+  订阅 EntitySpawnedEvent → 实例化预制体 → FishNet.Spawn
+  订阅 EntityDespawnedEvent → FishNet.Despawn
+  订阅 EntityOwnershipTransferredEvent → NetworkObject.GiveOwnership
+
+NetworkEntityView 增强：
+  SyncedEntityId — 同步的 Core 层 EntityId
+  IsOwnedByMe — 当前客户端是否拥有该实体
+  IsOwnedByServer — 服务器是否拥有该实体
+```

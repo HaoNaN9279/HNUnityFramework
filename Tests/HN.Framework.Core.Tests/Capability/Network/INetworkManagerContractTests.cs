@@ -110,6 +110,28 @@ namespace HN.Framework.Core.Tests.Capability.Network
             Assert.DoesNotThrow(() => mgr.TriggerClientConnected(1));
             Assert.DoesNotThrow(() => mgr.TriggerClientDisconnected(1));
         }
+
+        [Test]
+        public void LocalClientId_Default_ReturnsNegativeOne()
+        {
+            var mgr = new MockNetworkManager();
+            Assert.That(mgr.LocalClientId, Is.EqualTo(-1));
+        }
+
+        [Test]
+        public void ConnectedClientIds_Default_ReturnsEmpty()
+        {
+            var mgr = new MockNetworkManager();
+            Assert.That(mgr.ConnectedClientIds.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void LocalClientId_AfterSetting_ReturnsCorrectValue()
+        {
+            var mgr = new MockNetworkManager();
+            mgr.LocalClientId = 42;
+            Assert.That(mgr.LocalClientId, Is.EqualTo(42));
+        }
     }
 
     /// <summary>
@@ -120,6 +142,8 @@ namespace HN.Framework.Core.Tests.Capability.Network
         public bool IsServer { get; private set; }
         public bool IsClient { get; private set; }
         public bool IsHost => IsServer && IsClient;
+        public int LocalClientId { get; set; } = -1;
+        public System.Collections.Generic.IReadOnlyList<int> ConnectedClientIds { get; set; } = System.Array.Empty<int>();
 
         public event Action<int>? OnClientConnected;
         public event Action<int>? OnClientDisconnected;

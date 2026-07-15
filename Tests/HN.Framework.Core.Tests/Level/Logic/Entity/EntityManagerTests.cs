@@ -9,6 +9,16 @@ namespace HN.Framework.Core.Tests.Level.Logic.Entity
     [TestFixture]
     public class EntityManagerTests
     {
+        private EntityManager m_manager;
+        private EventBus m_eventBus;
+
+        [SetUp]
+        public void SetUp()
+        {
+            m_eventBus = new EventBus();
+            m_manager = new EntityManager(m_eventBus);
+        }
+
         [Test]
         public void Spawn_ReturnsEntityWithUniqueIncrementingId()
         {
@@ -150,6 +160,99 @@ namespace HN.Framework.Core.Tests.Level.Logic.Entity
 
             Assert.That(manager.GetEntity(id), Is.Null);
             Assert.That(manager.EntityCount, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void SpawnWithOwner_SetsOwnerClientId()
+        {
+            var entity = m_manager.SpawnWithOwner(100, 3);
+            Assert.That(entity.OwnerClientId, Is.EqualTo(3));
+        }
+
+        [Test]
+        public void SpawnWithOwner_OwnerIsNotNegativeOne()
+        {
+            var entity = m_manager.SpawnWithOwner(100, 5);
+            Assert.That(entity.IsOwned, Is.True);
+        }
+
+        [Test]
+        public void Spawn_DelegatesToSpawnWithOwner_DefaultNoOwner()
+        {
+            var entity = m_manager.Spawn(100);
+            Assert.That(entity.OwnerClientId, Is.EqualTo(-1));
+            Assert.That(entity.IsOwned, Is.False);
+        }
+
+        [Test]
+        public void HasAuthority_ServerAlwaysHasAuthority()
+        {
+            uint entityId = m_manager.Spawn(100).EntityId;
+            Assert.That(m_manager.HasAuthority(entityId, 0), Is.True);
+        }
+
+        [Test]
+        public void HasAuthority_OwnerHasAuthority()
+        {
+            uint entityId = m_manager.SpawnWithOwner(100, 3).EntityId;
+            Assert.That(m_manager.HasAuthority(entityId, 3), Is.True);
+        }
+
+        [Test]
+        public void HasAuthority_NonOwnerHasNoAuthority()
+        {
+            uint entityId = m_manager.SpawnWithOwner(100, 3).EntityId;
+            Assert.That(m_manager.HasAuthority(entityId, 5), Is.False);
+        }
+
+        [Test]
+        public void HasAuthority_NonExistentEntity_ReturnsFalse()
+        {
+            Assert.That(m_manager.HasAuthority(9999, 0), Is.False);
+        }
+
+        [Test]
+        public void TransferOwnership_ChangesOwner()
+        {
+            uint entityId = m_manager.SpawnWithOwner(100, 3).EntityId;
+            m_manager.TransferOwnership(entityId, 7);
+            Assert.That(m_manager.GetEntity(entityId).OwnerClientId, Is.EqualTo(7));
+        }
+
+        [Test]
+        public void TransferOwnership_PublishesEvent()
+        {
+            uint entityId = m_manager.Spawn(100).EntityId;
+            EntityOwnershipTransferredEvent received = default;
+            m_eventBus.Subscribe<EntityOwnershipTransferredEvent>(evt => received = evt);
+
+            m_manager.TransferOwnership(entityId, 5);
+
+            Assert.That(received.EntityId, Is.EqualTo(entityId));
+            Assert.That(received.OldOwnerId, Is.EqualTo(-1));
+            Assert.That(received.NewOwnerId, Is.EqualTo(5));
+            m_eventBus.Unsubscribe<EntityOwnershipTransferredEvent>(received => { });
+        }
+
+        [Test]
+        public void RemoveOwnership_ClearsOwner()
+        {
+            uint entityId = m_manager.SpawnWithOwner(100, 3).EntityId;
+            m_manager.RemoveOwnership(entityId);
+            Assert.That(m_manager.GetEntity(entityId).OwnerClientId, Is.EqualTo(-1));
+        }
+
+        [Test]
+        public void GetOwnedEntities_ReturnsCorrectEntities()
+        {
+            var e1 = m_manager.SpawnWithOwner(100, 3);
+            var e2 = m_manager.SpawnWithOwner(101, 3);
+            m_manager.SpawnWithOwner(102, 5); // Different owner
+
+            var owned = m_manager.GetOwnedEntities(3);
+            Assert.That(owned.Count, Is.EqualTo(2));
+            Assert.That(owned, Has.Member(e1));
+            Assert.That(owned, Has.Member(e2));
         }
 
         private static EntityManager CreateManager()

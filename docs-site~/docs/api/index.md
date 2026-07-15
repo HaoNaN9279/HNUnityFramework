@@ -43,6 +43,8 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
 - **IAssetManager** — 资源管理器接口
 - **ILogProvider** — 日志提供者接口（支持 LogLevel 分级 + Channel 通道）
 - **INetworkManager** — 网络管理器接口，定义 IsServer/IsClient/IsHost、StartServer/StartClient/StopConnection、连接事件
+- **LocalClientId** — INetworkManager 接口新增属性，获取本地客户端连接 ID
+- **ConnectedClientIds** — INetworkManager 接口新增属性，获取已连接客户端 ID 列表
 - **SyncedModel\<T\>** — 同步数据模型，实现 IReadOnlyModel\<T\>，支持服务端写入、脏标记追踪、线程安全的值变更通知
 - **SyncCollectionOperation** — 同步集合操作类型枚举（Add/Remove/Insert/Set/Clear）
 - **SyncCollectionChange\<T\>** — 同步列表变更事件参数（Operation/Index/Item/OldItem）
@@ -86,8 +88,10 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
 - **Entity** ✅ — 实体系统
   - `Entity` — 纯数据实体基类，MemoryPack 可序列化，实现 IReference
   - `EntityManager` — 实体生命周期管理器（Spawn/Despawn/GetEntity）
+  - **EntityManager（扩展）** — 新增 SpawnWithOwner/HasAuthority/TransferOwnership/RemoveOwnership/GetOwnedEntities 方法
   - `EntitySpawnedEvent` — 实体生成事件
   - `EntityDespawnedEvent` — 实体销毁事件
+- **EntityOwnershipTransferredEvent** — 实体所有权转移事件
 - **Sheet** ✅ — 配置表运行时查询系统
   - `ISheetManager` — 配置表管理器，支持表注册和查询
   - `IConfigTable<TKey, TRow>` — 泛型配置表接口（Get/TryGet/GetAll/Count）
@@ -125,6 +129,9 @@ Unity 平台层，依赖 UnityEngine。
 
 - **FishNetNetworkManager** — FishNet 网络管理器实现，纯 C# 包装 FishNet.NetworkManager
 - **NetworkEntityView** — 网络实体视图基类，继承 FishNet.NetworkBehaviour，提供 RegisterSyncedModel/UnregisterSyncedModel/ApplySyncValue 同步基础设施
+- **SyncedEntityId** — NetworkEntityView 新增属性，同步的 Core 层 EntityId
+- **IsOwnedByMe** — NetworkEntityView 新增属性，判断当前客户端是否拥有该实体
+- **IsOwnedByServer** — NetworkEntityView 新增属性，判断服务器是否拥有该实体
 - **FishNetSyncedList\<T\>** — 同步列表包装器，继承 FishNet SyncList\<T\>，提供框架统一的 OnCollectionChanged 事件
 - **FishNetSyncedDictionary\<TKey, TValue\>** — 同步字典包装器，继承 FishNet SyncDictionary，提供框架统一的 OnCollectionChanged 事件
 - **FishNetMessageBus** — 网络消息总线，封装 FishNet Broadcast 系统
@@ -158,6 +165,7 @@ Unity 平台层，依赖 UnityEngine。
 - **LocaleSelector** — 语言选择器，管理可用语言列表和 PlayerPrefs 持久化偏好
 - **TextLocalizer** — MonoBehaviour 组件，挂载到 TMP_Text 上自动响应语言切换更新文本
 - **AssetLocalizer** — 静态工具类，按语言拼接路径加载本地化资源
+- **NetworkEntityLifecycleBridge** — 网络实体生命周期桥接组件，将 EntityManager 事件桥接到 FishNet
 
 **Level.View — 视图层**
 

@@ -154,3 +154,52 @@ world.EventBus.Subscribe<EntitySpawnedEvent>(evt =>
 - **线程安全**：EntityManager 非线程安全，仅在主线程使用
 - **不参与 Tick**：EntityManager 是纯事件驱动的，不实现 ITickable
 - **EntityDefId 映射**：EntityDefId 指向配置表定义，ViewFactory 通过此 ID 查找对应的预制体地址
+
+## 网络权限与生命周期
+
+Entity 系统与 C6.3 网络实体权限系统集成，提供端到端的网络实体生命周期管理。
+
+### 所有权模型
+
+| OwnerClientId | 含义 | 权限 |
+|:------------:|------|------|
+| -1 | 无所有者 | 仅 Server 可操作 |
+| 0 | Server 所有 | Server 始终拥有 |
+| >0 | 指定客户端所有 | 所有者 + Server 可操作 |
+
+### 使用示例
+
+```csharp
+// 服务端生成一个由客户端 3 所有的实体
+var entity = world.EntityManager.SpawnWithOwner(1001, 3);
+
+// 检查权限（服务端）
+if (world.EntityManager.HasAuthority(entity.EntityId, clientId))
+{
+    // 允许操作
+}
+
+// 转移所有权
+world.EntityManager.TransferOwnership(entity.EntityId, newOwnerId);
+
+// 移除所有权
+world.EntityManager.RemoveOwnership(entity.EntityId);
+
+// 查询客户端拥有的所有实体
+var ownedEntities = world.EntityManager.GetOwnedEntities(clientId);
+```
+
+### 生命周期事件
+
+```csharp
+world.EventBus.Subscribe<EntitySpawnedEvent>(evt =>
+{
+    // Entity 已生成，Unity 层的 NetworkEntityLifecycleBridge
+    // 会自动创建对应的 NetworkObject 并同步到所有客户端
+});
+
+world.EventBus.Subscribe<EntityOwnershipTransferredEvent>(evt =>
+{
+    // 所有权已变更，Unity 层会自动调用 GiveOwnership
+});
+```

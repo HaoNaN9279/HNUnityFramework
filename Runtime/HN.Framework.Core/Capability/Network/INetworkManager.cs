@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace HN.Framework.Core.Capability.Network
 {
@@ -46,6 +47,18 @@ namespace HN.Framework.Core.Capability.Network
         /// 断开连接（旧式 API，与 StopConnection 等价）。
         /// </summary>
         void Disconnect();
+
+        /// <summary>
+        /// 获取本地客户端在服务端分配的唯一连接 ID。
+        /// 未连接时返回 -1。
+        /// </summary>
+        int LocalClientId { get; }
+
+        /// <summary>
+        /// 获取当前所有已连接客户端的 ID 列表。
+        /// 仅服务端有效，客户端返回空列表。
+        /// </summary>
+        System.Collections.Generic.IReadOnlyList<int> ConnectedClientIds { get; }
 
         /// <summary>
         /// 有新客户端连接时触发，参数为连接的客户端 ID。

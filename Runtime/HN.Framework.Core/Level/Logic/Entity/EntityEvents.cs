@@ -29,4 +29,23 @@ namespace HN.Framework.Core.Level.Logic.Entity
             EntityId = entityId;
         }
     }
+
+    /// <summary>
+    /// 实体所有权转移事件。当实体的 OwnerClientId 发生变化时，
+    /// 通过 <see cref="Capability.Event.EventBus"/> 发布，
+    /// 供 Unity 层监听以更新 FishNet NetworkObject 的所有权。
+    /// </summary>
+    public readonly struct EntityOwnershipTransferredEvent
+    {
+        public readonly uint EntityId;
+        public readonly int OldOwnerId;
+        public readonly int NewOwnerId;
+
+        public EntityOwnershipTransferredEvent(uint entityId, int oldOwnerId, int newOwnerId)
+        {
+            EntityId = entityId;
+            OldOwnerId = oldOwnerId;
+            NewOwnerId = newOwnerId;
+        }
+    }
 }

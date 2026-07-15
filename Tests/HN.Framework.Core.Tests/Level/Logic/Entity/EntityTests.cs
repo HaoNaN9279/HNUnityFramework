@@ -3,6 +3,10 @@
 using NUnit.Framework;
 using HN.Framework.Core.Level.Logic.Entity;
 using HN.Framework.Core.Capability.Event;
+using HN.Framework.Core.Driver.Common;
+using HN.Framework.Core.Driver.Common.Pool.ReferencePool;
+
+using EntityType = HN.Framework.Core.Level.Logic.Entity.Entity;
 
 namespace HN.Framework.Core.Tests.Level.Logic.Entity
 {
@@ -50,6 +54,37 @@ namespace HN.Framework.Core.Tests.Level.Logic.Entity
             Assert.That(entity2.EntityDefId, Is.EqualTo(10), "Re-spawned entity should have correct def ID");
             Assert.That(entity2.EntityId, Is.EqualTo(2u), "ID should increment: despawn doesn't affect ID counter");
             Assert.That(manager.EntityCount, Is.EqualTo(1), "Only one entity should be alive");
+        }
+
+        [Test]
+        public void OwnerClientId_Default_IsNegativeOne()
+        {
+            var entity = ReferencePool.Acquire<EntityType>();
+            entity.Initialize(1, 100);
+            Assert.That(entity.OwnerClientId, Is.EqualTo(-1));
+            Assert.That(entity.IsOwned, Is.False);
+            ReferencePool.Release(entity);
+        }
+
+        [Test]
+        public void OwnerClientId_AfterSpawnWithOwner_HasCorrectOwner()
+        {
+            var entity = ReferencePool.Acquire<EntityType>();
+            entity.Initialize(1, 100, 3);
+            Assert.That(entity.OwnerClientId, Is.EqualTo(3));
+            Assert.That(entity.IsOwned, Is.True);
+            ReferencePool.Release(entity);
+        }
+
+        [Test]
+        public void Clear_ResetsOwnerClientId()
+        {
+            var entity = ReferencePool.Acquire<EntityType>();
+            entity.Initialize(1, 100, 3);
+            entity.Clear();
+            Assert.That(entity.OwnerClientId, Is.EqualTo(-1));
+            Assert.That(entity.IsOwned, Is.False);
+            ReferencePool.Release(entity);
         }
     }
 }
