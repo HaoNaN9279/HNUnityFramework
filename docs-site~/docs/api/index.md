@@ -98,6 +98,11 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
   - `ConfigTable<TKey, TRow>` — 默认实现，O(1) 字典查表
   - `AssetRef<T>` — MemoryPack 可序列化的资产引用，存 Addressables Label
   - `ConfigLoader` — MemoryPack 反序列化工具类
+- **GameplayTag** ✅ — 层级标签系统
+  - `GameplayTag` — 8 字节值类型（TableIndex + InstanceId），层级编码，零 GC
+  - `GameplayTagManager` — 定义表管理，加载/冻结/查询
+  - `GameplayTagContainer` — 标签容器，增删查 + 批量层级匹配
+  - `TagQuery` — 嵌套布尔查询表达式（Any/All/Not），用于配置表条件匹配
 
 #### HN.Framework.Unity
 

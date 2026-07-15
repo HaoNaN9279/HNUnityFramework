@@ -10,6 +10,7 @@ using HN.Framework.Core.Driver.Common;
 using HN.Framework.Core.Capability.Event;
 using HN.Framework.Core.Level.Logic;
 using HN.Framework.Core.Level.Logic.Entity;
+using HN.Framework.Core.Level;
 
 namespace HN.Framework.Core.Driver
 {
@@ -21,6 +22,12 @@ namespace HN.Framework.Core.Driver
         public ControllerManager ControllerManager { get; }
         public EventBus EventBus { get; }
         public EntityManager EntityManager { get; }
+
+        /// <summary>
+        /// GameplayTag 管理器，管理层级标签的注册、冻结和查询。
+        /// 由 GameWorldDriver 在初始化时加载配置并调用 Freeze()。
+        /// </summary>
+        public GameplayTagManager GameplayTagManager { get; }
 
         public Capability.Debug.DebugHub DebugHub { get; }
 
@@ -85,6 +92,7 @@ namespace HN.Framework.Core.Driver
             EventBus = new EventBus();
             DebugHub = new Capability.Debug.DebugHub();
             EntityManager = new EntityManager(EventBus);
+            GameplayTagManager = new GameplayTagManager();
         }
 
         public void Initialize()
