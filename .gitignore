@@ -2,3 +2,6 @@
 
 **/*.user
 **/*.suo
+
+# AI agent workspace artifacts
+.opencode/jobs/
