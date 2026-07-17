@@ -13,10 +13,7 @@ using UnityEngine;
 namespace HN.Framework.Unity.Tests.Network.Prediction
 {
     /// <summary>
-    /// 客户端预测集成测试（架构验证）。
-    /// 验证预测/校调/回滚流程的核心类型创建、null 安全、序列化与默认值行为。
-    /// 不启动真实 FishNet 网络——仅做代码级验证。
-    /// </summary>
+    /// 客户端预测集成测试（架构验证）�?    /// 验证预测/校调/回滚流程的核心类型创建、null 安全、序列化与默认值行为�?    /// 不启动真�?FishNet 网络——仅做代码级验证�?    /// </summary>
     [TestFixture]
     public class PredictionIntegrationTests
     {
@@ -48,11 +45,9 @@ namespace HN.Framework.Unity.Tests.Network.Prediction
             }
         }
 
-        #region Null 安全检查
-
+        #region Null 安全检�?
         /// <summary>
-        /// PredictionManagerAdapter 构造函数：传入 null PredictionManager 应抛出 ArgumentNullException。
-        /// </summary>
+        /// PredictionManagerAdapter 构造函数：传入 null PredictionManager 应抛�?ArgumentNullException�?        /// </summary>
         [Test]
         public void PredictionManagerAdapter_NullPredictionManager_ThrowsArgumentNullException()
         {
@@ -64,8 +59,7 @@ namespace HN.Framework.Unity.Tests.Network.Prediction
         }
 
         /// <summary>
-        /// PredictionManagerAdapter 构造函数：传入 null TimeManager 应抛出 ArgumentNullException。
-        /// </summary>
+        /// PredictionManagerAdapter 构造函数：传入 null TimeManager 应抛�?ArgumentNullException�?        /// </summary>
         [Test]
         public void PredictionManagerAdapter_NullTimeManager_ThrowsArgumentNullException()
         {
@@ -77,8 +71,7 @@ namespace HN.Framework.Unity.Tests.Network.Prediction
         }
 
         /// <summary>
-        /// LagCompensationAdapter 构造函数：传入 null RollbackManager 应抛出 ArgumentNullException。
-        /// </summary>
+        /// LagCompensationAdapter 构造函数：传入 null RollbackManager 应抛�?ArgumentNullException�?        /// </summary>
         [Test]
         public void LagCompensationAdapter_NullRollbackManager_ThrowsArgumentNullException()
         {
@@ -90,8 +83,7 @@ namespace HN.Framework.Unity.Tests.Network.Prediction
         }
 
         /// <summary>
-        /// LagCompensationAdapter 构造函数：传入 null TimeManager 应抛出 ArgumentNullException。
-        /// </summary>
+        /// LagCompensationAdapter 构造函数：传入 null TimeManager 应抛�?ArgumentNullException�?        /// </summary>
         [Test]
         public void LagCompensationAdapter_NullTimeManager_ThrowsArgumentNullException()
         {
@@ -107,9 +99,7 @@ namespace HN.Framework.Unity.Tests.Network.Prediction
         #region PredictionReconcileData
 
         /// <summary>
-        /// PredictionReconcileData&lt;T&gt; 结构体：字段赋值后能正确读取。
-        /// 使用 int 作为 T，验证 unmanaged 约束下的字段行为。
-        /// </summary>
+        /// PredictionReconcileData<T> 结构体：字段赋值后能正确读取�?        /// 使用 int 作为 T，验�?unmanaged 约束下的字段行为�?        /// </summary>
         [Test]
         public void PredictionReconcileData_FieldAssignment_Correct()
         {
@@ -129,9 +119,7 @@ namespace HN.Framework.Unity.Tests.Network.Prediction
         }
 
         /// <summary>
-        /// PredictionReconcileData&lt;T&gt; MemoryPack 序列化：序列化→反序列化往返测试。
-        /// 使用 float 作为 T 验证泛型 struct 的正确往返。
-        /// </summary>
+        /// PredictionReconcileData<T> MemoryPack 序列化：序列化→反序列化往返测试�?        /// 使用 float 作为 T 验证泛型 struct 的正确往返�?        /// </summary>
         [Test]
         public void PredictionReconcileData_SerializeDeserialize_Roundtrip()
         {
@@ -154,9 +142,7 @@ namespace HN.Framework.Unity.Tests.Network.Prediction
         }
 
         /// <summary>
-        /// PredictionReconcileData&lt;T&gt; 默认值：创建后所有字段为默认零值。
-        /// 用于验证未赋值状态下的结构体行为。
-        /// </summary>
+        /// PredictionReconcileData<T> 默认值：创建后所有字段为默认零值�?        /// 用于验证未赋值状态下的结构体行为�?        /// </summary>
         [Test]
         public void PredictionReconcileData_Default_AllFieldsAreZero()
         {
@@ -175,9 +161,7 @@ namespace HN.Framework.Unity.Tests.Network.Prediction
         #region PredictionInputBase
 
         /// <summary>
-        /// PredictionInputBase 派生类：可正常实例化并读写 Tick 属性。
-        /// 验证抽象基类接口（IReference）实现完整。
-        /// </summary>
+        /// PredictionInputBase 派生类：可正常实例化并读�?Tick 属性�?        /// 验证抽象基类接口（IReference）实现完整�?        /// </summary>
         [Test]
         public void PredictionInputBase_TickProperty_ReadWrite()
         {
@@ -188,9 +172,7 @@ namespace HN.Framework.Unity.Tests.Network.Prediction
         }
 
         /// <summary>
-        /// PredictionInputBase 派生类：Clear() 方法应正确重置所有字段。
-        /// 验证 IReference 接口实现的正确性。
-        /// </summary>
+        /// PredictionInputBase 派生类：Clear() 方法应正确重置所有字段�?        /// 验证 IReference 接口实现的正确性�?        /// </summary>
         [Test]
         public void PredictionInputBase_Clear_ResetsAllFields()
         {
@@ -215,9 +197,7 @@ namespace HN.Framework.Unity.Tests.Network.Prediction
         }
 
         /// <summary>
-        /// PredictionInputBase 派生类：字段复制后值保持一致。
-        /// 验证数据结构的字段读写完整性（MemoryPack 源码生成器在测试程序集中不可用）。
-        /// </summary>
+        /// PredictionInputBase 派生类：字段复制后值保持一致�?        /// 验证数据结构的字段读写完整性（MemoryPack 源码生成器在测试程序集中不可用）�?        /// </summary>
         [Test]
         public void PredictionInputBase_FieldCopy_PreservesValues()
         {
@@ -252,9 +232,7 @@ namespace HN.Framework.Unity.Tests.Network.Prediction
         #region GetNetworkTickInfo
 
         /// <summary>
-        /// PredictionManagerAdapter.GetNetworkTickInfo() 在网络未启动时返回 (0, 0, 0)。
-        /// 验证未初始化状态下返回合理的默认值。
-        /// </summary>
+        /// PredictionManagerAdapter.GetNetworkTickInfo() 在网络未启动时返�?(0, 0, 0)�?        /// 验证未初始化状态下返回合理的默认值�?        /// </summary>
         [Test]
         public void GetNetworkTickInfo_NotRunning_ReturnsDefaults()
         {
@@ -277,20 +255,17 @@ namespace HN.Framework.Unity.Tests.Network.Prediction
         #region 测试用派生类
 
         /// <summary>
-        /// PredictionInputBase 的测试用具体子类。
-        /// 用于验证 IReference 接口实现及字段读写行为。
-        /// MemoryPack 源码生成器在测试程序集中不可用，
-        /// 因此仅测试数据结构行为，不测试序列化。
-        /// </summary>
+        /// PredictionInputBase 的测试用具体子类�?        /// 用于验证 IReference 接口实现及字段读写行为�?        /// MemoryPack 源码生成器在测试程序集中不可用，
+        /// 因此仅测试数据结构行为，不测试序列化�?        /// </summary>
         private sealed class TestPredictionInput : PredictionInputBase
         {
-            /// <summary>水平轴输入（-1 ~ 1）。</summary>
+            /// <summary>水平轴输入（-1 ~ 1）�?/summary>
             public float AxisX;
 
-            /// <summary>垂直轴输入（-1 ~ 1）。</summary>
+            /// <summary>垂直轴输入（-1 ~ 1）�?/summary>
             public float AxisY;
 
-            /// <summary>跳跃按钮。</summary>
+            /// <summary>跳跃按钮�?/summary>
             public bool Jump;
 
             /// <inheritdoc/>

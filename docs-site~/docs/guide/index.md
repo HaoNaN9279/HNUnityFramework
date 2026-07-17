@@ -42,6 +42,7 @@ HNUnityFramework 采用三层架构设计，自底向上分为**驱动层 (Drive
 - **[本地化 (C3)](./localization)** — 多语言字符串查询、TextLocalizer 自动文本更新、AssetLocalizer 按语言加载资源
 - **网络 (✅)** — `INetworkManager` 网络服务接口（C6.1 状态同步 + 帧同步 + C6.2 客户端预测已完成，详见[网络指南](./network)）
 - **存储** — `IStorageProvider` 持久化存储接口
+- **[物理系统 (Physics)](./physics)** — `IPhysicsWorld` 纯 C# 物理抽象层，统一 2D/3D 物理接口，支持 PhysX 封装、射线检测、碰撞事件
 - **[流程管理 (Procedure)](./procedure)** — `ProcedureManager` 事件驱动的游戏流程控制
 - **事件 (🚧 Stub)** — `IEventBus` 事件总线接口
 
@@ -51,6 +52,7 @@ HNUnityFramework 采用三层架构设计，自底向上分为**驱动层 (Drive
 
 - **[MVC 框架](./mvc)** — Model-View-Controller 分层架构
 - **[HFSM](./hfsm)** — 层次有限状态机，支持条件转换和状态嵌套
+- **[Combat 战斗数值体系](./combat)** — 属性/效果/Buff/技能 四模块数值系统（AttributeSet/EffectPipeline/DamagePipeline/BuffSystem/AbilitySystem）
 - **Entity 系统 (🚧 Stub)** — Entity 基类与 EntityView 基类
 - **视图工厂 (🚧 Stub)** — ViewFactory 基类与 PropertyBinder
 

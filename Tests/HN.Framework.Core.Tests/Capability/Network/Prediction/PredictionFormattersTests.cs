@@ -1,7 +1,7 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
+using HN.Framework.Core.Driver.Common.Serialization;
 using HN.Framework.Core.Capability.Network.Prediction;
 using HN.Framework.Core.Capability.Serialization;
-using HN.Framework.Core.Driver.Common.Serialization;
 
 namespace HN.Framework.Core.Tests.Capability.Network.Prediction
 {

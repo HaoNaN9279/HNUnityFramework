@@ -98,6 +98,12 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
   - `ConfigTable<TKey, TRow>` — 默认实现，O(1) 字典查表
   - `AssetRef<T>` — MemoryPack 可序列化的资产引用，存 Addressables Label
   - `ConfigLoader` — MemoryPack 反序列化工具类
+- **Combat（战斗数值体系）** ✅ — 基于 GAS 模式的四模块数值体系：
+  - `AttributeType` / `AttributeTypeManager` / `AttributeSet<TId>` — 属性类型标识与管理、泛型属性集合、Modifier 修正系统（Add/Multiply/Override/MinCap/MaxCap）
+  - `EffectSpec<TId>` / `EffectPipeline<TId>` — 效果规格定义与效果管线（Instant/Duration/Infinite）
+  - `DamagePipeline<TId>` / `IDamageFormula<TId>` — 四阶段伤害管线（PreMigration→Calculate→PostMigration→ApplyDamage），可替换公式
+  - `BuffSpec<TId>` / `BuffSystem<TId>` — Buff 规格与系统（Single/Multi/Refresh/Extend 四种堆叠规则）
+  - `AbilitySpec<TId>` / `AbilitySystem<TId>` — 技能规格与系统（Cooldown/Cost/Tag 条件预检）
 - **GameplayTag** ✅ — 层级标签系统
   - `GameplayTag` — 8 字节值类型（TableIndex + InstanceId），层级编码，零 GC
   - `GameplayTagManager` — 定义表管理，加载/冻结/查询

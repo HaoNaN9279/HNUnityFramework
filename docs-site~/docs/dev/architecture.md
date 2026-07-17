@@ -225,7 +225,7 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 | L4 | Sheet/Config 系统 | ✅ | ISheetManager + ConfigTable + AssetRef + SheetManager |
 | L5 | 图数据模型 | 📋 | 规划中 |
 | L6 | 动画数据模型 | 📋 | 规划中 |
-| L7 | 战斗数值体系 | 📋 | 规划中 |
+| L7 | 战斗数值体系 | ✅ | Attribute+Effect+Buff+Ability 实现 |
 | L8 | 任务成就系统 | 📋 | 规划中 |
 | L9 | 物品背包装备 | 📋 | 规划中 |
 | L10 | AI 行为框架 | 📋 | 规划中 |

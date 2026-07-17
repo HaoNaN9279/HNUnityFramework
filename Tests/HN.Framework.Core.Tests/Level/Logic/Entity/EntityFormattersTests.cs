@@ -1,11 +1,9 @@
-﻿#nullable enable
-
 using NUnit.Framework;
-using HN.Framework.Core.Level.Logic.Entity;
-using HN.Framework.Core.Capability.Serialization;
 using HN.Framework.Core.Driver.Common.Serialization;
+using HN.Framework.Core.Capability.Serialization;
+using HNEntity = HN.Framework.Core.Level.Logic.Entity.Entity;
 
-namespace HN.Framework.Core.Tests.Level.Logic.Entity
+namespace HN.Framework.Core.Tests.Level.Logic.EntityTests
 {
     [TestFixture]
     public class EntityFormattersTests
@@ -19,11 +17,11 @@ namespace HN.Framework.Core.Tests.Level.Logic.Entity
         [Test]
         public void Serialize_Deserialize_Roundtrip()
         {
-            var original = new Entity();
+            var original = new HNEntity();
             original.Initialize(100, 200, 300);
 
             byte[] data = MemoryPackSerializer.Serialize(original);
-            var result = MemoryPackSerializer.Deserialize<Entity>(data);
+            var result = MemoryPackSerializer.Deserialize<HNEntity>(data);
 
             Assert.That(result, Is.Not.Null);
             Assert.That(result.EntityId, Is.EqualTo(100u));
@@ -34,11 +32,11 @@ namespace HN.Framework.Core.Tests.Level.Logic.Entity
         [Test]
         public void Serialize_Deserialize_DefaultOwnerClientId()
         {
-            var original = new Entity();
+            var original = new HNEntity();
             original.Initialize(1, 2);
 
             byte[] data = MemoryPackSerializer.Serialize(original);
-            var result = MemoryPackSerializer.Deserialize<Entity>(data);
+            var result = MemoryPackSerializer.Deserialize<HNEntity>(data);
 
             Assert.That(result, Is.Not.Null);
             Assert.That(result.EntityId, Is.EqualTo(1u));
@@ -49,11 +47,11 @@ namespace HN.Framework.Core.Tests.Level.Logic.Entity
         [Test]
         public void Serialize_Deserialize_BoundaryValues()
         {
-            var original = new Entity();
+            var original = new HNEntity();
             original.Initialize(uint.MaxValue, int.MaxValue, 0);
 
             byte[] data = MemoryPackSerializer.Serialize(original);
-            var result = MemoryPackSerializer.Deserialize<Entity>(data);
+            var result = MemoryPackSerializer.Deserialize<HNEntity>(data);
 
             Assert.That(result.EntityId, Is.EqualTo(uint.MaxValue));
             Assert.That(result.EntityDefId, Is.EqualTo(int.MaxValue));
@@ -63,10 +61,10 @@ namespace HN.Framework.Core.Tests.Level.Logic.Entity
         [Test]
         public void Serialize_Null_ReturnsNull()
         {
-            Entity nullEntity = null;
+            HNEntity nullEntity = null;
 
             byte[] data = MemoryPackSerializer.Serialize(nullEntity);
-            var result = MemoryPackSerializer.Deserialize<Entity>(data);
+            var result = MemoryPackSerializer.Deserialize<HNEntity>(data);
 
             Assert.That(result, Is.Null);
         }
@@ -74,11 +72,11 @@ namespace HN.Framework.Core.Tests.Level.Logic.Entity
         [Test]
         public void IsOwned_AfterDeserialization_Correct()
         {
-            var original = new Entity();
+            var original = new HNEntity();
             original.Initialize(1, 2, 5);
 
             byte[] data = MemoryPackSerializer.Serialize(original);
-            var result = MemoryPackSerializer.Deserialize<Entity>(data);
+            var result = MemoryPackSerializer.Deserialize<HNEntity>(data);
 
             Assert.That(result.IsOwned, Is.True);
             Assert.That(result.EntityId, Is.EqualTo(1u));
@@ -87,11 +85,11 @@ namespace HN.Framework.Core.Tests.Level.Logic.Entity
         [Test]
         public void IsOwned_AfterDeserialization_NegativeOwner_NotOwned()
         {
-            var original = new Entity();
+            var original = new HNEntity();
             original.Initialize(1, 2, -1);
 
             byte[] data = MemoryPackSerializer.Serialize(original);
-            var result = MemoryPackSerializer.Deserialize<Entity>(data);
+            var result = MemoryPackSerializer.Deserialize<HNEntity>(data);
 
             Assert.That(result.IsOwned, Is.False);
         }
