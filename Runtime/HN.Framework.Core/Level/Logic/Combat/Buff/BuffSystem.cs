@@ -43,11 +43,28 @@ namespace HN.Framework.Core.Level.Logic.Combat
     {
         private readonly List<BuffInstance> _activeBuffs = new();
         private readonly Dictionary<BuffHandle, int> _handleIndexMap = new();
+        private readonly Func<int, IBuffBehaviour<TId>?>? _behaviourFactory;
         private int _nextHandleId = 1;
 
         public event Action<BuffSpec<TId>, TId, TId, int>? OnBuffApplied;
         public event Action<BuffSpec<TId>, TId, TId, int, bool>? OnBuffRemoved;
         public event Action<BuffSpec<TId>, TId, TId, int, int>? OnBuffStackChanged;
+
+        /// <summary>
+        /// 默认构造器。不使用 Behaviour 时调用。
+        /// </summary>
+        public BuffSystem()
+        {
+        }
+
+        /// <summary>
+        /// 构造器。传入 Behaviour 工厂以便在 Buff 生命周期中注入自定义逻辑。
+        /// </summary>
+        /// <param name="behaviourFactory">根据 BehaviourId 生成 <see cref="IBuffBehaviour{TId}"/> 的工厂。可为 null。</param>
+        public BuffSystem(Func<int, IBuffBehaviour<TId>?>? behaviourFactory)
+        {
+            _behaviourFactory = behaviourFactory;
+        }
 
         /// <inheritdoc />
         public BuffHandle ApplyBuff(BuffSpec<TId> spec, TId source, TId target,
@@ -71,10 +88,19 @@ namespace HN.Framework.Core.Level.Logic.Combat
                         if (existing.Stacks >= spec.MaxStacks)
                             return existing.Handle; // 已达最大层数，忽略
                         // 增加层数，应用层效果
+                        var oldStacks = existing.Stacks;
                         existing.Stacks++;
                         existing.RemainingTime = spec.Duration; // 重置持续时间
                         ApplyApplyEffects(spec, source, target, targetAttributes, effectPipeline);
-                        OnBuffStackChanged?.Invoke(spec, source, target, existing.Stacks - 1, existing.Stacks);
+
+                        // Behaviour OnStackChanged
+                        if (existing.Behaviour != null)
+                        {
+                            var ctx = CreateBehaviourContext(existing.Spec, source, target, targetAttributes, effectPipeline, existing);
+                            existing.Behaviour.OnStackChanged(oldStacks, existing.Stacks, ctx);
+                        }
+
+                        OnBuffStackChanged?.Invoke(spec, source, target, oldStacks, existing.Stacks);
                         return existing.Handle;
 
                     case BuffStackRule.Refresh:
@@ -107,11 +133,24 @@ namespace HN.Framework.Core.Level.Logic.Combat
                 ApplyEffectHandles = new List<EffectHandle>(),
             };
 
+            // 尝试创建 Behaviour
+            if (_behaviourFactory != null && spec.BehaviourId > 0)
+            {
+                instance.Behaviour = _behaviourFactory(spec.BehaviourId);
+            }
+
             // 应用 ApplyEffects
             ApplyApplyEffects(spec, source, target, targetAttributes, effectPipeline);
 
             _activeBuffs.Add(instance);
             _handleIndexMap[handle] = _activeBuffs.Count - 1;
+
+            // Behaviour OnApply
+            if (instance.Behaviour != null)
+            {
+                var ctx = CreateBehaviourContext(spec, source, target, targetAttributes, effectPipeline, instance);
+                instance.Behaviour.OnApply(ctx);
+            }
 
             OnBuffApplied?.Invoke(spec, source, target, 1);
             return handle;
@@ -143,6 +182,13 @@ namespace HN.Framework.Core.Level.Logic.Combat
 
                 // 递减持续时间
                 instance.RemainingTime -= deltaTime;
+
+                // Behaviour OnTick
+                if (instance.Behaviour != null)
+                {
+                    var tickCtx = CreateBehaviourContext(instance.Spec, instance.Source, instance.Target, targetAttributes, effectPipeline, instance);
+                    instance.Behaviour.OnTick(deltaTime, tickCtx);
+                }
 
                 // 周期性效果
                 if (instance.Spec.PeriodicEffects != null && instance.Spec.PeriodicEffects.Count > 0)
@@ -233,6 +279,13 @@ namespace HN.Framework.Core.Level.Logic.Combat
                 }
             }
 
+            // Behaviour OnRemove
+            if (instance.Behaviour != null)
+            {
+                var removeCtx = CreateBehaviourContext(instance.Spec, instance.Source, instance.Target, targetAttributes, effectPipeline, instance);
+                instance.Behaviour.OnRemove(isExpired, removeCtx);
+            }
+
             OnBuffRemoved?.Invoke(instance.Spec, instance.Source, instance.Target, instance.Stacks, isExpired);
             return true;
         }
@@ -265,6 +318,24 @@ namespace HN.Framework.Core.Level.Logic.Combat
             // 实际在 RemoveBuff 中通过 RemoveEffects 或 EffectPipeline.RemoveEffect 处理
         }
 
+        private BuffBehaviourContext<TId> CreateBehaviourContext(
+            BuffSpec<TId> spec, TId source, TId target,
+            IAttributeSet<TId> targetAttributes, IEffectPipeline<TId> effectPipeline,
+            BuffInstance instance)
+        {
+            return new BuffBehaviourContext<TId>
+            {
+                BuffId = spec.BuffId,
+                DisplayName = spec.DisplayName,
+                Source = source,
+                Target = target,
+                Stacks = instance.Stacks,
+                TargetAttributes = targetAttributes,
+                EffectPipeline = effectPipeline,
+                CustomParams = spec.BehaviourCustomParams,
+            };
+        }
+
         private void CleanupExpired()
         {
             for (int i = _activeBuffs.Count - 1; i >= 0; i--)
@@ -295,6 +366,7 @@ namespace HN.Framework.Core.Level.Logic.Combat
             public bool IsExpired;
             public Dictionary<int, Fixed64> PeriodAccumulator = new();
             public Dictionary<int, bool> PeriodInitialized = new();
+            public IBuffBehaviour<TId>? Behaviour;
         }
     }
 }

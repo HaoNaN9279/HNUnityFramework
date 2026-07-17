@@ -14,6 +14,8 @@
     "overrideReferences": true,
     "precompiledReferences": [
         "nunit.framework.dll",
+        "System.Runtime.dll",
+        "netstandard.dll",
         "MemoryPack.dll",
         "FixedMathSharp.dll"
     ],

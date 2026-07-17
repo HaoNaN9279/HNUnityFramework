@@ -33,6 +33,9 @@ namespace HN.Framework.Core.Level.Logic.Combat
         /// <summary>Buff 定义 ID。</summary>
         public int BuffId { get; set; }
 
+        /// <summary>关联的 Behaviour 定义 ID。0 表示无自定义行为。</summary>
+        public int BehaviourId { get; set; }
+
         /// <summary>显示名称。</summary>
         public string? DisplayName { get; set; }
 
@@ -59,6 +62,9 @@ namespace HN.Framework.Core.Level.Logic.Combat
 
         /// <summary>可选标签索引（如 GameplayTag）。</summary>
         public HashSet<int>? TagIndices { get; set; }
+
+        /// <summary>传递给 Behaviour 的自定义参数。由 Behaviour 实现方定义键值约定。</summary>
+        public Dictionary<string, Fixed64>? BehaviourCustomParams { get; set; }
     }
 
     /// <summary>
