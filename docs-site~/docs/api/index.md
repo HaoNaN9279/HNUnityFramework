@@ -80,6 +80,7 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
 - **CameraPreset** — 摄像机预设数据模型（FOV/近远裁面/优先级/混合时间），实现 `IReference`
 - **CameraShakeProfile** — 摄像机振动配置数据模型（振幅/频率/时长/衰减类型），实现 `IReference`
 - **IHotUpdateEntry** — 热更新 DLL 入口接口，由热更程序集实现以注册模块到 GameWorld
+- **C12 — 过场动画系统**：基于 Timeline 的过场动画框架，含自定义 Track（字幕/对话/事件/震动/游戏状态）、角色绑定解析器、优先级仲裁、输入阻塞/摄像机接管自动化。
 
 **Level.Logic — 逻辑层**
 

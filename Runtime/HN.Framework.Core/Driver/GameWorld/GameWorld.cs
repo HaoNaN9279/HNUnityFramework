@@ -5,6 +5,7 @@ using HN.Framework.Core.Capability.Input;
 using HN.Framework.Core.Capability.Localization;
 using HN.Framework.Core.Capability.Physics;
 using HN.Framework.Core.Capability.Camera;
+using HN.Framework.Core.Capability.Cutscene;
 using HN.Framework.Core.Capability.UI;
 using HN.Framework.Core.Driver.Common;
 using HN.Framework.Core.Capability.Event;
@@ -84,6 +85,9 @@ namespace HN.Framework.Core.Driver
         /// </summary>
         public ICameraManager? CameraManager { get; set; }
 
+        /// <summary>过场动画管理器（C12，由 GameWorldDriver 注入）</summary>
+        public ICutsceneManager? CutsceneManager { get; set; }
+
         public GameWorld()
         {
             PoolManager = new ObjectPoolManager();
@@ -113,6 +117,7 @@ namespace HN.Framework.Core.Driver
             (InputManager as ITickable)?.Tick();
             (UIManager as ITickable)?.Tick();
             (PhysicsWorld as ITickable)?.Tick();
+            (CutsceneManager as ITickable)?.Tick();
         }
 
         public void LateTick()
@@ -125,6 +130,7 @@ namespace HN.Framework.Core.Driver
             (InputManager as ITickable)?.LateTick();
             (UIManager as ITickable)?.LateTick();
             (PhysicsWorld as ITickable)?.LateTick();
+            (CutsceneManager as ITickable)?.LateTick();
         }
     }
 }

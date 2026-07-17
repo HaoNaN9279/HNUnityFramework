@@ -1,0 +1,26 @@
+{
+    "name": "HN.Framework.Unity.Tests.Cutscene",
+    "rootNamespace": "HN.Framework.Unity.Tests.Cutscene",
+    "references": [
+        "HN.Framework.Core",
+        "HN.Framework.Unity",
+        "Unity.Timeline",
+        "Unity.Addressables"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll",
+        "System.Runtime.dll",
+        "netstandard.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": []
+}

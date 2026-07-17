@@ -4,6 +4,7 @@
     "references":  [
         "HN.Framework.Core",
         "HN.Framework.Unity",
+        "Unity.Timeline",
         "HybridCLR.Editor"
                     ],
     "includePlatforms":  [
@@ -15,15 +16,15 @@
     "allowUnsafeCode":  false,
     "overrideReferences":  false,
     "precompiledReferences":  [
-                                   "ClosedXML.dll",
-                                   "DocumentFormat.OpenXml.dll"
-                               ],
+                                    "ClosedXML.dll",
+                                    "DocumentFormat.OpenXml.dll"
+                                ],
     "autoReferenced":  true,
     "defineConstraints":  [
 
-                          ],
+                           ],
     "versionDefines":  [
 
-                       ],
+                        ],
     "noEngineReferences":  false
 }
