@@ -111,6 +111,17 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
   - `GameplayTagManager` — 定义表管理，加载/冻结/查询
   - `GameplayTagContainer` — 标签容器，增删查 + 批量层级匹配
   - `TagQuery` — 嵌套布尔查询表达式（Any/All/Not），用于配置表条件匹配
+- **Inventory（物品/背包/装备）** ✅ — 物品背包装备框架：
+  - `ItemCategory` — 物品类别枚举（Weapon/Armor/Accessory/Consumable/Material/Quest/Key）
+  - `EquipmentSlot` — 装备槽位枚举（[Flags]，Weapon/Head/Chest/Legs/Feet/Accessory1/Accessory2）
+  - `ItemDef` — 物品配置表行定义（MemoryPackable struct，含 Id/Category/MaxStack/AllowedSlots/Durability/Buffs 等 14 字段）
+  - `ItemBuffSpec` — 物品附加 Buff 规格定义，提供 `BuildBuffSpec<TId>()` 桥接到 L7 BuffSystem
+  - `ItemInstance` — 运行时物品实例（MemoryPackable + IReference），含堆叠/耐久/OwnerEntityId/WorldEntityId/ExtraData
+  - `ContainerType` — 容器类型枚举（Backpack/Warehouse/Equipment/Hotbar/Shop/Material）
+  - `ContainerSlot` — 容器槽位数据（ItemInstance 引用 + StackCount）
+  - `IContainer` / `Container` — 容器接口与实现（定长数组+自动堆叠+事件通知）
+  - `IEquipment` / `Equipment` — 装备系统接口与实现（位掩码槽位校验+L7 Buff 生命周期管理）
+  - `ItemFormatters` — ItemInstance 的 MemoryPack 自定义格式化器
 
 #### HN.Framework.Unity
 
@@ -189,6 +200,9 @@ Unity 平台层，依赖 UnityEngine。
 - **DefaultPropertyBinder** — PropertyBinder 默认实现，基于 Dictionary 管理绑定关系
 - **ViewFactory** — 视图工厂，支持同步 CreateView/ReleaseView 和预制体缓存
 - **EntityView** — 实体视图基类（MonoBehaviour），提供 OnSpawned/OnDespawned 生命周期
+- **Inventory** — 物品背包装备 Unity 桥接层
+  - `ContainerView` — MonoBehaviour，挂载到 Entity 的容器数据桥接组件
+  - `EquipmentView` — MonoBehaviour，挂载到 Entity 的装备数据桥接组件
 
 ### Editor
 

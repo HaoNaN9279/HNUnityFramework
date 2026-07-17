@@ -6,6 +6,7 @@ using HN.Framework.Core.Capability.Network.Prediction;
 using HN.Framework.Core.Level;
 using HN.Framework.Core.Level.Logic.Entity;
 using HN.Framework.Core.Level.Logic.Sheet;
+using HN.Framework.Core.Level.Logic.Inventory.Serialization;
 
 namespace HN.Framework.Core.Capability.Serialization
 {

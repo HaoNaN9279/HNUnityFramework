@@ -227,7 +227,7 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 | L6 | 动画数据模型 | 📋 | 规划中 |
 | L7 | 战斗数值体系 | ✅ | Attribute+Effect+Buff+Ability 实现 |
 | L8 | 任务成就系统 | 📋 | 规划中 |
-| L9 | 物品背包装备 | 📋 | 规划中 |
+| L9 | 物品背包装备 | ✅ | Item+Container+Equipment 核心三模块 + MemoryPack 序列化 + Unity 桥接 |
 | L10 | AI 行为框架 | 📋 | 规划中 |
 | V1 | UI 运行时 | ✅ Phase 2 | 7 层 Canvas + Addressables + 动画 + Toast + 引导 |
 | V2 | ViewFactory + EntityView | ✅ | 实体视图工厂 |

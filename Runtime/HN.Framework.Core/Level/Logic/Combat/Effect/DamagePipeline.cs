@@ -7,6 +7,13 @@ using FixedMathSharp;
 namespace HN.Framework.Core.Level.Logic.Combat
 {
     /// <summary>
+    /// 管线阶段委托。对 <see cref="DamageContext{TId}"/> 进行引用传递修改。
+    /// </summary>
+    /// <typeparam name="TId">来源标识类型。</typeparam>
+    /// <param name="context">伤害上下文（引用传递）。</param>
+    public delegate void DamageStageAction<TId>(ref DamageContext<TId> context) where TId : IEquatable<TId>;
+
+    /// <summary>
     /// 伤害计算公式接口。项目可通过实现此接口替换默认加减法公式。
     /// </summary>
     /// <typeparam name="TId">来源标识类型。</typeparam>
@@ -21,25 +28,15 @@ namespace HN.Framework.Core.Level.Logic.Combat
     }
 
     /// <summary>
-    /// 默认伤害公式：RawDamage - Defense（最低 0）。
+    /// 默认伤害公式。直接使用 PreMigration 阶段处理后的伤害值，最低为 0。
+    /// 项目可通过实现 <see cref="IDamageFormula{TId}"/> 替换公式，或在 PreMigration 阶段实现减伤逻辑。
     /// </summary>
     /// <typeparam name="TId">来源标识类型。</typeparam>
     public sealed class DefaultDamageFormula<TId> : IDamageFormula<TId> where TId : IEquatable<TId>
     {
-        /// <summary>攻击力属性类型（配置表定义）。</summary>
-        public static readonly AttributeType ATK = new AttributeType(2);
-
-        /// <summary>防御力属性类型（配置表定义）。</summary>
-        public static readonly AttributeType DEF = new AttributeType(3);
-
         public Fixed64 Calculate(ref DamageContext<TId> context)
         {
-            // 默认：RawDamage = ATK - DEF，最低 0
-            var atk = context.AttackerAttributes?.GetFinalValue(ATK) ?? Fixed64.Zero;
-            var def = context.DefenderAttributes?.GetFinalValue(DEF) ?? Fixed64.Zero;
-
-            var raw = atk - def;
-            return FixedMath.Max(raw, Fixed64.Zero);
+            return FixedMath.Max(context.PreMigrationDamage, Fixed64.Zero);
         }
     }
 
@@ -97,13 +94,13 @@ namespace HN.Framework.Core.Level.Logic.Combat
         private readonly IDamageFormula<TId> _formula;
 
         /// <summary>PreMigration 阶段委托（增伤/减伤判断）。签名：(ref DamageContext{TId}) → void。</summary>
-        public Action<DamageContext<TId>>? OnPreMigration { get; set; }
+        public DamageStageAction<TId>? OnPreMigration { get; set; }
 
         /// <summary>PostMigration 阶段委托（护甲/分摊/反弹）。签名：(ref DamageContext{TId}) → void。</summary>
-        public Action<DamageContext<TId>>? OnPostMigration { get; set; }
+        public DamageStageAction<TId>? OnPostMigration { get; set; }
 
         /// <summary>ApplyDamage 阶段委托（替代默认扣血逻辑）。签名：(ref DamageContext{TId}) → void。</summary>
-        public Action<DamageContext<TId>>? OnApplyDamage { get; set; }
+        public DamageStageAction<TId>? OnApplyDamage { get; set; }
 
         /// <summary>伤害事件（context, 是否已被处理）。</summary>
         public event Action<DamageContext<TId>, bool>? OnDamageProcessed;
@@ -129,20 +126,22 @@ namespace HN.Framework.Core.Level.Logic.Combat
 
             // === 阶段 1: PreMigration（增伤/减伤判断） ===
             context.PreMigrationDamage = context.BaseDamage;
-            OnPreMigration?.Invoke(context);
+            OnPreMigration?.Invoke(ref context);
+            // PreMigration 可能修改了 BaseDamage，重新同步
+            context.PreMigrationDamage = context.BaseDamage;
 
             // === 阶段 2: DamageCalculate（核心公式） ===
             context.CalculatedDamage = _formula.Calculate(ref context);
 
             // === 阶段 3: PostMigration（护甲/分摊/反弹） ===
             context.FinalDamage = context.CalculatedDamage;
-            OnPostMigration?.Invoke(context);
+            OnPostMigration?.Invoke(ref context);
 
             // === 阶段 4: ApplyDamage（应用到目标） ===
             bool handled = false;
             if (OnApplyDamage != null)
             {
-                OnApplyDamage(context);
+                OnApplyDamage(ref context);
                 handled = true;
             }
             else

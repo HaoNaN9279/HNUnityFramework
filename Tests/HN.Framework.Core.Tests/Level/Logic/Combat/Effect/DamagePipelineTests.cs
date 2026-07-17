@@ -56,6 +56,14 @@ namespace HN.Framework.Core.Tests.Level.Logic.Combat
         {
             _defender.SetBaseValue(DEF, (Fixed64)999);
 
+            // 项目通过 PreMigration 实现 ATK-DEF 减伤逻辑
+            _pipeline.OnPreMigration = (ref DamageContext<int> ctx) =>
+            {
+                var atk = ctx.AttackerAttributes?.GetFinalValue(ATK) ?? Fixed64.Zero;
+                var def = ctx.DefenderAttributes?.GetFinalValue(DEF) ?? Fixed64.Zero;
+                ctx.BaseDamage = FixedMath.Max(atk - def, Fixed64.Zero);
+            };
+
             var context = new DamageContext<int>
             {
                 AttackerId = 1,
@@ -93,7 +101,7 @@ namespace HN.Framework.Core.Tests.Level.Logic.Combat
         public void PreMigration_CanModifyDamage()
         {
             // PreMigration stage: increase BaseDamage by 20%
-            _pipeline.OnPreMigration = (DamageContext<int> ctx) =>
+            _pipeline.OnPreMigration = (ref DamageContext<int> ctx) =>
             {
                 ctx.BaseDamage = ctx.BaseDamage * (Fixed64)12 / (Fixed64)10;
             };
@@ -114,7 +122,7 @@ namespace HN.Framework.Core.Tests.Level.Logic.Combat
         [Test]
         public void PostMigration_CanModifyFinalDamage()
         {
-            _pipeline.OnPostMigration = (DamageContext<int> ctx) =>
+            _pipeline.OnPostMigration = (ref DamageContext<int> ctx) =>
             {
                 ctx.FinalDamage /= (Fixed64)2;
             };
@@ -136,7 +144,7 @@ namespace HN.Framework.Core.Tests.Level.Logic.Combat
         public void OnApplyDamage_CanOverrideDefault()
         {
             Fixed64 recordedDamage = Fixed64.Zero;
-            _pipeline.OnApplyDamage = (DamageContext<int> ctx) =>
+            _pipeline.OnApplyDamage = (ref DamageContext<int> ctx) =>
             {
                 recordedDamage = ctx.FinalDamage;
             };

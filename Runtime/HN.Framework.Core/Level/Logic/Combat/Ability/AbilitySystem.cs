@@ -152,20 +152,19 @@ namespace HN.Framework.Core.Level.Logic.Combat
         {
             if (deltaTime <= Fixed64.Zero) return;
 
-            var expiredKeys = new List<(int, TId)>();
+            // 先收集所有键的快照，避免 foreach 期间修改字典
+            var keys = new List<(int, TId)>(_cooldowns.Keys);
 
-            foreach (var kvp in _cooldowns)
+            for (int i = 0; i < keys.Count; i++)
             {
-                var newRemaining = kvp.Value - deltaTime;
+                var key = keys[i];
+                if (!_cooldowns.TryGetValue(key, out var remaining)) continue;
+
+                var newRemaining = remaining - deltaTime;
                 if (newRemaining <= Fixed64.Zero)
-                    expiredKeys.Add(kvp.Key);
+                    _cooldowns.Remove(key);
                 else
-                    _cooldowns[kvp.Key] = newRemaining;
-            }
-
-            for (int i = 0; i < expiredKeys.Count; i++)
-            {
-                _cooldowns.Remove(expiredKeys[i]);
+                    _cooldowns[key] = newRemaining;
             }
         }
 
