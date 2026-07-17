@@ -40,7 +40,7 @@ namespace HN.Framework.Unity.Capability.Cutscene
                 return null;
             }
 
-            Object resolved = ResolveBinding(targetId);
+            Object resolved = ResolveBinding(roleName, targetId);
             if (resolved != null)
             {
                 _resolvedCache[id] = resolved;
@@ -62,24 +62,45 @@ namespace HN.Framework.Unity.Capability.Cutscene
             return names;
         }
 
-        private Object ResolveBinding(string targetId)
+        private Object ResolveBinding(string roleName, string targetId)
         {
             switch (_bindingMap.ResolveMode)
             {
                 case BindingResolveMode.ScenePath:
+                {
+                    // 优先通过注册表按角色名 O(1) 查找
+                    if (CutsceneActorRegistry.TryResolveByRole(roleName, out var go))
+                        return go;
+                    // 尝试按 targetId 查找（targetId 可能恰好与 ActorRole 同名）
+                    if (CutsceneActorRegistry.TryResolveByRole(targetId, out go))
+                        return go;
+                    // Fallback：保留旧方式以兼容未挂 CutsceneActor 组件的对象
                     return GameObject.Find(targetId);
+                }
                 case BindingResolveMode.Tag:
+                {
+                    // 优先通过注册表的 Tag 索引 O(1) 查找
+                    if (CutsceneActorRegistry.TryResolveByTag(targetId, out var go))
+                        return go;
+                    // Fallback：引擎内部的 Tag 索引也是 O(1)
                     return GameObject.FindWithTag(targetId);
+                }
                 case BindingResolveMode.EntityId:
-                    return ResolveEntityBinding(targetId);
+                    if (CutsceneActorRegistry.TryResolveByEntity(targetId, out var entityGo))
+                        return entityGo;
+                    // Fallback
+                    return FindActorByEntityId(targetId);
                 case BindingResolveMode.ActorComponent:
-                    return ResolveActorComponent(targetId);
+                    if (CutsceneActorRegistry.TryResolveByTag(targetId, out var actorGo))
+                        return actorGo;
+                    // Fallback
+                    return FindActorByTag(targetId);
                 default:
                     return null;
             }
         }
 
-        private Object ResolveEntityBinding(string entityId)
+        private static Object FindActorByEntityId(string entityId)
         {
             var actors = Object.FindObjectsByType<CutsceneActor>(FindObjectsSortMode.None);
             foreach (var actor in actors)
@@ -90,7 +111,7 @@ namespace HN.Framework.Unity.Capability.Cutscene
             return null;
         }
 
-        private Object ResolveActorComponent(string actorTag)
+        private static Object FindActorByTag(string actorTag)
         {
             var actors = Object.FindObjectsByType<CutsceneActor>(FindObjectsSortMode.None);
             foreach (var actor in actors)

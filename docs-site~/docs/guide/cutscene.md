@@ -6,7 +6,10 @@ sidebar_position: 23
 
 ## 概述
 
-C12 过场动画系统基于 Unity Timeline 构建，提供完整的过场动画播放、管理和编辑器支持。核心创新是 `CutsceneBindingResolver`（自定义 `IExposedPropertyTable`），通过角色名而非具体 GameObject 引用进行 Track 绑定，实现 TimelineAsset 与场景解耦。
+C12 过场动画系统基于 Unity Timeline 构建，提供完整的过场动画播放、管理和编辑器支持。核心创新有两个：
+
+1. **`CutsceneBindingResolver`**（自定义 `IExposedPropertyTable`）：通过角色名而非具体 GameObject 引用进行 Track 绑定，实现 TimelineAsset 与场景解耦。
+2. **`CutsceneActorRegistry`**（主动注册表）：CutsceneActor 在 OnEnable/OnDisable 生命周期中自动注册/注销，实现 O(1) 字典查找替代传统 `GameObject.Find` / `FindObjectsByType` 的 O(n) 全场景扫描，大幅提升运行时性能。
 
 ## 快速开始
 
@@ -20,7 +23,9 @@ C12 过场动画系统基于 Unity Timeline 构建，提供完整的过场动画
 ```
 选择 GameObject → Add Component → HN Framework/Cutscene/CutsceneActor
 ```
-在 Inspector 中设置 `Actor Role` 名称。
+在 Inspector 中设置 `Actor Role` 名称。组件启用时会自动向 `CutsceneActorRegistry` 注册，禁用时自动注销。
+
+> **提示**：推荐始终为过场相关的 GameObject 添加 `CutsceneActor` 组件，以获得 O(1) 查找性能。未添加组件的对象仍可通过 fallback 机制解析（`GameObject.Find` 等），但性能较低。
 
 ### 3. 配置绑定
 
@@ -31,10 +36,10 @@ bindingMap.AddBinding("NPC1", "/Game/Characters/Merchant");
 ```
 
 支持四种解析模式：
-- `ScenePath` — 通过 `GameObject.Find` 查找
-- `Tag` — 通过 Tag 查找
-- `EntityId` — 通过 L3 Entity 系统查找
-- `ActorComponent` — 通过 `CutsceneActor.ActorTag` 查找
+- `ScenePath` — 优先通过 `CutsceneActorRegistry.TryResolveByRole()` O(1) 查找，未命中时回退到 `GameObject.Find`
+- `Tag` — 优先通过 `CutsceneActorRegistry.TryResolveByTag()` O(1) 查找，未命中时回退到 `FindWithTag`
+- `EntityId` — 优先通过 `CutsceneActorRegistry.TryResolveByEntity()` O(1) 查找，未命中时回退到 `FindObjectsByType`
+- `ActorComponent` — 优先通过 `CutsceneActorRegistry.TryResolveByTag()` O(1) 查找，未命中时回退到 `FindObjectsByType`
 
 ### 4. 播放过场
 
@@ -88,3 +93,44 @@ cutsceneManager.Enqueue("Assets/Cutscenes/Ending", CutscenePriority.Normal);
 - 选择 Timeline Asset 预览
 - 编辑角色绑定映射
 - 导出绑定配置
+
+## 绑定解析原理
+
+### 注册表机制
+
+`CutsceneActorRegistry` 是一个全局静态注册表，提供 O(1) 的字典查找：
+
+```
+CutsceneActor.OnEnable()  →  CutsceneActorRegistry.Register(this)
+                                 ├── _roleMap[ActorRole] = gameObject
+                                 ├── _tagMap[ActorTag] = gameObject
+                                 └── _entityMap[EntityId] = gameObject
+
+CutsceneActor.OnDisable() →  CutsceneActorRegistry.Unregister(this)
+                                 └── 仅当值匹配时才移除
+
+场景卸载                →  SceneManager.sceneUnloaded 回调
+                                 └── 批量清理该场景相关注册项
+```
+
+### 解析流程
+
+```
+CutsceneBindingResolver.GetReferenceValue(id)
+  → ParsePropertyName("Hero:12345") → "Hero"
+  → bindingMap.TryGetBinding("Hero") → targetId
+  → ResolveBinding("Hero", targetId):
+      ├── ScenePath:    Registry→role → Registry→targetId → GameObject.Find (fallback)
+      ├── Tag:          Registry→tag  → FindWithTag (fallback)
+      ├── EntityId:     Registry→entity → FindObjectsByType (fallback)
+      └── ActorComponent: Registry→tag → FindObjectsByType (fallback)
+```
+
+### 性能对比
+
+| 模式 | 优化前 | 优化后（Registry 命中） |
+|------|--------|------------------------|
+| ScenePath | `GameObject.Find` O(n) | `Dictionary.TryGetValue` **O(1)** |
+| Tag | `FindWithTag` O(1) | `Dictionary.TryGetValue` **O(1)** |
+| EntityId | `FindObjectsByType` O(n) + GC | `Dictionary.TryGetValue` **O(1)** |
+| ActorComponent | `FindObjectsByType` O(n) + GC | `Dictionary.TryGetValue` **O(1)** |

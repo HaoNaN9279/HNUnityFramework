@@ -19,6 +19,16 @@ namespace HN.Framework.Unity.Capability.Cutscene
             ActorRole = gameObject.name;
         }
 
+        private void OnEnable()
+        {
+            CutsceneActorRegistry.Register(this);
+        }
+
+        private void OnDisable()
+        {
+            CutsceneActorRegistry.Unregister(this);
+        }
+
         private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.yellow;
