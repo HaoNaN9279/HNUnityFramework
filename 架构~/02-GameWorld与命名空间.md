@@ -159,14 +159,16 @@ public class GameEntry : GameWorldDriver
 | L7 | AttributeDefinition, AbilityDefinition, EffectDefinition, Modifier, IAttributeSet, IAbilitySystem, IEffectPipeline, DamagePipeline, BuffSystem, EffectSpec | `HN.Framework.Core.Level.Logic.Combat` | Core |
 | L8 | IQuestManager, QuestCondition (Single/And/Or/Not), QuestLine | `HN.Framework.Core.Level.Logic.Quest` | Core |
 | L9 | IInventoryService, IEquipmentService, ItemStack, Slot, InvOpResult, ItemDefinition | `HN.Framework.Core.Level.Logic.Inventory` | Core |
-| L10 | BTNode, BehaviorTree, Blackboard, IAIPerception, INavigationAgent, AIConfig | `HN.Framework.Core.Level.Logic.AI` | Core |
+| L10 | AIAgent, DecisionPipeline, KnowledgePool, Blackboard, IDecisionStrategy, StrategyRegistry, IActionCommand, BehaviorTreeStrategy, FSMStrategy, UtilityStrategy, GOAPStrategy, HTNStrategy, DecisionTreeStrategy, FuzzyLogicStrategy, ScriptedStrategy | `HN.Framework.Core.Level.Logic.AI` | Core |
+| L10 | AIAgentComponent, VisionSensor, AudioSensor, NavMeshAgentAdapter, DefaultActionExecutor | `HN.Framework.Unity.Level.Logic.AI` | Unity |
+| L10 | AIStrategyEditorWindow, BehaviorTreeEditor, DecisionTreeEditor, UtilityCurveEditor | `HN.Framework.Editor.Graph` | Editor |
 | V1 | UIManager, UIPanel, UIDialog, UIToast, UIGuide, UIAnimation, RedDotManager | `HN.Framework.Unity.Level.View.UI` | Unity |
 | V2 | ViewFactory, EntityView | `HN.Framework.Unity.Level.View` | Unity |
 | V3 | PropertyBinder, DefaultPropertyBinder | `HN.Framework.Unity.Level.View.Binding` | Unity |
 | V4 | AnimationPlayableRuntime | `HN.Framework.Unity.Level.View.Animation` | Unity |
 | V5 | AudioEmitter, AudioListener | `HN.Framework.Unity.Level.View.Audio` | Unity |
 | E1 | ShowInInspector, ReadOnly, Button, FoldoutGroup 等 + CustomEditorRenderer | `HN.Framework.Editor.EditorUI` | Editor |
-| E2 | GraphEditorWindow, AnimationGraphEditor, BehaviorTreeEditor | `HN.Framework.Editor.Graph` | Editor |
+| E2 | GraphEditorWindow, AnimationGraphEditor, BehaviorTreeEditor, DecisionTreeEditor, UtilityCurveEditor | `HN.Framework.Editor.Graph` | Editor |
 | E3 | DebugHubWindow, LogViewer, RuntimeStateInspector | `HN.Framework.Editor.Debug` | Editor |
 | E4 | LocalizationEditorWindow, AssetLocaleTagger | `HN.Framework.Editor.Localization` | Editor |
 | E5 | AudioBankEditor, AudioEventEditor, AudioProfiler | `HN.Framework.Editor.Audio` | Editor |

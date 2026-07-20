@@ -123,6 +123,28 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
   - `IContainer` / `Container` — 容器接口与实现（定长数组+自动堆叠+事件通知）
   - `IEquipment` / `Equipment` — 装备系统接口与实现（位掩码槽位校验+L7 Buff 生命周期管理）
   - `ItemFormatters` — ItemInstance 的 MemoryPack 自定义格式化器
+- **Quest（任务/成就系统）** ✅ — 事件驱动的任务/成就框架：
+  - `QuestState` — 任务状态枚举（Locked/Active/Completed/Claimed/Failed）
+  - `QuestDef` — 任务配置表行定义（MemoryPackable struct，含 Id/Name/Description/ConditionGroupIds/RewardGroupIds 等 9 字段）
+  - `QuestInstance` — 任务运行时实例（MemoryPackable + IReference，含 Progress/TimeRemaining/RepeatCount）
+  - `QuestHandle` — 任务句柄（int-based readonly struct，IEquatable）
+  - `IQuestSystem<TId>` / `QuestSystem<TId>` — 任务生命周期系统（接受/完成/领取/放弃/失败 + Tick 超时检测）
+  - `QuestStateChangedEvent<TId>` / `QuestAcceptedEvent<TId>` / `QuestCompletedEvent<TId>` / `QuestClaimedEvent<TId>` / `QuestFailedEvent<TId>` / `QuestProgressUpdatedEvent` — 任务事件集
+  - `AchievementState` — 成就状态枚举（Hidden/Revealed/Completed/Claimed）
+  - `AchievementDef` — 成就配置表行定义（MemoryPackable struct，含 Id/CategoryId/ConditionGroupIds/RewardGroupIds 等 9 字段）
+  - `AchievementInstance` — 成就运行时实例（MemoryPackable + IReference，含 ProgressPercent/CompletedTime/ClaimedTime）
+  - `IAchievementSystem<TId>` / `AchievementSystem<TId>` — 成就生命周期系统（揭示/完成/领取 + 分类查询）
+  - `AchievementStateChangedEvent<TId>` / `AchievementRevealedEvent<TId>` / `AchievementProgressUpdatedEvent` / `AchievementClaimedEvent<TId>` — 成就事件集
+  - `ConditionType` / `ConditionDef` / `ConditionResult` — 条件引擎数据（Counter/State/MultiCounter 条件，参数键值对驱动）
+  - `CompositeOperator` / `CompositeCondition` / `ConditionGroupDef` — 组合条件（And/Or/Not 运算符 + 条件组 AND 聚合）
+  - `ConditionEvaluator<TId>` — 事件驱动条件评估器（Counter 自动计数 + State 状态检查 + 条件组评估）
+  - `CounterState` — Counter 运行时计数状态（MemoryPackable + IReference）
+  - `RewardType` / `RewardDef` — 奖励配置定义（Item/Currency/Experience/Attribute/Unlock/Custom 六类）
+  - `IRewardHandler<TId>` — 奖励处理器开放接口（HandledType / CanHandle / Deliver）
+  - `RewardProcessor<TId>` / `RewardDeliveryResult` — 奖励分发引擎（处理器注册 + 概率判定 + 批量分发）
+  - `QuestChainDef` / `QuestChainState` / `QuestChainInstance` — 任务链系统（线性/分支推进，BranchConditionIds 分支条件）
+  - `IQuestManager<TId>` / `QuestManager<TId>` — 统一管理器（ITickable，EventBus 集成，整合 Quest/Achievement/Condition/Reward/QuestChain 五大子系统）
+  - `QuestManagerInitializedEvent` / `RewardClaimedEvent<TId>` / `QuestChainStateChangedEvent<TId>` — 管理器级事件
 
 #### HN.Framework.Unity
 
@@ -204,6 +226,8 @@ Unity 平台层，依赖 UnityEngine。
 - **Inventory** — 物品背包装备 Unity 桥接层
   - `ContainerView` — MonoBehaviour，挂载到 Entity 的容器数据桥接组件
   - `EquipmentView` — MonoBehaviour，挂载到 Entity 的装备数据桥接组件
+- **Quest** — 任务/成就 Unity 桥接层
+  - `QuestManagerBridge` — MonoBehaviour 桥接组件，View-Bridge 模式，挂载到 Entity 上桥接 Core 层 IQuestManager
 
 ### Editor
 
