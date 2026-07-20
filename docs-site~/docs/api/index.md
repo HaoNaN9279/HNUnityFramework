@@ -250,4 +250,15 @@ Unity 平台层，依赖 UnityEngine。
 - **HNUndoableObject** — 支持 Undo/Redo 的对象基类
 - **HNDictionaryDrawer** — 字典属性绘图器
 
+**BuildPipeline — 资源质检与自动化构建 ✅**
+
+- **规则框架**：`IAssetRule`（规则接口）、`RuleSeverity`（严重度枚举）、`RuleResult`（检查结果）、`AssetRuleRegistry`（按 Importer 类型分组的规则注册中心）
+- **预设通用规则**：`MissingScriptRule`（缺失脚本检测）、`NamingConventionRule`（命名规范）、`ReferenceIntegrityRule`（引用完整性）、`AddressablesRule`（Addressables 配置检查）
+- **校验执行**：`AssetValidator`（校验调度器，按 Importer 类型匹配规则）、`AssetValidatorWindow`（校验结果查看窗口）
+- **构建管线**：`IBuildStep`（步骤接口）、`BuildPipelineOrchestrator`（构建编排器）、`PreBuildValidationStep`/`AddressablesBuildStep`/`PlayerBuildStep`/`PostBuildStep`（内置步骤）
+- **冗余检测**：`DependencyGraph`（资源引用图）、`RedundancyScanner`（冗余扫描器）、`RedundancyCleanerWindow`（清理窗口）
+- **版本管理**：`VersionConfig`（版本配置 SO）、`VersionManager`（版本号管理 + Git tag）、`BuildManifest`（构建清单）
+- **构建报告**：`BuildReportGenerator`（JSON/Markdown 报告生成器）、`BuildReportWindow`（报告查看窗口）
+- **设置集成**：`BuildPipelineSettings`（全局设置 SO）、`BuildPipelineSettingsProvider`（Project Settings 面板）
+
 > 💡 **提示**：API 参考文档由 DocFX 从代码 XML 注释自动更新。如需修改 API 描述，请直接修改源代码中的 `<summary>` 注释，然后运行 `npm run docs:api` 重新生成。

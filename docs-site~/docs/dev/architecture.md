@@ -244,7 +244,7 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 | E8 | ObjectPoolViewer | 📋 | 空目录 |
 | E8 | AddressablesExtensions | ✅ | Group 预设管理 |
 | E8 | HNDictionaryDrawer / HNUndoableObject | ✅ | 工具类 |
-| E9 | BuildPipeline | 📋 | 规划中 |
+| E9 | BuildPipeline | ✅ | 规则注册中心 + 预设规则 + 校验执行 + 构建编排 + 冗余检测 + 版本管理 + 构建报告 |
 
 > ✅ = 已实现  📋 = 规划中
 
