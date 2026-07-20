@@ -261,4 +261,13 @@ Unity 平台层，依赖 UnityEngine。
 - **构建报告**：`BuildReportGenerator`（JSON/Markdown 报告生成器）、`BuildReportWindow`（报告查看窗口）
 - **设置集成**：`BuildPipelineSettings`（全局设置 SO）、`BuildPipelineSettingsProvider`（Project Settings 面板）
 
+**EditorUI — 编辑器 UI 扩展系统 ✅**
+
+- **HNSmartInspector** — 智能 Inspector 主入口，`[CustomEditor(typeof(MonoBehaviour), editorForChildClasses: true)]` 全局注册
+- **运行时属性（19 个）**：ReadOnlyAttribute, ButtonAttribute, ShowIfAttribute, HideIfAttribute, EnableIfAttribute, DisableIfAttribute, ShowInInspectorAttribute, HideInInspectorAttribute, RequiredAttribute, ValidateInputAttribute, OnValueChangedAttribute, TitleAttribute, InfoBoxAttribute, PropertyOrderAttribute, FoldoutGroupAttribute, BoxGroupAttribute, TabGroupAttribute, HorizontalGroupAttribute, VerticalGroupAttribute
+- **PropertyDrawer 实现（6 个）**：ReadOnlyDrawer, ShowIfDrawer(含HideIf), EnableIfDrawer(含DisableIf), RequiredDrawer, OnValueChangedDrawer, ValidateInputDrawer
+- **扩展接口体系**：IPropertyDescriptor（字段级描述器）、IClassDescriptor（类级处理器）、DescriptorRegistry（注册中心）
+- **内置 Descriptors（9 个）**：TitleDescriptor, InfoBoxDescriptor, PropertyOrderDescriptor, ShowInInspectorDescriptor, FoldoutGroupDescriptor, BoxGroupDescriptor, TabGroupDescriptor, HorizontalGroupDescriptor, VerticalGroupDescriptor
+- **工具类**：ReflectionCache（反射缓存）、EditorLayout（布局辅助）、HNSmartInspectorStyles（样式常量）
+
 > 💡 **提示**：API 参考文档由 DocFX 从代码 XML 注释自动更新。如需修改 API 描述，请直接修改源代码中的 `<summary>` 注释，然后运行 `npm run docs:api` 重新生成。

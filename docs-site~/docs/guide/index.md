@@ -64,6 +64,7 @@ HNUnityFramework 采用三层架构设计，自底向上分为**驱动层 (Drive
 - **配置表编辑器** — 配置表导入与管理工具
 - **对象池调试** — 对象池运行状态监控窗口
 - **Addressables 扩展** — Addressables 分组与构建辅助工具
+- **Editor UI 扩展 ✅** — Odin-like 自定义 Inspector 增强，19 个运行时属性（ReadOnly/Button/ShowIf/HideIf/EnableIf/DisableIf/ShowInInspector/HideInInspector/Required/ValidateInput/OnValueChanged/Title/InfoBox/PropertyOrder/FoldoutGroup/BoxGroup/TabGroup/HorizontalGroup/VerticalGroup）+ 扩展接口体系 + HNSmartInspector
 - **资源质检 ✅** — 基于规则注册中心的资源质量检测系统，框架预设 4 种通用规则（缺失脚本/命名规范/引用完整性/Addressables 配置），项目可通过 `IAssetRule` 接口扩展自定义规则
 - **自动化构建 ✅** — 构建管线编排器（质检门禁 → Addressables → Player → 后处理）+ 版本管理（语义化版本/自动递增/Git tag）+ 构建报告生成（JSON/Markdown）
 - **冗余资源清理 ✅** — 基于引用图的冗余扫描器，可视化窗口支持冗余资源审查和移动到备份目录

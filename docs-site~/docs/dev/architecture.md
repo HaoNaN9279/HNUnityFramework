@@ -234,7 +234,7 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 | V3 | PropertyBinder | ✅ | IReadOnlyModel → UI 绑定 |
 | V4 | 动画 Playable 运行时 | 📋 | 规划中 |
 | V5 | 音频播放组件 | 📋 | 规划中 |
-| E1 | Editor UI 扩展 | 📋 | 规划中 |
+| E1 | Editor UI 扩展 | ✅ | 19 属性 + 扩展接口 + HNSmartInspector |
 | E2 | Graph Editor | 📋 | 规划中 |
 | E3 | Debug Hub Editor | 📋 | 规划中 |
 | E4 | Localization Editor | 📋 | 规划中 |
