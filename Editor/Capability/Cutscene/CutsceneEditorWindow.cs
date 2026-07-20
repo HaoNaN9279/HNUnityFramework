@@ -19,7 +19,7 @@ namespace HN.Framework.Editor.Capability.Cutscene
         private bool _isPlaying;
         private double _previewTime;
 
-        [MenuItem("HN Framework/Cutscene Editor")]
+        [MenuItem(HNUnityFrameworkConstants.FRAMEWORK_NAME + "/Cutscene Editor")]
         public static void ShowWindow()
         {
             var window = GetWindow<CutsceneEditorWindow>("Cutscene Editor");

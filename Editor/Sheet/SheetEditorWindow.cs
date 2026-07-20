@@ -23,7 +23,7 @@ namespace HN.Framework.Editor.Sheet
         private ExcelSourceParser _parser = null!;
         private ExcelSerializer _serializer = null!;
 
-        [MenuItem("HN Unity Framework/Sheet/Sheet Editor")]
+        [MenuItem(HNUnityFrameworkConstants.FRAMEWORK_NAME + "/Sheet/Sheet Editor")]
         public static void ShowWindow()
         {
             var window = GetWindow<SheetEditorWindow>("E7 Sheet Editor");

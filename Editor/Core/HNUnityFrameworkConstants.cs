@@ -9,7 +9,7 @@ namespace HN.Framework.Editor
         /// <summary>
         /// 框架名称，用于菜单和日志标识。
         /// </summary>
-        public const string FRAMEWORK_NAME = "HN Unity Framework";
+        public const string FRAMEWORK_NAME = "HNFramework";
         /// <summary>
         /// 项目文件夹根路径（由 FrameworkDeployer 自动创建）。
         /// </summary>
