@@ -22,6 +22,10 @@
 
 ### 5.2 GameWorld 双组件模式
 
+> **为空策略**：GameWorld 构造函数创建的模块（PoolManager, ProcedureManager, ControllerManager, DebugHub, EntityManager, AISystem, GameplayTagManager, EventBus）永远非空。
+> 所有外部注入模块（除 LogProvider 由 GameWorldDriver 保证非空外）均声明为可空类型（`?`），项目可按需注入或置空，最大化框架的适配范围。
+> 详见 [03-驱动层设计.md](./03-驱动层设计.md) D1 节。
+
 ```
                  HN.Framework.Core（纯 C#）            HN.Framework.Unity（Unity 层）
                  ────────────────────────            ──────────────────────────────

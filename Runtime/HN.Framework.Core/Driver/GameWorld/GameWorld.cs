@@ -1,3 +1,4 @@
+#nullable enable
 using HN.Framework.Core.Capability.Network;
 using HN.Framework.Core.Capability;
 using HN.Framework.Core.Capability.Debug;
@@ -40,7 +41,7 @@ namespace HN.Framework.Core.Driver
         public Capability.Debug.DebugHub DebugHub { get; }
 
         // 平台适配接口（由 GameWorldDriver 注入）
-        private ILogProvider _logProvider;
+        private ILogProvider _logProvider = null!;
         public ILogProvider LogProvider
         {
             get => _logProvider;
@@ -51,8 +52,8 @@ namespace HN.Framework.Core.Driver
             }
         }
         public IAssetManager? AssetManager { get; set; }
-        public INetworkManager NetworkManager { get; set; }
-        public IStorageProvider StorageProvider { get; set; }
+        public INetworkManager? NetworkManager { get; set; }
+        public IStorageProvider? StorageProvider { get; set; }
 
         /// <summary>
         /// 帧同步管理器。启用后在 Tick 循环的最优先位置驱动逻辑帧 Tick。
