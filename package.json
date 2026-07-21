@@ -1,0 +1,29 @@
+{
+  "name": "com.hn.framework",
+  "version": "1.0.0",
+  "displayName": "HN Unity Framework",
+  "description": "轻量级、模块化的 Unity 游戏开发框架。基于 MVC 模式的分层设计，提供资源管理、对象池、HFSM、流程管理、配置表支持等功能。",
+  "unity": "2022.3",
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.2.1",
+    "com.unity.addressables": "1.22.3",
+    "com.unity.cinemachine": "2.10.7",
+    "com.unity.inputsystem": "1.11.2",
+    "com.unity.test-framework": "1.1.33",
+    "com.unity.textmeshpro": "3.0.9",
+    "com.unity.timeline": "1.7.6"
+  },
+  "keywords": [
+    "framework",
+    "mvc",
+    "object-pool",
+    "hfsm",
+    "addressables",
+    "game-development"
+  ],
+  "author": {
+    "name": "HaoNaN9279",
+    "url": "https://github.com/HaoNaN9279/HNUnityFramework"
+  },
+  "license": "MIT"
+}

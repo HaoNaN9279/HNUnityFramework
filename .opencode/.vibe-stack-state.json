@@ -1,0 +1,28 @@
+{
+  "version": 2,
+  "domains": {
+    "game-dev/unity": {
+      "domain_key": "game-dev/unity",
+      "namespace": "game-dev_unity",
+      "activated_at": "2026-07-15T09:30:26Z",
+      "files": [
+        "mcp/game-dev_unity/unityMCP.json",
+        "rules/game-dev_unity/unity-bugs.md",
+        "rules/game-dev_unity/unity-code-standards.md",
+        "rules/game-dev_unity/unity.md"
+      ],
+      "directories": [],
+      "opencode_entries": {
+        "instructions": [
+          ".opencode/rules/game-dev_unity/*.md"
+        ],
+        "skills.paths": [
+          ".opencode/skills/game-dev_unity"
+        ],
+        "mcpServers": [
+          "game-dev_unity_unityMCP"
+        ]
+      }
+    }
+  }
+}

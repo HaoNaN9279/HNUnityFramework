@@ -1,0 +1,30 @@
+{
+    "name":  "HN.Framework.Editor",
+    "rootNamespace":  "HN.Framework.Editor",
+    "references":  [
+        "HN.Framework.Core",
+        "HN.Framework.Unity",
+        "Unity.Timeline",
+        "HybridCLR.Editor"
+                    ],
+    "includePlatforms":  [
+                             "Editor"
+                         ],
+    "excludePlatforms":  [
+
+                         ],
+    "allowUnsafeCode":  false,
+    "overrideReferences":  false,
+    "precompiledReferences":  [
+                                    "ClosedXML.dll",
+                                    "DocumentFormat.OpenXml.dll"
+                                ],
+    "autoReferenced":  true,
+    "defineConstraints":  [
+
+                           ],
+    "versionDefines":  [
+
+                        ],
+    "noEngineReferences":  false
+}

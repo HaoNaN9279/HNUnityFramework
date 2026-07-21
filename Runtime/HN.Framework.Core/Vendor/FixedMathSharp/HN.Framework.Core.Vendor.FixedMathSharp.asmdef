@@ -1,0 +1,16 @@
+﻿{
+    "name": "HN.Framework.Core.Vendor.FixedMathSharp",
+    "rootNamespace": "FixedMathSharp",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "FixedMathSharp.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}

@@ -1,0 +1,25 @@
+{
+    "name": "HN.Framework.Core.Tests.Cutscene",
+    "rootNamespace": "HN.Framework.Core.Tests.Cutscene",
+    "references": [
+        "HN.Framework.Core",
+        "GUID:3c1b0d1c2470401da464c2f78e21cbbe"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll",
+        "System.Runtime.dll",
+        "netstandard.dll",
+        "MemoryPack.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": []
+}

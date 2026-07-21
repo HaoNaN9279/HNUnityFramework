@@ -1,0 +1,26 @@
+{
+    "name": "HN.Framework.Unity",
+    "rootNamespace": "HN.Framework.Unity",
+    "references": [
+        "HN.Framework.Core",
+        "Unity.Addressables",
+        "Unity.ResourceManager",
+        "Cinemachine",
+        "Unity.TextMeshPro",
+        "Unity.Timeline",
+        "Unity.InputSystem",
+        "GUID:3c1b0d1c2470401da464c2f78e21cbbe",
+        "HN.Framework.Unity.Vendor.XLua",
+        "FishNet.Runtime",
+        "LitMotion"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

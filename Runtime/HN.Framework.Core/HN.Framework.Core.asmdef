@@ -1,0 +1,8 @@
+{
+    "name": "HN.Framework.Core",
+    "noEngineReferences": true,
+    "references": [
+        "GUID:3c1b0d1c2470401da464c2f78e21cbbe",
+        "GUID:644ddb74a15b97f4d9f2aa9d9cba1cb3"
+    ]
+}

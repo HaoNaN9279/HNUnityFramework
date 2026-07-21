@@ -1,0 +1,51 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "src": "../../Runtime",
+          "files": ["**/*.cs"],
+          "exclude": ["**/obj/**", "**/bin/**"]
+        },
+        {
+          "src": "../../Editor",
+          "files": ["**/*.cs"],
+          "exclude": ["**/obj/**", "**/bin/**"]
+        }
+      ],
+      "dest": "api",
+      "disableGitFeatures": false
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": ["api/**.yml", "api/**.md"]
+      },
+      {
+        "files": ["toc.yml", "index.md"]
+      }
+    ],
+    "resource": [
+      {
+        "files": ["images/**"]
+      }
+    ],
+    "dest": "../docfx-output",
+    "globalMetadata": {
+      "_appTitle": "HNUnityFramework API Reference",
+      "_appFooter": "HNUnityFramework",
+      "_enableSearch": true,
+      "_gitContribute": {
+        "repo": "https://github.com/HaoNaN9279/HNUnityFramework",
+        "branch": "main"
+      }
+    },
+    "template": ["default", "modern"],
+    "postProcessors": [],
+    "noLangKeyword": false,
+    "keepFileLink": false,
+    "cleanupCacheHistory": false,
+    "disableGitFeatures": false
+  }
+}

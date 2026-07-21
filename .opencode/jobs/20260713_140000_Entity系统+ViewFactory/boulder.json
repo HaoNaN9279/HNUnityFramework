@@ -1,0 +1,73 @@
+﻿{
+  "plan": "L3/V2 — Entity 系统 + ViewFactory",
+  "plan_path": ".opencode/jobs/20260713_140000_Entity系统+ViewFactory/plan.md",
+  "created_at": "2026-07-13T14:00:00",
+  "updated_at": "2026-07-13T19:25:00",
+  "total_waves": 4,
+  "current_wave": 4,
+  "phases": [
+    {
+      "wave": 1,
+      "jobs": [
+        {
+          "id": "T1",
+          "subject": "Core Entity 系统",
+          "status": "completed",
+          "verification": { "compile": "pass" },
+          "completed_at": "2026-07-13T18:45:00"
+        }
+      ]
+    },
+    {
+      "wave": 2,
+      "jobs": [
+        {
+          "id": "T2",
+          "subject": "DefaultPropertyBinder + EntityView 重写",
+          "status": "completed",
+          "verification": { "compile": "pass" },
+          "completed_at": "2026-07-13T18:55:00"
+        },
+        {
+          "id": "T3",
+          "subject": "ViewFactory 重写",
+          "status": "completed",
+          "verification": { "compile": "pass" },
+          "completed_at": "2026-07-13T19:00:00"
+        }
+      ]
+    },
+    {
+      "wave": 3,
+      "jobs": [
+        {
+          "id": "T4",
+          "subject": "Core 层 Entity 测试",
+          "status": "completed",
+          "verification": { "compile": "pass", "tests": "pass" },
+          "completed_at": "2026-07-13T19:10:00"
+        },
+        {
+          "id": "T5",
+          "subject": "Unity 层 EntityView 测试",
+          "status": "completed",
+          "verification": { "compile": "pass", "tests": "pass" },
+          "completed_at": "2026-07-13T19:15:00"
+        }
+      ]
+    },
+    {
+      "wave": 4,
+      "jobs": [
+        {
+          "id": "T6",
+          "subject": "文档更新",
+          "status": "completed",
+          "verification": null,
+          "completed_at": "2026-07-13T19:25:00"
+        }
+      ]
+    }
+  ],
+  "failures": []
+}

@@ -1,0 +1,44 @@
+{
+  "plan": "C6.3 网络实体权限与生命周期",
+  "created_at": "2026-07-15T10:00:28",
+  "updated_at": "2026-07-15T10:00:35",
+  "phases": [
+    {
+      "wave": 1,
+      "name": "Core 层（可并行）",
+      "jobs": [
+        { "id": "T1", "subject": "Entity 数据模型扩展 — OwnerClientId", "status": "completed", "assignee": "sisyphus-junior", "verification": {"file_read": "pass"}, "completed_at": "2026-07-15T10:00:28" },
+        { "id": "T2", "subject": "EntityManager 网络 API", "status": "completed", "assignee": "sisyphus-junior", "verification": {"file_read": "pass"}, "completed_at": "2026-07-15T10:00:28" },
+        { "id": "T3", "subject": "Entity 权限事件", "status": "completed", "assignee": "sisyphus-junior", "verification": {"file_read": "pass"}, "completed_at": "2026-07-15T10:00:28" },
+        { "id": "T4", "subject": "INetworkManager 接口扩展", "status": "completed", "assignee": "sisyphus-junior", "verification": {"file_read": "pass"}, "completed_at": "2026-07-15T10:00:28" }
+      ]
+    },
+    {
+      "wave": 2,
+      "name": "Unity 层（串行 MCP）",
+      "jobs": [
+        { "id": "T5", "subject": "FishNetNetworkManager 扩展", "status": "completed", "assignee": "atlas", "verification": {"compile_pass": "pass"}, "completed_at": "2026-07-15T10:00:30" },
+        { "id": "T7", "subject": "NetworkEntityView 增强", "status": "completed", "assignee": "atlas", "verification": {"compile_pass": "pass"}, "completed_at": "2026-07-15T10:00:30" },
+        { "id": "T6", "subject": "NetworkEntityLifecycleBridge 创建", "status": "completed", "assignee": "atlas", "verification": {"compile_pass": "pass"}, "completed_at": "2026-07-15T10:00:30" }
+      ]
+    },
+    {
+      "wave": 3,
+      "name": "测试编写 + 文档",
+      "jobs": [
+        { "id": "T8", "subject": "Core 层测试编写", "status": "completed", "assignee": "sisyphus-junior", "verification": {"tests_written": "pass"}, "completed_at": "2026-07-15T10:00:30" },
+        { "id": "T10", "subject": "文档更新", "status": "completed", "assignee": "sisyphus-junior", "verification": {"updated_6_files": "pass"}, "completed_at": "2026-07-15T10:00:30" }
+      ]
+    },
+    {
+      "wave": 4,
+      "name": "Unity 测试 + 全量运行（MCP 独占）",
+      "jobs": [
+        { "id": "T9", "subject": "Unity 测试编写 + 全量测试运行", "status": "completed", "assignee": "atlas", "verification": {"editmode_tests": "895 total, 1 pre-existing failure (unrelated)", "c6.3_tests": "all pass"}, "completed_at": "2026-07-15T10:00:30" }
+      ]
+    }
+  ],
+  "current_wave": 5,
+  "completed_at": "2026-07-15T10:00:35",
+  "failures": []
+}

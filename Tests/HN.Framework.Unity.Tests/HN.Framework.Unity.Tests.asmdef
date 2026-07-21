@@ -1,0 +1,32 @@
+{
+    "name": "HN.Framework.Unity.Tests",
+    "rootNamespace": "HN.Framework.Unity.Tests",
+    "references": [
+        "HN.Framework.Core",
+        "HN.Framework.Unity",
+        "HN.Framework.Editor",
+        "Unity.TextMeshPro",
+        "Unity.InputSystem",
+        "Unity.InputSystem.TestFramework",
+        "FishNet.Runtime",
+        "GUID:3c1b0d1c2470401da464c2f78e21cbbe",
+        "LitMotion",
+        "Cinemachine"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll",
+        "MemoryPack.dll",
+        "FixedMathSharp.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": []
+}

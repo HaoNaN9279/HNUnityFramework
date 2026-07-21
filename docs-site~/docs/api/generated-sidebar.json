@@ -1,0 +1,24 @@
+[
+  {
+    "type": "category",
+    "label": "工具类",
+    "items": [
+      "generated/hn"
+    ]
+  },
+  {
+    "type": "category",
+    "label": "资源管理",
+    "items": [
+      "generated/hn-framework",
+      "generated/hn-framework-editor"
+    ]
+  },
+  {
+    "type": "category",
+    "label": "序列化",
+    "items": [
+      "generated/hn-serialize"
+    ]
+  }
+]

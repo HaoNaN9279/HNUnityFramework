@@ -1,0 +1,27 @@
+{
+    "name": "HN.Framework.Core.Tests",
+    "rootNamespace": "HN.Framework.Core.Tests",
+    "references": [
+        "HN.Framework.Core",
+        "GUID:3c1b0d1c2470401da464c2f78e21cbbe",
+        "GUID:644ddb74a15b97f4d9f2aa9d9cba1cb3"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll",
+        "System.Runtime.dll",
+        "netstandard.dll",
+        "MemoryPack.dll",
+        "FixedMathSharp.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": []
+}
