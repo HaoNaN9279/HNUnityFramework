@@ -145,6 +145,27 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
   - `QuestChainDef` / `QuestChainState` / `QuestChainInstance` — 任务链系统（线性/分支推进，BranchConditionIds 分支条件）
   - `IQuestManager<TId>` / `QuestManager<TId>` — 统一管理器（ITickable，EventBus 集成，整合 Quest/Achievement/Condition/Reward/QuestChain 五大子系统）
   - `QuestManagerInitializedEvent` / `RewardClaimedEvent<TId>` / `QuestChainStateChangedEvent<TId>` — 管理器级事件
+- **AI 决策管线（L10）** ✅ — 策略管线 + 插件式注册，8 种内置策略：
+  - `AISystem` — GameWorld 内置 AI Agent 管理器，统一驱动所有 Agent 的 Tick，使用 HNLogicTime.DeltaTime 确保时间同步
+  - `IDecisionStrategy` — 决策策略插件接口（Name/Priority/IsEnabled/Evaluate/Reset）
+  - `IEvaluationContext` — 评估上下文（Blackboard/WorldState/Perception）
+  - `IActionCommand` — 动作指令接口，含 MoveTo/Attack/UseAbility/PlayAnimation/Wait 5 种内置指令
+  - `StrategyContext` — 评估上下文实现，聚合 KnowledgePool 三组件
+  - `StrategyRegistry` — 策略注册中心（Register/Unregister/Get/GetAll）
+  - `DecisionPipeline` — 决策管线编排器（四层链：Strategic→TaskPlanning→BehaviorExecution→SubState）
+  - `AIAgent` — Agent 容器，聚合 KnowledgePool + DecisionPipeline + 动作执行
+  - `AgentStatus` — Agent 运行状态枚举（Inactive/Active/Paused）
+  - **知识池（KnowledgePool）**：`Blackboard`（键值数据共享）/ `WorldStateCache`（带过期世界状态）/ `PerceptionState`（感知数据聚合）/ `PerceptionEntry` / `Vector3Data` / `AudioType`
+  - **8 种内置策略**：
+    - `BehaviorTreeStrategy` — 行为树（Sequence/Selector/Parallel 组合节点 + Inverter/Repeater/Conditional 装饰节点 + ActionNode）
+    - `FSMStrategy` — 封装 L2 HFSM，状态绑定 ActionCommand
+    - `UtilityStrategy` — 效用系统（Linear/SShape/Exponential/Inverse/Step 曲线加权评分）
+    - `GOAPStrategy` — 目标导向行动规划（A* 搜索行动序列）
+    - `HTNStrategy` — 层次任务网络（复合任务→原始任务递归分解）
+    - `DecisionTreeStrategy` — 决策树（条件节点→叶子节点深度优先遍历）
+    - `FuzzyLogicStrategy` — 模糊逻辑（三角/梯形隶属度，Mamdani 推理，重心法解模糊化）
+    - `ScriptedStrategy` — 脚本驱动，桥接 C15 IScriptEngine
+  - **Unity 层**：`AIAgentComponent` / `IPerceptionSensor` / `VisionSensor` / `AudioSensor` / `NavMeshAgentAdapter` / `AnimActionAdapter` / `DefaultActionExecutor`
 
 #### HN.Framework.Unity
 

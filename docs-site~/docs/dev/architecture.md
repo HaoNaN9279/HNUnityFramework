@@ -228,7 +228,7 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 | L7 | 战斗数值体系 | ✅ | Attribute+Effect+Buff+Ability 实现 |
 | L8 | 任务成就系统 | ✅ | 事件驱动任务/成就框架（QuestManager + Condition/Reward/QuestChain） |
 | L9 | 物品背包装备 | ✅ | Item+Container+Equipment 核心三模块 + MemoryPack 序列化 + Unity 桥接 |
-| L10 | AI 行为框架 | 📋 | 规划中 |
+| L10 | AI 决策管线 | ✅ | 8 种内置决策策略（行为树/FSM/效用/GOAP/HTN/决策树/模糊逻辑/脚本驱动），知识池（黑板/世界状态/感知状态），决策管线编排器，Agent 容器，Unity 桥接组件 |
 | V1 | UI 运行时 | ✅ Phase 2 | 7 层 Canvas + Addressables + 动画 + Toast + 引导 |
 | V2 | ViewFactory + EntityView | ✅ | 实体视图工厂 |
 | V3 | PropertyBinder | ✅ | IReadOnlyModel → UI 绑定 |

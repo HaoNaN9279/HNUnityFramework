@@ -291,7 +291,8 @@ namespace HN.Framework.Core.Tests.Level.Logic.Quest
         [Test]
         public void Tick_Expired_FiresFailedEvent()
         {
-            var ts = new TestQuestSystem(1, timeLimit: 5);
+            var ts = new TestQuestSystem(1);
+            ts.Defs[1] = TestQuestSystem.CreateTestDef(1, timeLimit: 5);
             ts.System.AcceptQuest(1, 100u);
 
             QuestStateChangedEvent<uint> captured = default;

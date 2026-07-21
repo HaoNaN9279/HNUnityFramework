@@ -55,16 +55,30 @@
 
 ```
 Tick():
-  PoolManager.Tick()       → 池回收调度
-  ProcedureManager.Tick()   → 流程状态 Tick
-  ControllerManager.Tick()  → 所有 Controller + ControllerUnit
-  AssetManager?.Tick()      → 资源自动卸载 + 预加载消费
+  (FrameSyncManager as ITickable)?.Tick()  → 帧同步（最优先，C6）
+  PoolManager.Tick()                        → 池回收调度（C10）
+  ProcedureManager.Tick()                   → 流程状态 Tick（C9）
+  ControllerManager.Tick()                  → 所有 Controller + ControllerUnit（L1）
+  AISystem.Tick()                           → 所有 AIAgent 决策 Tick（L10）
+  AssetManager?.Tick()                      → 资源自动卸载 + 预加载消费（C4）
+  (InputManager as ITickable)?.Tick()       → 输入（C14，事件驱动，ITickable 可选）
+  (UIManager as ITickable)?.Tick()          → UI（C13）
+  (PhysicsWorld as ITickable)?.Tick()       → 物理（C16）
+  (CutsceneManager as ITickable)?.Tick()    → 过场动画（C12）
+  QuestManager?.Tick()                      → 任务/成就超时检查（L8，项目注入）
 
 LateTick():
+  (FrameSyncManager as ITickable)?.LateTick()
   PoolManager.LateTick()
   ProcedureManager.LateTick()
   ControllerManager.LateTick()
+  AISystem.LateTick()
   AssetManager?.LateTick()
+  (InputManager as ITickable)?.LateTick()
+  (UIManager as ITickable)?.LateTick()
+  (PhysicsWorld as ITickable)?.LateTick()
+  (CutsceneManager as ITickable)?.LateTick()
+  QuestManager?.LateTick()
 ```
 
 ### 5.4 Scripts 仓库 GameEntry 示例
@@ -160,6 +174,7 @@ public class GameEntry : GameWorldDriver
 | L8 | IQuestManager, QuestCondition (Single/And/Or/Not), QuestLine | `HN.Framework.Core.Level.Logic.Quest` | Core |
 | L9 | IInventoryService, IEquipmentService, ItemStack, Slot, InvOpResult, ItemDefinition | `HN.Framework.Core.Level.Logic.Inventory` | Core |
 | L10 | AIAgent, DecisionPipeline, KnowledgePool, Blackboard, IDecisionStrategy, StrategyRegistry, IActionCommand, BehaviorTreeStrategy, FSMStrategy, UtilityStrategy, GOAPStrategy, HTNStrategy, DecisionTreeStrategy, FuzzyLogicStrategy, ScriptedStrategy | `HN.Framework.Core.Level.Logic.AI` | Core |
+| L10 | AISystem（GameWorld 内置 AI Agent 管理器） | `HN.Framework.Core.Level.Logic.AI` | Core |
 | L10 | AIAgentComponent, VisionSensor, AudioSensor, NavMeshAgentAdapter, DefaultActionExecutor | `HN.Framework.Unity.Level.Logic.AI` | Unity |
 | L10 | AIStrategyEditorWindow, BehaviorTreeEditor, DecisionTreeEditor, UtilityCurveEditor | `HN.Framework.Editor.Graph` | Editor |
 | V1 | UIManager, UIPanel, UIDialog, UIToast, UIGuide, UIAnimation, RedDotManager | `HN.Framework.Unity.Level.View.UI` | Unity |

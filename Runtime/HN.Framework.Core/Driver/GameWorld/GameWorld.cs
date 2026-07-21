@@ -10,6 +10,7 @@ using HN.Framework.Core.Capability.UI;
 using HN.Framework.Core.Driver.Common;
 using HN.Framework.Core.Capability.Event;
 using HN.Framework.Core.Level.Logic;
+using HN.Framework.Core.Level.Logic.AI;
 using HN.Framework.Core.Level.Logic.Entity;
 using HN.Framework.Core.Level;
 
@@ -23,6 +24,12 @@ namespace HN.Framework.Core.Driver
         public ControllerManager ControllerManager { get; }
         public EventBus EventBus { get; }
         public EntityManager EntityManager { get; }
+
+        /// <summary>
+        /// AI 系统，管理所有 AIAgent 的注册与统一 Tick 驱动。
+        /// AIAgentComponent 在 Awake 时通过此属性注册 Agent，GameWorld 负责每帧驱动。
+        /// </summary>
+        public AISystem AISystem { get; }
 
         /// <summary>
         /// GameplayTag 管理器，管理层级标签的注册、冻结和查询。
@@ -88,6 +95,15 @@ namespace HN.Framework.Core.Driver
         /// <summary>过场动画管理器（C12，由 GameWorldDriver 注入）</summary>
         public ICutsceneManager? CutsceneManager { get; set; }
 
+        /// <summary>
+        /// 任务管理器（L8，由项目代码注入）。
+        /// 注入的实例应实现 <see cref="ITickable"/> 以支持超时检查等定时逻辑。
+        /// 若注入实例实现了 ITickable，GameWorld 会自动驱动其 Tick/LateTick。
+        /// 典型注入方式：在 <c>GameWorldDriver.OnRegisterGameModules()</c> 或 <c>GameEntry</c> 中设置，
+        /// 例如 <c>world.QuestManager = new QuestManager&lt;int&gt;(...)</c>。
+        /// </summary>
+        public ITickable? QuestManager { get; set; }
+
         public GameWorld()
         {
             PoolManager = new ObjectPoolManager();
@@ -97,6 +113,7 @@ namespace HN.Framework.Core.Driver
             DebugHub = new Capability.Debug.DebugHub();
             EntityManager = new EntityManager(EventBus);
             GameplayTagManager = new GameplayTagManager();
+            AISystem = new AISystem();
         }
 
         public void Initialize()
@@ -112,12 +129,14 @@ namespace HN.Framework.Core.Driver
             PoolManager.Tick();
             ProcedureManager.Tick();
             ControllerManager.Tick();
+            AISystem.Tick();
             AssetManager?.Tick();
             // InputManager 是事件驱动的，Tick 仅当它实现 ITickable 时才生效
             (InputManager as ITickable)?.Tick();
             (UIManager as ITickable)?.Tick();
             (PhysicsWorld as ITickable)?.Tick();
             (CutsceneManager as ITickable)?.Tick();
+            QuestManager?.Tick();
         }
 
         public void LateTick()
@@ -126,11 +145,13 @@ namespace HN.Framework.Core.Driver
             PoolManager.LateTick();
             ProcedureManager.LateTick();
             ControllerManager.LateTick();
+            AISystem.LateTick();
             AssetManager?.LateTick();
             (InputManager as ITickable)?.LateTick();
             (UIManager as ITickable)?.LateTick();
             (PhysicsWorld as ITickable)?.LateTick();
             (CutsceneManager as ITickable)?.LateTick();
+            QuestManager?.LateTick();
         }
     }
 }

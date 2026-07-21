@@ -389,10 +389,23 @@ questManager.RegisterCounterEventType<MonsterKilledEvent>("MonsterKilled");
 
 ### ITickable 驱动
 
-`QuestManager.Tick()` 每帧调用 `QuestSystem.Tick(deltaTime)`，处理限时任务的超时检测：
+`QuestManager.Tick()` 每帧调用 `QuestSystem.Tick(deltaTime)`，处理限时任务的超时检测。
+
+QuestManager 通过 `GameWorld.QuestManager` 属性注入到 GameWorld，GameWorld 在 Tick 循环末尾自动驱动：
 
 ```csharp
-// GameWorld 更新循环中自动驱动
+// 注入（在 GameWorldDriver.OnRegisterGameModules 或 GameEntry 中）
+world.QuestManager = new QuestManager<int>(eventBus);
+
+// GameWorld.Tick() 中自动驱动
+// ...
+QuestManager?.Tick();
+```
+
+QuestManager 内部使用 `HNLogicTime.DeltaTime` 确保与 GameWorld 其他模块保持相同的时间基准和暂停语义：
+
+```csharp
+// QuestManager.Tick() 内部实现
 public void Tick()
 {
     var deltaTime = Fixed64.FromDouble(HNLogicTime.DeltaTime);
@@ -402,7 +415,9 @@ public void Tick()
 
 ## Unity 桥接 — QuestManagerBridge
 
-`QuestManagerBridge` 遵循 View-Bridge 模式，挂载到 Entity 的 GameObject 上，桥接 Core 层 `IQuestManager<uint>`：
+`QuestManagerBridge` 遵循 View-Bridge 模式，挂载到 Entity 的 GameObject 上，桥接 Core 层 `IQuestManager<uint>`。
+项目代码通过 `GameWorld.QuestManager` 注入 QuestManager 实例后，GameWorld 会自动驱动其 Tick。QuestManagerBridge 负责
+资源加载和存档持久化桥接。
 
 ```csharp
 // 创建桥接组件
