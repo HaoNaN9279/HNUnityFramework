@@ -10,10 +10,35 @@ namespace HN.Framework.Unity.Capability.Cutscene
 {
     public class CutsceneManager : ICutsceneManager
     {
+        /// <summary>
+        /// 缓存的过场全局配置。由模块初始化时设置。
+        /// </summary>
+        internal static CutsceneSettings? s_CachedSettings;
+
         public IInputBlocker InputBlocker { get; set; }
         public ICameraManager CameraManager { get; set; }
 
-        public CutsceneGlobalSettings GlobalSettings { get; set; } = CutsceneGlobalSettings.Default;
+        /// <summary>
+        /// 全局配置。优先读取 <see cref="CutsceneSettings"/> SO，回退到 struct 默认值。
+        /// </summary>
+#pragma warning disable CS0618 // 保留对旧 struct 的兼容
+        public CutsceneGlobalSettings GlobalSettings
+        {
+            get
+            {
+                if (s_CachedSettings != null)
+                {
+                    return new CutsceneGlobalSettings
+                    {
+                        GlobalSkipEnabled = s_CachedSettings.GlobalSkipEnabled,
+                        GlobalSpeedMultiplier = s_CachedSettings.GlobalSpeedMultiplier
+                    };
+                }
+                return CutsceneGlobalSettings.Default;
+            }
+            set { }
+        }
+#pragma warning restore CS0618
         public bool IsAnyPlaying => _activePlayers.Count > 0;
         public int ActivePlayerCount => _activePlayers.Count;
         public int QueuedCount => _queue.Count;

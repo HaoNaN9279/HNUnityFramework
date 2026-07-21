@@ -1,8 +1,11 @@
 namespace HN.Framework.Core.Capability.Cutscene
 {
     /// <summary>
-    /// 过场动画全局配置
+    /// 过场动画全局配置（已废弃）。
+    /// 请改用 <see cref="HN.Framework.Unity.Capability.Cutscene.CutsceneSettings"/> ScriptableObject，
+    /// 通过 Project Settings > HN Unity Framework > Cutscene 面板配置。
     /// </summary>
+    [System.Obsolete("Use HN.Framework.Unity.Capability.Cutscene.CutsceneSettings instead, accessible via Project Settings > HN Unity Framework > Cutscene.")]
     public struct CutsceneGlobalSettings
     {
         /// <summary>是否全局允许跳过过场</summary>

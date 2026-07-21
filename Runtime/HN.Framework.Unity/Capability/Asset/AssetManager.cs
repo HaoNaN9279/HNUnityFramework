@@ -68,6 +68,14 @@ namespace HN.Framework.Unity.Capability.Asset
         private readonly Queue<PreloadRequest> m_PreloadQueue = new Queue<PreloadRequest>();
         private readonly Dictionary<string, (int loaded, int total)> m_GroupProgress = new Dictionary<string, (int loaded, int total)>();
 
+        /// <summary>
+        /// 缓存的资源配置。由模块初始化时设置，未设置时使用默认值。
+        /// </summary>
+        internal static AssetSettings? s_CachedSettings;
+
+        /// <summary>
+        /// 资源自动卸载延迟（秒）。优先读取 <see cref="AssetSettings"/>，回退默认值 30 秒。
+        /// </summary>
         private float m_AutoUnloadDelay = 30f;
         private IAssetOperator m_Operator;
 
@@ -86,7 +94,11 @@ namespace HN.Framework.Unity.Capability.Asset
         public void Tick()
         {
             // 1. Auto-unload expired assets (RefCount == 0 && beyond delay threshold)
-            if (m_Operator == null)
+            if (s_CachedSettings?.EnableAutoUnload == false)
+            {
+                // 自动卸载已全局禁用
+            }
+            else if (m_Operator == null)
             {
                 UnityEngine.Debug.LogWarning("[AssetManager] Tick: m_Operator is null, cannot perform auto-unload.");
             }
@@ -378,8 +390,8 @@ namespace HN.Framework.Unity.Capability.Asset
             m_GroupProgress.Clear();
             m_PreloadQueue.Clear();
 
-            // 恢复默认值
-            m_AutoUnloadDelay = 30f;
+            // 恢复默认值（优先从配置 SO 读取）
+            m_AutoUnloadDelay = s_CachedSettings?.AutoUnloadDelay ?? 30f;
 
             UnityEngine.Debug.Log("[AssetManager] Cleared all resources.");
         }

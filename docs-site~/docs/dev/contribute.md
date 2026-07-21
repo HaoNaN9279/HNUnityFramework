@@ -60,6 +60,86 @@ docs: 更新 Core 模块使用指南
 2. 构建 Docusaurus 站点
 3. 部署到 GitHub Pages
 
+## 扩展模块配置（Settings）
+
+框架支持去中心化的模块级配置架构。为新增模块添加 Project Settings 配置面板的步骤：
+
+### 1. 创建配置 ScriptableObject
+
+在模块 Runtime 目录下创建 `Settings/` 子目录，定义配置类：
+
+```csharp
+// Runtime/.../Capability/MyModule/Settings/MySettings.cs
+using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
+namespace HN.Framework.Unity.Capability.MyModule
+{
+    public class MySettings : ScriptableObject
+    {
+        [SerializeField] private string m_SomeProperty = "default";
+        public string SomeProperty => m_SomeProperty;
+
+#if UNITY_EDITOR
+        public static MySettings GetOrCreateSettings()
+        {
+            return HNModuleSettingsUtility.GetOrCreateSettings<MySettings>(AssetPath);
+        }
+        public static SerializedObject GetSerializedSettings()
+        {
+            return HNModuleSettingsUtility.GetSerializedSettings<MySettings>(AssetPath);
+        }
+#endif
+        public static readonly string AssetPath =
+            "Assets/Project/RuntimeAssets/MyModule/MySettings.asset";
+    }
+}
+```
+
+### 2. 创建 SettingsProvider
+
+在模块 Editor 目录下创建 `Settings/` 子目录，注册到 Project Settings：
+
+```csharp
+// Editor/MyModule/Settings/MySettingsProvider.cs
+using UnityEditor;
+
+namespace HN.Framework.Editor.MyModule
+{
+    public static class MySettingsProvider
+    {
+        [SettingsProvider]
+        public static SettingsProvider CreateMySettingsProvider()
+        {
+            return new SettingsProvider("Project/HN Unity Framework/MyModule", SettingsScope.Project)
+            {
+                label = "MyModule",
+                guiHandler = (searchContext) =>
+                {
+                    var settings = HN.Framework.Unity.Capability.MyModule.MySettings.GetSerializedSettings();
+                    // 使用 SerializedProperty 绘制配置字段
+                }
+            };
+        }
+    }
+}
+```
+
+### 3. 集成到部署
+
+在 `FrameworkDeployer.cs` 中添加一行调用即可确保 .asset 文件在部署时自动创建：
+
+```csharp
+HN.Framework.Unity.Capability.MyModule.MySettings.GetOrCreateSettings();
+```
+
+### 4. 命名注意事项
+
+- **避免类型冲突**：配置类名不应与 `UnityEngine` 名称空间中的类型重名（如 `AudioSettings` 与 `UnityEngine.AudioSettings` 冲突），Editor 代码中使用全限定名引用
+- **注册路径约定**：统一使用 `"Project/HN Unity Framework/{ModuleName}"` 作为 SettingsProvider 路径
+
 ### 手动更新
 
 以下文档需要手动维护：

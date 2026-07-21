@@ -189,7 +189,8 @@ Unity 平台层，依赖 UnityEngine。
 - **HNDictionary\<TKey, TValue\>** — 可序列化字典
 - **SerializableDictionary\<K, V\>** — Unity 序列化字典
 - **JsonData** — 可序列化 JSON 数据容器，实现 ISerializationCallbackReceiver
-- **HNUnityFrameworkGlobalSettings** — 框架全局资源配置
+- **HNUnityFrameworkGlobalSettings** — 框架全局资源配置（LogicRate 等核心参数）
+- **HNModuleSettingsUtility** — 模块配置 ScriptableObject 通用工厂工具类。封装 `GetOrCreateSettings<T>()` / `GetSerializedSettings<T>()` / `EnsureDirectoryExists`，消除各模块配置的重复样板代码。`#if UNITY_EDITOR` 包裹，Runtime 只读
 - **HNRenderPipeline** 🚧 — 自定义渲染管线（待实现）
 - **HNRenderPipelineAsset** 🚧 — 渲染管线资源（待实现）
 
@@ -214,6 +215,12 @@ Unity 平台层，依赖 UnityEngine。
 - **ISheetRegistrar** — 由 Luban 生成的 Tables 实现，自动注册所有表
 - **LubanTablesAdapter** — 泛型辅助类，LoadTables<TTables>
 - **AssetRefExtensions** — AssetRef<T> 的 Addressables 加载扩展
+- **AudioSettings** — 音频模块配置 ScriptableObject（MasterVolume / MaxConcurrentSounds / EnableSpatialAudio），通过 `[SettingsProvider]` 注册到 Project Settings
+- **UISettings** — UI 模块配置（Toast 时长/并发数/动画/遮罩/字号），通过 `[SettingsProvider]` 注册
+- **NetworkSettings** — 网络模块配置（帧同步帧率/缓冲/地址/端口），通过 `[SettingsProvider]` 注册
+- **AssetSettings** — 资源模块配置（自动卸载延迟/开关），通过 `[SettingsProvider]` 注册
+- **CutsceneSettings** — 过场动画模块配置（全局跳过/速度倍率），通过 `[SettingsProvider]` 注册，替代旧 `CutsceneGlobalSettings` struct
+- **AISettings** — AI 模块配置（动作频率/模糊推理采样/管线层级），通过 `[SettingsProvider]` 注册
 - **RuntimeDebugConsole** — UGUI 运行时调试控制台（`~` 键切换，命令输入/自动补全/历史）
 - **LuaModManager** — xLua Mod 脚本管理器，实现 IScriptEngine，提供沙箱隔离和 API 白名单机制（源码集成，C# 9.0）
 - **HybridCLRAdapter** — HybridCLR 运行时适配器，负责加载热更新 DLL 和注册 AOT 补充元数据（源码集成，C# 9.0）
@@ -228,6 +235,7 @@ Unity 平台层，依赖 UnityEngine。
 - **CameraHandle** — 运行时 VCam 引用管理，包装 CinemachineVirtualCameraBase，提供 Follow/LookAt 绑定和预设切换
 - **CameraShake** — 摄像机振动控制器，通过 CinemachineBasicMultiChannelPerlin 实现 Perlin 噪声振动
 - **LocaleManager** — 本地化管理器，实现 ILocaleProvider，管理多语言 StringTable、语言切换和 OnLocaleChanged 事件分发
+- **LocalizationSettings** — 本地化模块配置 ScriptableObject（DefaultLocale / AutoDetectLocale），通过 `[SettingsProvider]` 注册到 Project Settings
 - **ILocaleDataLoader** — 本地化数据加载接口，支持可注入的数据源（Addressables / Resources / 自定义）
 - **AddressableStringTableLoader** — ILocaleDataLoader 的 Addressables 实现，加载 JSON 格式字符串表
 - **LocaleSelector** — 语言选择器，管理可用语言列表和 PlayerPrefs 持久化偏好
@@ -258,10 +266,18 @@ Unity 平台层，依赖 UnityEngine。
 
 **Core — 编辑器核心**
 
-- **FrameworkDeployer** — 框架部署工具
+- **FrameworkDeployer** — 框架部署工具（部署时自动调用各模块配置的 `GetOrCreateSettings()` 确保 .asset 文件就位）
 - **HNUnityFrameworkConstants** — 框架常量定义
-- **HNUnityFrameworkGlobalSettingsProvider** — 全局设置提供者
+- **HNUnityFrameworkGlobalSettingsProvider** — 全局设置提供者（Project Settings/HN Unity Framework 根面板）
 - **HNUnityFrameworkEditorMenus** — 编辑器菜单扩展
+- **AudioSettingsProvider** — 音频模块设置面板（Project Settings/HN Unity Framework/Audio）
+- **LocalizationSettingsProvider** — 本地化模块设置面板（Project Settings/HN Unity Framework/Localization）
+- **UISettingsProvider** — UI 模块设置面板（Project Settings/HN Unity Framework/UI）
+- **NetworkSettingsProvider** — 网络模块设置面板（Project Settings/HN Unity Framework/Network）
+- **AssetSettingsProvider** — 资源模块设置面板（Project Settings/HN Unity Framework/Asset）
+- **CutsceneSettingsProvider** — 过场动画模块设置面板（Project Settings/HN Unity Framework/Cutscene）
+- **HybridCLRSettingsProvider** — HybridCLR 设置面板（Project Settings/HN Unity Framework/HybridCLR）
+- **AISettingsProvider** — AI 模块设置面板（Project Settings/HN Unity Framework/AI）
 
 **Sheet — 配置表工具**
 
@@ -287,7 +303,8 @@ Unity 平台层，依赖 UnityEngine。
 
 - **HybridCLRBuildProcessor** — HybridCLR 构建管线处理器，在 Unity 构建过程中自动处理 AOT 元数据生成和原生库拷贝
 - **HybridCLRMetadataGenerator** — AOT 元数据生成器，封装 HybridCLR 的标准生成流程
-- **HybridCLRBuildSettings** — HybridCLR 构建配置 ScriptableObject（AOT 元数据 / 热更程序集 / 构建选项）
+- **HybridCLRBuildSettings** — [已废弃] HybridCLR 构建配置 ScriptableObject（AOT 元数据 / 热更程序集 / 构建选项）。请改用 `HybridCLRSettings`
+- **HybridCLRSettings** — HybridCLR 构建配置（替代 HybridCLRBuildSettings），通过 `HNModuleSettingsUtility` 管理 + `[SettingsProvider]` 注册
 - **HybridCLRNativeLibManager** — HybridCLR 原生库管理器，验证安装状态和拷贝原生库到构建输出
 
 **Utils — 编辑器工具**
@@ -304,7 +321,7 @@ Unity 平台层，依赖 UnityEngine。
 - **冗余检测**：`DependencyGraph`（资源引用图）、`RedundancyScanner`（冗余扫描器）、`RedundancyCleanerWindow`（清理窗口）
 - **版本管理**：`VersionConfig`（版本配置 SO）、`VersionManager`（版本号管理 + Git tag）、`BuildManifest`（构建清单）
 - **构建报告**：`BuildReportGenerator`（JSON/Markdown 报告生成器）、`BuildReportWindow`（报告查看窗口）
-- **设置集成**：`BuildPipelineSettings`（全局设置 SO）、`BuildPipelineSettingsProvider`（Project Settings 面板）
+- **设置集成**：`BuildPipelineSettings`（全局设置 SO，通过 `HNModuleSettingsUtility` 管理创建/加载）、`BuildPipelineSettingsProvider`（Project Settings 面板）
 
 **EditorUI — 编辑器 UI 扩展系统 ✅**
 

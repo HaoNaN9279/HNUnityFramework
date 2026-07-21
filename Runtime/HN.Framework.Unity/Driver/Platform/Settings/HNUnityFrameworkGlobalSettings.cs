@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.IO;
 
 
 #if UNITY_EDITOR
@@ -16,26 +13,18 @@ namespace HN.Framework.Unity.Driver.Platform
 #if UNITY_EDITOR
         public static HNUnityFrameworkGlobalSettings GetOrCreateSettings()
         {
-            var settings = AssetDatabase.LoadAssetAtPath<HNUnityFrameworkGlobalSettings>(GlobalSettingsPath);
-            if (settings == null)
-            {
-                settings = CreateInstance<HNUnityFrameworkGlobalSettings>();
-                AssetDatabase.CreateAsset(settings, GlobalSettingsPath);
-                AssetDatabase.SaveAssets();
-            }
-
-            return settings;
+            return HNModuleSettingsUtility.GetOrCreateSettings<HNUnityFrameworkGlobalSettings>(GlobalSettingsPath);
         }
 
         public static SerializedObject GetSerializedSettings()
         {
-            return new SerializedObject(GetOrCreateSettings());
+            return HNModuleSettingsUtility.GetSerializedSettings<HNUnityFrameworkGlobalSettings>(GlobalSettingsPath);
         }
 #endif
 
         public static string GetGlobalSettingsLoadPath()
         {
-            return GlobalSettingsPath.Substring("Assets/Project/RuntimeAssets".Length);
+            return "Core/HNUnityFrameworkGlobalSettings.asset";
         }
 
 

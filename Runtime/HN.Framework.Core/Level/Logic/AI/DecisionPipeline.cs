@@ -37,15 +37,27 @@ namespace HN.Framework.Core.Level.Logic.AI
         private IDecisionStrategy[] m_Layers;
         private bool[] m_LayerEnabled;
 
-        private static readonly int LayerCount = 4;
+        /// <summary>
+        /// 管线层级数。可通过 <see cref="SetLayerCount"/> 在初始化时从配置 SO 注入。
+        /// </summary>
+        internal static int s_LayerCount = 4;
+
+        /// <summary>
+        /// 设置决策管线层级数（由 Unity 层桥接从 AISettings 注入）。
+        /// </summary>
+        public static void SetLayerCount(int count)
+        {
+            if (count > 0)
+                s_LayerCount = count;
+        }
 
         /// <summary>
         /// 初始化管线，所有层默认跳过
         /// </summary>
         public void Initialize()
         {
-            m_Layers = new IDecisionStrategy[LayerCount];
-            m_LayerEnabled = new bool[LayerCount];
+            m_Layers = new IDecisionStrategy[s_LayerCount];
+            m_LayerEnabled = new bool[s_LayerCount];
         }
 
         /// <summary>
@@ -103,7 +115,7 @@ namespace HN.Framework.Core.Level.Logic.AI
             }
 
             var results = new List<IActionCommand>();
-            for (int i = 0; i < LayerCount; i++)
+            for (int i = 0; i < s_LayerCount; i++)
             {
                 if (m_LayerEnabled[i] && m_Layers[i] != null && m_Layers[i].IsEnabled)
                 {
@@ -125,7 +137,7 @@ namespace HN.Framework.Core.Level.Logic.AI
         public IReadOnlyList<IDecisionStrategy> GetActiveStrategies()
         {
             var active = new List<IDecisionStrategy>();
-            for (int i = 0; i < LayerCount; i++)
+            for (int i = 0; i < s_LayerCount; i++)
             {
                 if (m_LayerEnabled[i] && m_Layers[i] != null)
                 {
@@ -142,7 +154,7 @@ namespace HN.Framework.Core.Level.Logic.AI
         /// <returns>存在启用层则返回 true</returns>
         public bool HasAnyEnabled()
         {
-            for (int i = 0; i < LayerCount; i++)
+            for (int i = 0; i < s_LayerCount; i++)
             {
                 if (m_LayerEnabled[i])
                 {
@@ -158,7 +170,7 @@ namespace HN.Framework.Core.Level.Logic.AI
         /// </summary>
         public void ResetAll()
         {
-            for (int i = 0; i < LayerCount; i++)
+            for (int i = 0; i < s_LayerCount; i++)
             {
                 if (m_Layers[i] != null)
                 {

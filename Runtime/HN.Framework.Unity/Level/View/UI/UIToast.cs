@@ -38,14 +38,16 @@ namespace HN.Framework.Unity.Level.View.UI
         public Action? OnDismissed;
 
         /// <summary>
-        /// 入场动画持续时间（秒）。重写以使用淡入效果。
+        /// 入场动画持续时间（秒）。优先读取 UISettings，回退默认值 0.2 秒。
         /// </summary>
-        protected override float OnEnterAnimationDuration => 0.2f;
+        protected override float OnEnterAnimationDuration =>
+            UIManager.s_CachedSettings?.ToastAnimationDuration ?? 0.2f;
 
         /// <summary>
-        /// 退场动画持续时间（秒）。重写以使用淡出效果。
+        /// 退场动画持续时间（秒）。优先读取 UISettings，回退默认值 0.15 秒。
         /// </summary>
-        protected override float OnExitAnimationDuration => 0.15f;
+        protected override float OnExitAnimationDuration =>
+            (UIManager.s_CachedSettings?.ToastAnimationDuration ?? 0.2f) * 0.75f;
 
         /// <summary>
         /// 显示 Toast 消息。

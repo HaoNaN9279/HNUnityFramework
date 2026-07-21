@@ -4,8 +4,10 @@ using UnityEngine;
 namespace HN.Framework.Editor.Scripting
 {
     /// <summary>
-    /// HybridCLR 构建配置，定义 AOT 元数据生成和热更新构建的相关参数。
+    /// HybridCLR 构建配置（已废弃）。
+    /// 请改用 <see cref="HybridCLRSettings"/>，通过 Project Settings > HN Unity Framework > HybridCLR 面板配置。
     /// </summary>
+    [System.Obsolete("Use HybridCLRSettings instead, accessible via Project Settings > HN Unity Framework > HybridCLR.")]
     public class HybridCLRBuildSettings : ScriptableObject
     {
         [Header("AOT Metadata")]

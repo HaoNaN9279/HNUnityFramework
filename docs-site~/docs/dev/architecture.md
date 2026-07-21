@@ -197,7 +197,16 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 | D4 | GameObjectPool / PooledObject | ✅ | Unity 对象池 |
 | D4 | UnityLogProvider / UnityTimeProvider / UnityCoroutineProvider | ✅ | 平台适配 |
 | D4 | HNRenderPipeline + ShaderLibrary | ✅ | 渲染管线 + Shader 库 |
-| D4 | GlobalSettings | ✅ | ScriptableObject 全局配置 |
+| D4 | GlobalSettings (HNUnityFrameworkGlobalSettings) | ✅ | 框架核心配置（LogicRate 等），ScriptableObject |
+| D4 | ModuleSettings (HNModuleSettingsUtility) | ✅ | 模块级配置扩展体系：通用工厂工具类 + 去中心化模块自包含模式 |
+| D4 | AudioSettings | ✅ | 音频模块配置（MasterVolume / MaxConcurrentSounds / EnableSpatialAudio） |
+| D4 | LocalizationSettings | ✅ | 本地化模块配置（DefaultLocale / AutoDetectLocale） |
+| D4 | UISettings | ✅ | UI 模块配置（Toast 时长/并发数/动画/遮罩） |
+| D4 | NetworkSettings | ✅ | 网络模块配置（帧率/缓冲/连接地址/端口） |
+| D4 | AssetSettings | ✅ | 资源模块配置（自动卸载延迟/开关） |
+| D4 | CutsceneSettings | ✅ | 过场动画配置（全局跳过/速度倍率） |
+| D4 | AISettings | ✅ | AI 模块配置（动作频率/模糊推理/管线层级） |
+| D4 | HybridCLRSettings | ✅ | HybridCLR 热更新构建配置 |
 | C1 | MemoryPack 序列化模块 | ✅ | 二进制序列化 + Unity 格式化器 |
 | C2 | Debug 系统（Core + Unity） | ✅ | DebugHub + RuntimeDebugConsole + InputDebugger |
 | C3 | 本地化系统 | ✅ | Core + Unity 层全部已完成（LocaleManager / TextLocalizer / LocaleSelector / AssetLocalizer） |

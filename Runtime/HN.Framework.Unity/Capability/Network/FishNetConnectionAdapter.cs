@@ -11,6 +11,11 @@ namespace HN.Framework.Unity.Capability.Network
     public class FishNetConnectionAdapter
     {
         /// <summary>
+        /// 缓存的网络全局配置。由模块初始化时设置。
+        /// </summary>
+        internal static NetworkSettings? s_CachedSettings;
+
+        /// <summary>
         /// 是否已成功连接到远程服务端。
         /// 当 FishNet 的 ClientManager 建立连接后由外部调用 <see cref="UpdateConnectionState"/> 设置为 <c>true</c>。
         /// </summary>
@@ -23,14 +28,16 @@ namespace HN.Framework.Unity.Capability.Network
         public int LocalClientId { get; private set; }
 
         /// <summary>
-        /// 要连接的远程服务端 IP 地址或域名。默认值为 <c>"127.0.0.1"</c>。
+        /// 要连接的远程服务端 IP 地址或域名。
+        /// 优先读取 <see cref="NetworkSettings"/>，回退默认值 <c>"127.0.0.1"</c>。
         /// </summary>
-        public string ServerAddress { get; set; } = "127.0.0.1";
+        public string ServerAddress { get; set; } = s_CachedSettings?.DefaultServerAddress ?? "127.0.0.1";
 
         /// <summary>
-        /// 要连接的远程服务端端口号。默认值为 <c>7777</c>。
+        /// 要连接的远程服务端端口号。
+        /// 优先读取 <see cref="NetworkSettings"/>，回退默认值 <c>7777</c>。
         /// </summary>
-        public ushort ServerPort { get; set; } = 7777;
+        public ushort ServerPort { get; set; } = s_CachedSettings?.DefaultServerPort ?? 7777;
 
         /// <summary>
         /// 更新当前连接状态。

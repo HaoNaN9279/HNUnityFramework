@@ -409,8 +409,18 @@ namespace HN.Framework.Core.Level.Logic.AI.Strategies
         /// <summary>
         /// 解模糊化时对输出变量值域的采样点数。
         /// 数值越大精度越高，但计算开销也越大。
+        /// 可通过 <see cref="SetDefuzzificationSamples"/> 在初始化时从配置 SO 注入。
         /// </summary>
-        private const int DefuzzificationSamples = 200;
+        internal static int s_DefuzzificationSamples = 200;
+
+        /// <summary>
+        /// 设置解模糊化采样点数（由 Unity 层桥接从 AISettings 注入）。
+        /// </summary>
+        public static void SetDefuzzificationSamples(int samples)
+        {
+            if (samples > 0)
+                s_DefuzzificationSamples = samples;
+        }
 
         /// <inheritdoc/>
         public string Name => "FuzzyLogic";
@@ -679,12 +689,12 @@ namespace HN.Framework.Core.Level.Logic.AI.Strategies
             // 步骤 4-6：对输出变量值域采样，进行 MAX 聚合 + 重心法解模糊化
             float outputMin = OutputVariable.MinValue;
             float outputMax = OutputVariable.MaxValue;
-            float step = (outputMax - outputMin) / DefuzzificationSamples;
+            float step = (outputMax - outputMin) / s_DefuzzificationSamples;
 
             float sumXTimesMu = 0f;
             float sumMu = 0f;
 
-            for (int sampleIndex = 0; sampleIndex <= DefuzzificationSamples; sampleIndex++)
+            for (int sampleIndex = 0; sampleIndex <= s_DefuzzificationSamples; sampleIndex++)
             {
                 float x = outputMin + sampleIndex * step;
 

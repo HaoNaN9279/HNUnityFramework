@@ -19,7 +19,47 @@ namespace HN.Framework.Unity.Level.View.UI
     public sealed class UIManager : IUIManager, ITickable, IDisposable
     {
         private const int LayerCount = 7;
-        private const int MaxConcurrentToasts = 3;
+
+        /// <summary>
+        /// 缓存的 UI 全局配置。由模块初始化时设置，未设置时使用默认值。
+        /// </summary>
+        internal static UISettings? s_CachedSettings;
+
+        /// <summary>
+        /// 最大并发 Toast 数量。优先读取 <see cref="UISettings"/>，回退默认值 3。
+        /// </summary>
+        private static int MaxConcurrentToasts =>
+            s_CachedSettings?.MaxConcurrentToasts ?? 3;
+
+        /// <summary>
+        /// Toast 默认显示时长。优先读取 <see cref="UISettings"/>，回退默认值 2 秒。
+        /// </summary>
+        private static float DefaultToastDuration =>
+            s_CachedSettings?.DefaultToastDuration ?? 2f;
+
+        /// <summary>
+        /// 通用 UI 动画默认时长。优先读取 <see cref="UISettings"/>，回退默认值 0.3 秒。
+        /// </summary>
+        private static float DefaultAnimationDuration =>
+            s_CachedSettings?.DefaultAnimationDuration ?? 0.3f;
+
+        /// <summary>
+        /// 模态遮罩透明度。优先读取 <see cref="UISettings"/>，回退默认值 0.5。
+        /// </summary>
+        internal static float DialogMaskAlpha =>
+            s_CachedSettings?.DialogMaskAlpha ?? 0.5f;
+
+        /// <summary>
+        /// Toast 动画时长。优先读取 <see cref="UISettings"/>，回退默认值 0.2 秒。
+        /// </summary>
+        private static float ToastAnimationDuration =>
+            s_CachedSettings?.ToastAnimationDuration ?? 0.2f;
+
+        /// <summary>
+        /// Toast 默认字号。优先读取 <see cref="UISettings"/>，回退默认值 24。
+        /// </summary>
+        private static int ToastFontSize =>
+            s_CachedSettings?.ToastFontSize ?? 24;
 
         /// <summary>
         /// 将 UILayer 枚举值映射为连续的数组索引（0-6），因为 UILayer 的值是 SortOrder 而非索引。
@@ -568,7 +608,7 @@ namespace HN.Framework.Unity.Level.View.UI
         // ── ShowToast ──
 
         /// <inheritdoc />
-        public void ShowToast(string message, float duration = 2f)
+        public void ShowToast(string message, float duration = -1f)
         {
             if (!_initialized)
             {
@@ -578,6 +618,9 @@ namespace HN.Framework.Unity.Level.View.UI
 
             if (string.IsNullOrEmpty(message))
                 return;
+
+            if (duration <= 0f)
+                duration = DefaultToastDuration;
 
             var item = new ToastItem { Message = message, Duration = duration };
 
@@ -616,7 +659,7 @@ namespace HN.Framework.Unity.Level.View.UI
             textGo.transform.SetParent(toastGo.transform, false);
             var textComp = textGo.AddComponent<TMPro.TextMeshProUGUI>();
             textComp.text = item.Message;
-            textComp.fontSize = 24;
+            textComp.fontSize = ToastFontSize;
             textComp.alignment = TMPro.TextAlignmentOptions.Center;
 
             var toast = toastGo.AddComponent<UIToast>();

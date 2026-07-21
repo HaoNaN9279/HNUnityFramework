@@ -1,4 +1,5 @@
 using UnityEngine;
+using HN.Framework.Unity.Driver.Platform;
 
 namespace HN.Framework.Editor.BuildPipeline
 {
@@ -64,22 +65,16 @@ namespace HN.Framework.Editor.BuildPipeline
         /// </summary>
         public string VersionConfigPath => m_VersionConfigPath;
 
+        private static readonly string AssetPath =
+            "Assets/Editor/BuildPipeline/Settings/BuildPipelineSettings.asset";
+
         /// <summary>
         /// 获取或创建设置实例。
         /// </summary>
         /// <returns>设置实例</returns>
         public static BuildPipelineSettings GetOrCreateSettings()
         {
-            string path = "Assets/Editor/BuildPipeline/Settings/BuildPipelineSettings.asset";
-            var settings = UnityEditor.AssetDatabase.LoadAssetAtPath<BuildPipelineSettings>(path);
-            if (settings == null)
-            {
-                settings = CreateInstance<BuildPipelineSettings>();
-                UnityEditor.AssetDatabase.CreateAsset(settings, path);
-                UnityEditor.AssetDatabase.SaveAssets();
-            }
-
-            return settings;
+            return HNModuleSettingsUtility.GetOrCreateSettings<BuildPipelineSettings>(AssetPath);
         }
 
         /// <summary>
@@ -88,7 +83,7 @@ namespace HN.Framework.Editor.BuildPipeline
         /// <returns>序列化对象</returns>
         public static UnityEditor.SerializedObject GetSerializedSettings()
         {
-            return new UnityEditor.SerializedObject(GetOrCreateSettings());
+            return HNModuleSettingsUtility.GetSerializedSettings<BuildPipelineSettings>(AssetPath);
         }
     }
 }

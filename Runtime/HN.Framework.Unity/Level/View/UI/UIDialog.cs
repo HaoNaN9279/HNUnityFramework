@@ -72,7 +72,7 @@ namespace HN.Framework.Unity.Level.View.UI
             if (maskImage != null)
             {
                 var color = maskImage.color;
-                color.a = 0.5f;
+                color.a = UIManager.DialogMaskAlpha;
                 maskImage.color = color;
             }
         }

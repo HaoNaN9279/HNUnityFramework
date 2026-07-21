@@ -18,8 +18,21 @@ namespace HN.Framework.Unity.Capability.Scripting
         private bool m_Initialized;
         private GameWorld m_GameWorld;
 
+        /// <summary>
+        /// 缓存的 HybridCLR 构建配置值。由模块初始化时设置，未设置时使用默认值。
+        /// </summary>
+        internal static string? s_AotMetadataLabelOverride;
+        internal static string? s_HotUpdateKeyOverride;
+
         private static readonly string s_RuntimeApiTypeName = "HybridCLR.RuntimeApi, HybridCLR.Runtime";
-        private static readonly string s_AotMetadataLabel = "AOTMetadata";
+
+        /// <summary>
+        /// AOT 元数据 Addressables 标签。
+        /// 优先读取配置注入值，回退默认值 "AOTMetadata"。
+        /// </summary>
+        private static string AotMetadataLabel =>
+            s_AotMetadataLabelOverride ?? "AOTMetadata";
+
         private const int HomologousImageModeSuperSet = 1;
 
         /// <summary>
@@ -159,7 +172,7 @@ namespace HN.Framework.Unity.Capability.Scripting
 
             try
             {
-                var handle = Addressables.LoadAssetsAsync<TextAsset>(s_AotMetadataLabel, null);
+                var handle = Addressables.LoadAssetsAsync<TextAsset>(AotMetadataLabel, null);
                 handle.WaitForCompletion();
 
                 if (handle.Status == AsyncOperationStatus.Succeeded && handle.Result != null)
@@ -174,11 +187,11 @@ namespace HN.Framework.Unity.Capability.Scripting
                         }
                     }
 
-                    UnityEngine.Debug.Log($"[HybridCLRAdapter] Loaded {count} AOT metadata asset(s) from label '{s_AotMetadataLabel}'.");
+                    UnityEngine.Debug.Log($"[HybridCLRAdapter] Loaded {count} AOT metadata asset(s) from label '{AotMetadataLabel}'.");
                 }
                 else
                 {
-                    UnityEngine.Debug.LogWarning($"[HybridCLRAdapter] No AOT metadata assets found with label '{s_AotMetadataLabel}'. AOT metadata registration skipped.");
+                    UnityEngine.Debug.LogWarning($"[HybridCLRAdapter] No AOT metadata assets found with label '{AotMetadataLabel}'. AOT metadata registration skipped.");
                 }
 
                 m_Initialized = true;
@@ -202,7 +215,7 @@ namespace HN.Framework.Unity.Capability.Scripting
             }
 
             // 2. 加载热更新 DLL
-            const string hotUpdateKey = "HotUpdateDLL";
+            var hotUpdateKey = s_HotUpdateKeyOverride ?? "HotUpdateDLL";
             var assembly = LoadHotUpdateAssembly(hotUpdateKey);
             if (assembly == null)
             {
