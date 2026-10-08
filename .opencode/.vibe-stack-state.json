@@ -4,7 +4,7 @@
     "game-dev/unity": {
       "domain_key": "game-dev/unity",
       "namespace": "game-dev_unity",
-      "activated_at": "2026-07-15T09:30:26Z",
+      "activated_at": "2026-08-04T01:51:12Z",
       "files": [
         "mcp/game-dev_unity/unityMCP.json",
         "rules/game-dev_unity/unity-bugs.md",

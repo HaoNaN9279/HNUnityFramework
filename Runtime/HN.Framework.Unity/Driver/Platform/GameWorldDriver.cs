@@ -132,6 +132,7 @@ namespace HN.Framework.Unity.Driver.Platform
 
         protected virtual void Update()
         {
+            HNLogicTime.SetFrameDelta(Time.deltaTime);
             World.Tick();
         }
 

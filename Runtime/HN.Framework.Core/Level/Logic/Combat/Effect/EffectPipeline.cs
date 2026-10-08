@@ -72,6 +72,7 @@ namespace HN.Framework.Core.Level.Logic.Combat
                         RemainingTime = remaining,
                         IsDelayed = spec.HasDelay && spec.DelayTime > Fixed64.Zero,
                         DelayRemaining = spec.HasDelay ? spec.DelayTime : Fixed64.Zero,
+                        TargetAttributes = targetAttributes,
                     };
 
                     _activeEffects.Add(instance);
@@ -95,7 +96,7 @@ namespace HN.Framework.Core.Level.Logic.Combat
             if (instance.IsExpired) return false;
 
             instance.IsExpired = true;
-            RemoveModifierHandles(instance.AppliedModHandles, targetAttributes);
+            RemoveModifierHandles(instance.AppliedModHandles, instance.TargetAttributes);
             OnEffectRemoved?.Invoke(instance.Spec, instance.Source, instance.Target, false);
             return true;
         }
@@ -109,6 +110,7 @@ namespace HN.Framework.Core.Level.Logic.Combat
             {
                 var inst = _activeEffects[i];
                 if (inst.IsExpired) continue;
+                if (!ReferenceEquals(inst.TargetAttributes, targetAttributes)) continue; // 只推进属于该目标属性集的效果，避免多实体共享时重复推进
 
                 // 延迟逻辑
                 if (inst.IsDelayed)
@@ -116,7 +118,7 @@ namespace HN.Framework.Core.Level.Logic.Combat
                     inst.DelayRemaining -= deltaTime;
                     if (inst.DelayRemaining <= Fixed64.Zero)
                     {
-                        var handles = ApplyAttributeModifiers(inst.Spec.AttributeModifiers, targetAttributes);
+                        var handles = ApplyAttributeModifiers(inst.Spec.AttributeModifiers, inst.TargetAttributes);
                         inst.AppliedModHandles.AddRange(handles);
                         inst.IsDelayed = false;
                     }
@@ -130,7 +132,7 @@ namespace HN.Framework.Core.Level.Logic.Combat
                     if (inst.RemainingTime <= Fixed64.Zero)
                     {
                         inst.IsExpired = true;
-                        RemoveModifierHandles(inst.AppliedModHandles, targetAttributes);
+                        RemoveModifierHandles(inst.AppliedModHandles, inst.TargetAttributes);
                         OnEffectRemoved?.Invoke(inst.Spec, inst.Source, inst.Target, true);
                         continue;
                     }
@@ -143,7 +145,7 @@ namespace HN.Framework.Core.Level.Logic.Combat
                     while (inst.TimeSinceLastPeriod >= inst.Spec.PeriodInterval)
                     {
                         inst.TimeSinceLastPeriod -= inst.Spec.PeriodInterval;
-                        ApplyAttributeModifiers(inst.Spec.AttributeModifiers, targetAttributes);
+                        ApplyAttributeModifiers(inst.Spec.AttributeModifiers, inst.TargetAttributes);
                     }
                 }
             }
@@ -221,6 +223,7 @@ namespace HN.Framework.Core.Level.Logic.Combat
             public bool IsDelayed;
             public Fixed64 DelayRemaining;
             public bool IsExpired;
+            public IAttributeSet<TId> TargetAttributes = null!;
         }
     }
 }

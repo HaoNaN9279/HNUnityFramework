@@ -103,10 +103,8 @@ namespace HN.Framework.Core.Level.Logic.Quest
             _handleIndexMap[handle] = index;
             _achievementIndexMap[key] = index;
 
-            // Initialize 已根据 IsHidden 设置初始状态：
-            //   IsHidden=true  → Hidden  → RevealAchievement 负责过渡到 Revealed
-            //   IsHidden=false → Revealed（直接 Active，无需额外过渡）
-            // 统一触发状态变更事件：系统视角下从"未追踪"（Hidden）到 Revealed
+            // Initialize 后实例 State 恒为 Revealed（隐藏与非隐藏一致）。
+            // 事件以 Hidden→Revealed 语义发布，表示成就从"未追踪"进入"已揭示可完成"。
             OnAchievementStateChanged?.Invoke(
                 new AchievementStateChangedEvent<TId>(ownerId, achievementId, AchievementState.Hidden, AchievementState.Revealed));
 

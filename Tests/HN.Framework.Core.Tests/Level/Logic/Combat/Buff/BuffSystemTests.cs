@@ -225,5 +225,92 @@ namespace HN.Framework.Core.Tests.Level.Logic.Combat
 
             Assert.That(_buffSystem.ActiveCount, Is.EqualTo(2));
         }
+
+        [Test]
+        public void SharedSystem_MultipleTargets_EachTickAdvanceOnceOnly()
+        {
+            var attrSet2 = new AttributeSet<int>();
+            attrSet2.SetBaseValue(ATK, (Fixed64)100);
+
+            var spec = CreateBuff(50, (Fixed64)10, BuffStackRule.Single, (Fixed64)50);
+
+            _buffSystem.ApplyBuff(spec, 0, 1, _attributeSet, _effectPipeline);
+            _buffSystem.ApplyBuff(spec, 0, 2, attrSet2, _effectPipeline);
+
+            Assert.That(_buffSystem.ActiveCount, Is.EqualTo(2));
+            Assert.That(_effectPipeline.ActiveCount, Is.EqualTo(2),
+                "ApplyBuff 应为每个实体创建 1 个 Duration 效果");
+            Assert.That(_attributeSet.GetFinalValue(ATK), Is.EqualTo((Fixed64)150));
+            Assert.That(attrSet2.GetFinalValue(ATK), Is.EqualTo((Fixed64)150));
+
+            // 模拟共享系统：每帧对两个实体各推进 BuffSystem + EffectPipeline，共 6 帧
+            for (int frame = 0; frame < 6; frame++)
+            {
+                _buffSystem.Tick((Fixed64)1, _attributeSet, _effectPipeline);
+                _effectPipeline.Tick((Fixed64)1, _attributeSet);
+                _buffSystem.Tick((Fixed64)1, attrSet2, _effectPipeline);
+                _effectPipeline.Tick((Fixed64)1, attrSet2);
+            }
+
+            Assert.That(_buffSystem.ActiveCount, Is.EqualTo(2),
+                "6 秒后两个 buff 都应存活");
+            Assert.That(_effectPipeline.ActiveCount, Is.EqualTo(2),
+                "6 秒后两个效果都应存活");
+
+            // 再推进 4 帧到第 10 秒
+            for (int frame = 0; frame < 4; frame++)
+            {
+                _buffSystem.Tick((Fixed64)1, _attributeSet, _effectPipeline);
+                _effectPipeline.Tick((Fixed64)1, _attributeSet);
+                _buffSystem.Tick((Fixed64)1, attrSet2, _effectPipeline);
+                _effectPipeline.Tick((Fixed64)1, attrSet2);
+            }
+
+            Assert.That(_buffSystem.ActiveCount, Is.EqualTo(0));
+            Assert.That(_effectPipeline.ActiveCount, Is.EqualTo(0),
+                "到期后效果应从 pipeline 中清理");
+            Assert.That(_attributeSet.GetFinalValue(ATK), Is.EqualTo((Fixed64)100),
+                "实体1 ATK 应回滚到基础值 100");
+            Assert.That(attrSet2.GetFinalValue(ATK), Is.EqualTo((Fixed64)100),
+                "实体2 ATK 应回滚到基础值 100");
+        }
+
+        [Test]
+        public void SharedSystem_ExpiryRollback_OnlyAffectsOwnTarget()
+        {
+            // 第二个属性集：base ATK = 100
+            var attrSet2 = new AttributeSet<int>();
+            attrSet2.SetBaseValue(ATK, (Fixed64)100);
+
+            // 创建 3 秒 duration buff，ATK+50 modifier
+            var spec = CreateBuff(60, (Fixed64)3, BuffStackRule.Single, (Fixed64)50);
+
+            // 应用到两个不同实体
+            _buffSystem.ApplyBuff(spec, 0, 1, _attributeSet, _effectPipeline);
+            _buffSystem.ApplyBuff(spec, 0, 2, attrSet2, _effectPipeline);
+
+            Assert.That(_buffSystem.ActiveCount, Is.EqualTo(2));
+            Assert.That(_attributeSet.GetFinalValue(ATK), Is.EqualTo((Fixed64)150));
+            Assert.That(attrSet2.GetFinalValue(ATK), Is.EqualTo((Fixed64)150));
+
+            // 只推进实体1：2 秒（BuffSystem + EffectPipeline 各两个）
+            _buffSystem.Tick((Fixed64)2, _attributeSet, _effectPipeline);
+            _effectPipeline.Tick((Fixed64)2, _attributeSet);
+            _buffSystem.Tick((Fixed64)0, attrSet2, _effectPipeline);
+            _effectPipeline.Tick((Fixed64)0, attrSet2);
+
+            // 再只推进实体1：2 秒 → 实体1 总共 4 秒，超过 3 秒到期
+            _buffSystem.Tick((Fixed64)2, _attributeSet, _effectPipeline);
+            _effectPipeline.Tick((Fixed64)2, _attributeSet);
+            _buffSystem.Tick((Fixed64)0, attrSet2, _effectPipeline);
+            _effectPipeline.Tick((Fixed64)0, attrSet2);
+
+            // 实体1 到期回滚到 100，实体2 仍为 150（未受影响）
+            Assert.That(_buffSystem.ActiveCount, Is.EqualTo(1));
+            Assert.That(_attributeSet.GetFinalValue(ATK), Is.EqualTo((Fixed64)100),
+                "实体1 ATK 应到期回滚到 100");
+            Assert.That(attrSet2.GetFinalValue(ATK), Is.EqualTo((Fixed64)150),
+                "实体2 ATK 应仍为 150（未被推进，未到期）");
+        }
     }
 }

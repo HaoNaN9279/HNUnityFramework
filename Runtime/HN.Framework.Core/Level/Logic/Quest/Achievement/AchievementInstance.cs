@@ -34,12 +34,15 @@ namespace HN.Framework.Core.Level.Logic.Quest
 
         /// <summary>
         /// 初始化成就实例。由工厂方法或反序列化调用。
+        /// Reveal 后必然已揭示，实例初始状态恒为 Revealed。
+        /// IsHidden 只决定实例创建前是否需要显式 Reveal 触发，不决定实例状态。
+        /// Clear() 重置为 Hidden 保留供引用池复用。
         /// </summary>
         /// <param name="def">成就配置定义。</param>
         internal void Initialize(AchievementDef def)
         {
             AchievementId = def.Id;
-            State = def.IsHidden ? AchievementState.Hidden : AchievementState.Revealed;
+            State = AchievementState.Revealed;
             ProgressPercent = 0f;
             CompletedTime = null;
             ClaimedTime = null;

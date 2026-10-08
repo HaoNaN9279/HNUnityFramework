@@ -15,6 +15,18 @@ namespace HN.Framework.Core.Driver.Common
             LogicFrameCount = 0;
         }
 
+        /// <summary>
+        /// 由驱动者（如 <see cref="GameWorldDriver.Update"/>）每帧调用，注入本帧实际耗时。
+        /// <para>
+        /// LockstepManager 在推进逻辑帧后会把 DeltaTime 写为固定帧间隔，
+        /// 供同一逻辑帧内后续模块（AISystem/QuestManager/PoolBase）读取。
+        /// </para>
+        /// </summary>
+        /// <param name="deltaTime">本帧的实际耗时（秒），通常为 UnityEngine.Time.deltaTime</param>
+        public static void SetFrameDelta(double deltaTime)
+        {
+            DeltaTime = deltaTime;
+        }
 
         /// <summary>
         /// 考虑在一个update中tick多次的情况，Time为每次Tick时的Time

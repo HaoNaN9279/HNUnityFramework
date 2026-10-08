@@ -479,6 +479,7 @@ namespace HN.Framework.Core.Level.Logic
             }
 
             currentState = null;
+            isAlive = false;
 
             var statesValues = states.Values;
             states.Clear();

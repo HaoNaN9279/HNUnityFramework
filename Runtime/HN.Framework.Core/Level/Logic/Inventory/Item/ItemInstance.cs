@@ -45,9 +45,9 @@ namespace HN.Framework.Core.Level.Logic.Inventory
         public Dictionary<string, Fixed64>? ExtraData { get; set; }
 
         /// <summary>
-        /// 初始化物品实例。由工厂方法或反序列化调用。
+        /// 初始化物品实例。供外部创建物品实例调用，保留重置语义（覆盖所有字段为传入值或默认值）。
         /// </summary>
-        internal void Initialize(int itemDefId, int stackCount = 1)
+        public void Initialize(int itemDefId, int stackCount = 1)
         {
             ItemDefId = itemDefId;
             StackCount = stackCount;

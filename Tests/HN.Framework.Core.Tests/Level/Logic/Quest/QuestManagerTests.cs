@@ -89,6 +89,7 @@ namespace HN.Framework.Core.Tests.Level.Logic.Quest
         {
             _questManager.Initialize(
                 questDefs,
+                Array.Empty<ConditionDef>(),
                 Array.Empty<AchievementDef>(),
                 Array.Empty<ConditionGroupDef>(),
                 Array.Empty<RewardDef>(),
@@ -159,6 +160,7 @@ namespace HN.Framework.Core.Tests.Level.Logic.Quest
             var rewardDef = new RewardDef { Id = 1, Type = RewardType.Item, TargetId = 100, Amount = 5, Probability = 1.0f };
             _questManager.Initialize(
                 new[] { questDef },
+                Array.Empty<ConditionDef>(),
                 Array.Empty<AchievementDef>(),
                 Array.Empty<ConditionGroupDef>(),
                 new[] { rewardDef },
@@ -369,6 +371,116 @@ namespace HN.Framework.Core.Tests.Level.Logic.Quest
             var mgr = new QuestManager<int>(_eventBus);
             // 不应抛出异常
             Assert.DoesNotThrow(() => mgr.NotifyGameEvent("TestEvent"));
+        }
+
+        // ==================== 奖励处理器注册测试 ====================
+
+        [Test]
+        public void RegisterRewardHandler_ClaimQuest_DeliversReward()
+        {
+            var handler = new MockRewardHandler();
+            _questManager.RegisterRewardHandler(handler);
+
+            var questDef = MakeQuestDef(1, rewardGroups: new List<int> { 1 });
+            var rewardDef = new RewardDef { Id = 1, Type = RewardType.Item, TargetId = 100, Amount = 5, Probability = 1.0f };
+            _questManager.Initialize(
+                new[] { questDef },
+                Array.Empty<ConditionDef>(),
+                Array.Empty<AchievementDef>(),
+                Array.Empty<ConditionGroupDef>(),
+                new[] { rewardDef },
+                Array.Empty<QuestChainDef>());
+
+            var handle = _questManager.TryAcceptQuest(1, 100);
+            _questManager.CompleteQuest(handle);
+
+            var result = _questManager.ClaimQuest(handle);
+
+            Assert.That(result.Success, Is.True);
+            Assert.That(handler.DeliverCallCount, Is.EqualTo(1));
+            Assert.That(result.DeliveredItems, Is.Not.Null);
+            Assert.That(result.DeliveredItems!.Count, Is.GreaterThan(0));
+        }
+
+        // ==================== Initialize 带条件配置测试 ====================
+
+        [Test]
+        public void Initialize_WithConditionDefs_CounterCompletesQuest()
+        {
+            var condDef = new ConditionDef
+            {
+                Id = 1,
+                Type = ConditionType.Counter,
+                Parameters = new Dictionary<string, string>
+                {
+                    { "EventTypeName", "KillMonster" },
+                    { "TargetCount", "3" }
+                }
+            };
+            var groupDef = new ConditionGroupDef
+            {
+                Id = 1,
+                ConditionIds = new List<int> { 1 }
+            };
+            var questDef = new QuestDef
+            {
+                Id = 1,
+                Name = "KillQuest",
+                Description = "Kill 3 monsters",
+                PrerequisiteQuestIds = null,
+                RequiredLevel = 0,
+                TimeLimit = null,
+                ConditionGroupIds = new List<int> { 1 },
+                RewardGroupIds = null,
+                IsRepeatable = false
+            };
+
+            _questManager.Initialize(
+                new[] { questDef },
+                new[] { condDef },
+                Array.Empty<AchievementDef>(),
+                new[] { groupDef },
+                Array.Empty<RewardDef>(),
+                Array.Empty<QuestChainDef>());
+
+            var handle = _questManager.TryAcceptQuest(1, 100);
+            Assert.That(handle.IsValid, Is.True);
+
+            // 通知 2 次，尚未达到目标
+            _questManager.NotifyGameEvent("KillMonster", 100);
+            _questManager.NotifyGameEvent("KillMonster", 100);
+            var questAfter2 = _questManager.GetQuest(handle);
+            Assert.That(questAfter2, Is.Not.Null);
+            Assert.That(questAfter2!.State, Is.EqualTo(QuestState.Active));
+
+            // 第 3 次通知达到目标，自动完成
+            _questManager.NotifyGameEvent("KillMonster", 100);
+            var quest = _questManager.GetQuest(handle);
+            Assert.That(quest, Is.Not.Null);
+            Assert.That(quest!.State, Is.EqualTo(QuestState.Completed));
+        }
+
+        // ==================== Mock 类型 ====================
+
+        private sealed class MockRewardHandler : IRewardHandler<int>
+        {
+            public int DeliverCallCount { get; private set; }
+
+            public RewardType HandledType => RewardType.Item;
+
+            public bool CanHandle(RewardDef reward)
+            {
+                return reward.Type == RewardType.Item;
+            }
+
+            public RewardDeliveryResult Deliver(RewardDef reward, int recipient)
+            {
+                DeliverCallCount++;
+                return RewardDeliveryResult.SuccessResult(new List<(RewardType, int, int)>
+                {
+                    (reward.Type, reward.TargetId, reward.Amount)
+                });
+            }
         }
     }
 }

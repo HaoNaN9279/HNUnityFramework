@@ -1,0 +1,4 @@
+<linker>
+    <assembly fullname="MemoryPack.Core" preserve="all" />
+    <assembly fullname="FixedMathSharp" preserve="all" />
+</linker>

@@ -16,7 +16,7 @@
         "nunit.framework.dll",
         "System.Runtime.dll",
         "netstandard.dll",
-        "MemoryPack.dll",
+        "MemoryPack.Core.dll",
         "FixedMathSharp.dll"
     ],
     "autoReferenced": false,

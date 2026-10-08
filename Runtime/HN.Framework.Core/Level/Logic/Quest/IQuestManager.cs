@@ -17,12 +17,14 @@ namespace HN.Framework.Core.Level.Logic.Quest
         /// 必须在任何其他操作之前调用。
         /// </summary>
         /// <param name="questDefs">任务定义列表。</param>
+        /// <param name="conditionDefs">条件定义列表，转发给 <see cref="ConditionEvaluator{TId}"/> 用于运行时 Counter 条件计数。</param>
         /// <param name="achievementDefs">成就定义列表。</param>
         /// <param name="conditionGroups">条件组定义列表。</param>
         /// <param name="rewards">奖励定义列表。</param>
         /// <param name="questChains">任务链定义列表。</param>
         void Initialize(
             IEnumerable<QuestDef> questDefs,
+            IEnumerable<ConditionDef> conditionDefs,
             IEnumerable<AchievementDef> achievementDefs,
             IEnumerable<ConditionGroupDef> conditionGroups,
             IEnumerable<RewardDef> rewards,
@@ -84,6 +86,16 @@ namespace HN.Framework.Core.Level.Logic.Quest
         /// <param name="ownerId">拥有者 ID。</param>
         /// <returns>奖励发放结果。</returns>
         RewardDeliveryResult ClaimAchievement(int achievementId, TId ownerId);
+
+        // ==================== 奖励处理器注册 ====================
+
+        /// <summary>
+        /// 注册奖励处理器。项目方通过此 API 注册自定义 <see cref="IRewardHandler{TId}"/>，
+        /// ClaimQuest/ClaimAchievement 时 <see cref="RewardProcessor{TId}"/> 会遍历已注册的
+        /// handler 来发放奖励。至少需要注册一个 handler 才能使奖励生效。
+        /// </summary>
+        /// <param name="handler">奖励处理器实例，不可为 null。</param>
+        void RegisterRewardHandler(IRewardHandler<TId> handler);
 
         // ==================== 条件事件注册 ====================
 

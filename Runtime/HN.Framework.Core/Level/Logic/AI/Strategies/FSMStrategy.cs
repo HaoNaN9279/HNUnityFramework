@@ -289,6 +289,14 @@ namespace HN.Framework.Core.Level.Logic.AI.Strategies
             }
 
             /// <inheritdoc/>
+            public override void OnCreate()
+            {
+                base.OnCreate();
+                // 普通 FSM 状态必须允许转换，否则 HFSM.Update() 永远不会评估出向转换
+                isAllowedTrans = true;
+            }
+
+            /// <inheritdoc/>
             public override void Clear()
             {
                 base.Clear();

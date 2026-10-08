@@ -81,7 +81,7 @@ namespace HN.Framework.Core.Level.Logic.Combat
                 {
                     case BuffStackRule.Single:
                         // 覆盖旧的：先移除再添加
-                        RemoveBuffInternal(existing, targetAttributes, effectPipeline, false);
+                        RemoveBuffInternal(existing, existing.TargetAttributes, effectPipeline, false);
                         break;
 
                     case BuffStackRule.Multi:
@@ -91,12 +91,12 @@ namespace HN.Framework.Core.Level.Logic.Combat
                         var oldStacks = existing.Stacks;
                         existing.Stacks++;
                         existing.RemainingTime = spec.Duration; // 重置持续时间
-                        ApplyApplyEffects(spec, source, target, targetAttributes, effectPipeline);
+                        ApplyApplyEffects(spec, source, target, existing.TargetAttributes, effectPipeline);
 
                         // Behaviour OnStackChanged
                         if (existing.Behaviour != null)
                         {
-                            var ctx = CreateBehaviourContext(existing.Spec, source, target, targetAttributes, effectPipeline, existing);
+                            var ctx = CreateBehaviourContext(existing.Spec, source, target, existing.TargetAttributes, effectPipeline, existing);
                             existing.Behaviour.OnStackChanged(oldStacks, existing.Stacks, ctx);
                         }
 
@@ -107,8 +107,8 @@ namespace HN.Framework.Core.Level.Logic.Combat
                         // 刷新持续时间
                         existing.RemainingTime = spec.Duration;
                         // 重新应用 ApplyEffects
-                        UnapplyModifierEffects(existing, targetAttributes);
-                        ApplyApplyEffects(spec, source, target, targetAttributes, effectPipeline);
+                        UnapplyModifierEffects(existing, existing.TargetAttributes);
+                        ApplyApplyEffects(spec, source, target, existing.TargetAttributes, effectPipeline);
                         return existing.Handle;
 
                     case BuffStackRule.Extend:
@@ -128,6 +128,7 @@ namespace HN.Framework.Core.Level.Logic.Combat
                 Spec = spec,
                 Source = source,
                 Target = target,
+                TargetAttributes = targetAttributes,
                 RemainingTime = spec.Duration,
                 Stacks = 1,
                 ApplyEffectHandles = new List<EffectHandle>(),
@@ -166,7 +167,7 @@ namespace HN.Framework.Core.Level.Logic.Combat
             var instance = _activeBuffs[index];
             if (instance.IsExpired) return false;
 
-            return RemoveBuffInternal(instance, targetAttributes, effectPipeline, false);
+            return RemoveBuffInternal(instance, instance.TargetAttributes, effectPipeline, false);
         }
 
         /// <inheritdoc />
@@ -179,6 +180,7 @@ namespace HN.Framework.Core.Level.Logic.Combat
             {
                 var instance = _activeBuffs[i];
                 if (instance.IsExpired) continue;
+                if (!ReferenceEquals(instance.TargetAttributes, targetAttributes)) continue; // 只推进属于该目标属性集的 Buff，避免多实体共享时重复推进
 
                 // 递减持续时间
                 instance.RemainingTime -= deltaTime;
@@ -186,7 +188,7 @@ namespace HN.Framework.Core.Level.Logic.Combat
                 // Behaviour OnTick
                 if (instance.Behaviour != null)
                 {
-                    var tickCtx = CreateBehaviourContext(instance.Spec, instance.Source, instance.Target, targetAttributes, effectPipeline, instance);
+                    var tickCtx = CreateBehaviourContext(instance.Spec, instance.Source, instance.Target, instance.TargetAttributes, effectPipeline, instance);
                     instance.Behaviour.OnTick(deltaTime, tickCtx);
                 }
 
@@ -213,7 +215,7 @@ namespace HN.Framework.Core.Level.Logic.Combat
                         if (instance.PeriodAccumulator[p] >= periodic.Interval)
                         {
                             instance.PeriodAccumulator[p] -= periodic.Interval;
-                            effectPipeline.Apply(periodic.Effect, instance.Source, instance.Target, targetAttributes);
+                            effectPipeline.Apply(periodic.Effect, instance.Source, instance.Target, instance.TargetAttributes);
                         }
                         instance.PeriodAccumulator[p] += deltaTime;
                     }
@@ -222,7 +224,7 @@ namespace HN.Framework.Core.Level.Logic.Combat
                 // 到期移除
                 if (instance.RemainingTime <= Fixed64.Zero)
                 {
-                    RemoveBuffInternal(instance, targetAttributes, effectPipeline, true);
+                    RemoveBuffInternal(instance, instance.TargetAttributes, effectPipeline, true);
                 }
             }
 
@@ -267,7 +269,7 @@ namespace HN.Framework.Core.Level.Logic.Combat
             instance.IsExpired = true;
 
             // 回滚 ApplyEffects 的 Modifier
-            UnapplyModifierEffects(instance, targetAttributes);
+            UnapplyModifierEffects(instance, instance.TargetAttributes);
 
             // 触发 RemoveEffects
             if (instance.Spec.RemoveEffects != null)
@@ -275,14 +277,14 @@ namespace HN.Framework.Core.Level.Logic.Combat
                 for (int i = 0; i < instance.Spec.RemoveEffects.Count; i++)
                 {
                     var removeEffect = instance.Spec.RemoveEffects[i];
-                    effectPipeline.Apply(removeEffect, instance.Source, instance.Target, targetAttributes);
+                    effectPipeline.Apply(removeEffect, instance.Source, instance.Target, instance.TargetAttributes);
                 }
             }
 
             // Behaviour OnRemove
             if (instance.Behaviour != null)
             {
-                var removeCtx = CreateBehaviourContext(instance.Spec, instance.Source, instance.Target, targetAttributes, effectPipeline, instance);
+                var removeCtx = CreateBehaviourContext(instance.Spec, instance.Source, instance.Target, instance.TargetAttributes, effectPipeline, instance);
                 instance.Behaviour.OnRemove(isExpired, removeCtx);
             }
 
@@ -359,6 +361,7 @@ namespace HN.Framework.Core.Level.Logic.Combat
             public BuffSpec<TId> Spec = null!;
             public TId Source = default!;
             public TId Target = default!;
+            public IAttributeSet<TId> TargetAttributes = null!;
             public Fixed64 RemainingTime;
             public int Stacks = 1;
             public List<EffectHandle> ApplyEffectHandles = new();

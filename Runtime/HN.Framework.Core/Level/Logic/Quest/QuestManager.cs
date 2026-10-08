@@ -94,6 +94,7 @@ namespace HN.Framework.Core.Level.Logic.Quest
         /// <inheritdoc />
         public void Initialize(
             IEnumerable<QuestDef> questDefs,
+            IEnumerable<ConditionDef> conditionDefs,
             IEnumerable<AchievementDef> achievementDefs,
             IEnumerable<ConditionGroupDef> conditionGroups,
             IEnumerable<RewardDef> rewards,
@@ -145,14 +146,8 @@ namespace HN.Framework.Core.Level.Logic.Quest
                 }
             }
 
-            // 加载条件配置到 ConditionEvaluator
-            // 注意：ConditionEvaluator 需要 ConditionDef 列表，但 Initialize 没有直接传入
-            // 从 ConditionGroupDef 可间接引用，但 ConditionDef 在 QuestManager 中不需要直接持有
-            // 因为 ConditionEvaluator 的 LoadConfigs 需要完整的 Def 数据
-            // 这里传递空列表——ConditionEvaluator 内部通过 RegisterQuestConditions 按需查询
-            // 实际上 ConditionEvaluator.LoadConfigs 只用于存储 Def 引用，而在 RegisterQuestConditions 中
-            // 需要通过 QuestManager 提供的 Def 查询
-            _conditionEvaluator.LoadConfigs(Array.Empty<ConditionDef>(), conditionGroupList);
+            // 将 conditionDefs 转发给 ConditionEvaluator，用于运行时 Counter 条件计数与评估
+            _conditionEvaluator.LoadConfigs(conditionDefs, conditionGroupList);
 
             _initialized = true;
             _eventBus.Publish(new QuestManagerInitializedEvent());
@@ -513,6 +508,14 @@ namespace HN.Framework.Core.Level.Logic.Quest
             _eventBus.Publish(new AchievementClaimedEvent<TId>(ownerId, achievementId));
 
             return rewardResult;
+        }
+
+        // ==================== 奖励处理器注册 ====================
+
+        /// <inheritdoc />
+        public void RegisterRewardHandler(IRewardHandler<TId> handler)
+        {
+            _rewardProcessor.RegisterHandler(handler);
         }
 
         // ==================== 条件事件注册 ====================
