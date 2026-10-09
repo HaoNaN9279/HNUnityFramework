@@ -37,6 +37,15 @@ namespace HN.Framework.Unity.Level.View.UI
         protected virtual float OnExitAnimationDuration => 0f;
 
         /// <summary>
+        /// 面板在所属 UILayer 内的层内排序号。
+        /// 仅在面板自带 Canvas（此时成为层的嵌套 SubCanvas）时生效，
+        /// 最终 sortingOrder = 层基值 + SubOrder（取值范围
+        /// [<see cref="UICanvasSorting.SubOrderMin"/>, <see cref="UICanvasSorting.SubOrderMax"/>]）。
+        /// 面板不携带 Canvas 时此属性不参与排序。
+        /// </summary>
+        public virtual int SubOrder => 1;
+
+        /// <summary>
         /// 当前面板生命周期状态。
         /// </summary>
         public UIPanelState CurrentState { get; private set; }

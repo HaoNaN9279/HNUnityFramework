@@ -147,8 +147,8 @@ public class GameEntry : GameWorldDriver
 | C11 | AudioManager, AudioEmitter, miniaudio bridge | `HN.Framework.Unity.Capability.Audio` | Unity |
 | C12 | CutsceneData, CutsceneRole, ICutsceneManager | `HN.Framework.Core.Capability.Cutscene` | Core |
 | C12 | CutsceneManager, CutsceneActor, ICutsceneActorRegistry, CutsceneActorRegistry, CutsceneBindingResolver + Tracks | `HN.Framework.Unity.Capability.Cutscene` | Unity |
-| C13 | UILayer, UIPanelState, IUIManager, RedDotNode, GuideStep, DialogResult, ToastConfig | `HN.Framework.Core.Capability.UI` | Core |
-| C13 | UIManager, UIPanel, UIDialog, UIToast, UIGuide, UIAnimation, RedDotManager | `HN.Framework.Unity.Level.View.UI` | Unity |
+| C13 | UILayer, UIPanelState, IUIManager, IUICanvasHandle, UICanvasSorting, RedDotNode, GuideStep, DialogResult, ToastConfig | `HN.Framework.Core.Capability.UI` | Core |
+| C13 | UIManager, UIPanel, UIDialog, UIToast, UIGuide, UIAnimation, UICanvasHandle, RedDotManager | `HN.Framework.Unity.Level.View.UI` | Unity |
 | C14 | IInputManager, InputAction, InputContext, IInputBlocker, InputTypes | `HN.Framework.Core.Capability.Input` | Core |
 | C14 | InputManager, InputBlocker, DeviceDetector, TouchInputAdapter, InputActionAssetLoader | `HN.Framework.Unity.Capability.Input` | Unity |
 | C15 | IScriptEngine, IScriptMod, IHotUpdateEntry, ModState, ScriptModConfig | `HN.Framework.Core.Capability.Scripting` | Core |

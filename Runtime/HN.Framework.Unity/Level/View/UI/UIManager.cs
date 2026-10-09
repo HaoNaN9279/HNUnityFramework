@@ -7,6 +7,7 @@ using HN.Framework.Core.Driver.Common;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.UI;
 
 namespace HN.Framework.Unity.Level.View.UI
 {
@@ -83,6 +84,14 @@ namespace HN.Framework.Unity.Level.View.UI
         private readonly Stack<UIPanel> _panelStack;
         private readonly Dictionary<string, UIPanel> _nonStackPanels;
 
+        // ── 层内嵌套 SubCanvas 管理 ──
+
+        /// <summary>每个层内的用户自定义嵌套 SubCanvas，按 (SubOrder, Id) 有序。</summary>
+        private readonly List<UICanvasHandle>[] _subCanvases;
+
+        /// <summary>SubCanvas 句柄 ID 分配器。</summary>
+        private int _nextCanvasId = 1;
+
         // ── Phase 2 新增字段 ──
 
         /// <summary>已显示的对话框面板（key 为 panelPath）。</summary>
@@ -127,6 +136,11 @@ namespace HN.Framework.Unity.Level.View.UI
             _layerRoots = new Transform?[LayerCount];
             _panelStack = new Stack<UIPanel>();
             _nonStackPanels = new Dictionary<string, UIPanel>();
+            _subCanvases = new List<UICanvasHandle>[LayerCount];
+            for (int i = 0; i < LayerCount; i++)
+            {
+                _subCanvases[i] = new List<UICanvasHandle>();
+            }
         }
 
         /// <summary>
@@ -262,6 +276,7 @@ namespace HN.Framework.Unity.Level.View.UI
                 previous.Pause();
             }
 
+            ConfigurePanelCanvas(panel, UILayer.UI);
             panel.Open(layerRoot);
             _panelStack.Push(panel);
         }
@@ -342,6 +357,7 @@ namespace HN.Framework.Unity.Level.View.UI
                 return;
             }
 
+            ConfigurePanelCanvas(panel, UILayer.UI);
             panel.Open(layerRoot);
             _nonStackPanels[panelPath] = panel;
         }
@@ -477,6 +493,7 @@ namespace HN.Framework.Unity.Level.View.UI
                     previous.Pause();
                 }
 
+                ConfigurePanelCanvas(panel, UILayer.UI);
                 panel.Open(layerRoot);
                 _panelStack.Push(panel);
             });
@@ -531,6 +548,7 @@ namespace HN.Framework.Unity.Level.View.UI
                     return;
                 }
 
+                ConfigurePanelCanvas(panel, UILayer.UI);
                 panel.Open(layerRoot);
                 _nonStackPanels[panelPath] = panel;
             });
@@ -587,6 +605,7 @@ namespace HN.Framework.Unity.Level.View.UI
                     return;
                 }
 
+                ConfigurePanelCanvas(dialog, UILayer.Popup);
                 dialog.Show(layerRoot, onConfirm, onCancel);
 
                 // 订阅关闭事件以清理 _currentDialogs
@@ -667,6 +686,7 @@ namespace HN.Framework.Unity.Level.View.UI
 
             toast.OnDismissed += OnToastDismissed;
 
+            ConfigurePanelCanvas(toast, UILayer.Toast);
             toast.Show(toastRoot, item.Message, item.Duration);
 
             _activeToastList.Add(new ActiveToast { Toast = toast, RemainingTime = item.Duration });
@@ -740,6 +760,7 @@ namespace HN.Framework.Unity.Level.View.UI
                 guide.OnGuideCompleted = onCompleted;
 
                 // 打开引导面板到 Guide 层
+                ConfigurePanelCanvas(guide, UILayer.Guide);
                 guide.Open(guideRoot);
 
                 _currentGuide = guide;
@@ -786,6 +807,172 @@ namespace HN.Framework.Unity.Level.View.UI
                 return null;
 
             return _layerRoots[index];
+        }
+
+        // ── 嵌套 SubCanvas 管理 ──
+
+        /// <inheritdoc />
+        public IUICanvasHandle? CreateCanvas(UILayer layer, int subOrder, string name, bool interactable = false)
+        {
+            if (!_initialized)
+            {
+                UnityEngine.Debug.LogError($"[UIManager] CreateCanvas('{name}') called before Initialize().");
+                return null;
+            }
+
+            int index = LayerToIndex(layer);
+            if (index < 0 || index >= LayerCount)
+            {
+                UnityEngine.Debug.LogError($"[UIManager] CreateCanvas(): invalid layer '{layer}'.");
+                return null;
+            }
+
+            Transform? layerRoot = _layerRoots[index];
+            if (layerRoot == null)
+            {
+                UnityEngine.Debug.LogError($"[UIManager] CreateCanvas(): layer root for '{layer}' is null.");
+                return null;
+            }
+
+            int clamped = UICanvasSorting.ClampSubOrder(subOrder);
+
+            var canvasGo = new GameObject(
+                string.IsNullOrEmpty(name) ? $"SubCanvas_{_nextCanvasId}" : name,
+                typeof(RectTransform), typeof(Canvas));
+            canvasGo.layer = layerRoot.gameObject.layer;
+            canvasGo.transform.SetParent(layerRoot, false);
+
+            var canvas = canvasGo.GetComponent<Canvas>();
+            canvas.overrideSorting = true;
+            canvas.sortingOrder = UICanvasSorting.ComputeSortingOrder(layer, clamped);
+
+            StretchToParent(canvasGo.GetComponent<RectTransform>());
+
+            if (interactable)
+                canvasGo.AddComponent<GraphicRaycaster>();
+
+            var handle = new UICanvasHandle(_nextCanvasId++, layer, clamped, canvas, canvasGo.transform);
+            _subCanvases[index].Add(handle);
+            SortLayerCanvases(index);
+            return handle;
+        }
+
+        /// <inheritdoc />
+        public void DestroyCanvas(IUICanvasHandle? handle)
+        {
+            if (handle is not UICanvasHandle typed || !typed.IsValid)
+                return;
+
+            int index = LayerToIndex(typed.Layer);
+            if (index < 0 || index >= LayerCount)
+                return;
+
+            _subCanvases[index].Remove(typed);
+            DestroyObject(typed.Canvas.gameObject);
+            SortLayerCanvases(index);
+        }
+
+        /// <inheritdoc />
+        public void SetCanvasSubOrder(IUICanvasHandle? handle, int subOrder)
+        {
+            if (handle is not UICanvasHandle typed || !typed.IsValid)
+                return;
+
+            int index = LayerToIndex(typed.Layer);
+            if (index < 0 || index >= LayerCount)
+                return;
+
+            typed.ApplySubOrder(UICanvasSorting.ClampSubOrder(subOrder));
+            SortLayerCanvases(index);
+        }
+
+        /// <summary>
+        /// 获取指定层当前的自定义 SubCanvas 数量（诊断用）。
+        /// </summary>
+        /// <param name="layer">UI 层级。</param>
+        /// <returns>SubCanvas 数量；层无效时返回 0。</returns>
+        public int GetSubCanvasCount(UILayer layer)
+        {
+            int index = LayerToIndex(layer);
+            if (index < 0 || index >= LayerCount)
+                return 0;
+            return _subCanvases[index].Count;
+        }
+
+        /// <summary>
+        /// 获取指定层当前的自定义 SubCanvas 句柄列表（诊断用，按层内渲染顺序）。
+        /// </summary>
+        /// <param name="layer">UI 层级。</param>
+        /// <returns>只读句柄列表；层无效时返回空列表。</returns>
+        public IReadOnlyList<UICanvasHandle> GetSubCanvases(UILayer layer)
+        {
+            int index = LayerToIndex(layer);
+            if (index < 0 || index >= LayerCount)
+                return Array.Empty<UICanvasHandle>();
+            return _subCanvases[index];
+        }
+
+        /// <summary>
+        /// 按 (SubOrder, Id) 重排层内 SubCanvas 的 hierarchy 顺序，保证同 SubOrder 时的确定性 tie-break。
+        /// 重排后它们位于层 Root 的末尾，即排在普通面板之上。
+        /// </summary>
+        private void SortLayerCanvases(int index)
+        {
+            var list = _subCanvases[index];
+            list.Sort((a, b) =>
+            {
+                int byOrder = a.SubOrder.CompareTo(b.SubOrder);
+                return byOrder != 0 ? byOrder : a.Id.CompareTo(b.Id);
+            });
+
+            Transform? root = _layerRoots[index];
+            if (root == null)
+                return;
+
+            int start = root.childCount - list.Count;
+            for (int i = 0; i < list.Count; i++)
+            {
+                Transform? t = list[i].Root;
+                if (t != null)
+                    t.SetSiblingIndex(start + i);
+            }
+        }
+
+        /// <summary>
+        /// 将 RectTransform 拉伸铺满父容器并重置缩放，用于修正嵌套 Canvas 不自适应屏幕的问题。
+        /// </summary>
+        private static void StretchToParent(RectTransform? rect)
+        {
+            if (rect == null)
+                return;
+
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.localScale = Vector3.one;
+        }
+
+        /// <summary>
+        /// 若面板自带 Canvas，则将其配置为层的嵌套 SubCanvas
+        /// （overrideSorting = true，sortingOrder = 层基值 + 面板 SubOrder），并拉伸铺满。
+        /// 面板不携带 Canvas 时为空操作（与层根 Canvas 共享）。
+        /// </summary>
+        /// <param name="panel">面板实例。</param>
+        /// <param name="layer">面板所属层。</param>
+        private static void ConfigurePanelCanvas(UIPanel panel, UILayer layer)
+        {
+            if (panel == null || panel.gameObject == null)
+                return;
+
+            var canvas = panel.GetComponent<Canvas>();
+            if (canvas == null)
+                return;
+
+            canvas.overrideSorting = true;
+            canvas.sortingOrder = UICanvasSorting.ComputeSortingOrder(layer, panel.SubOrder);
+            StretchToParent(panel.transform as RectTransform);
         }
 
         // ── ITickable ──
@@ -889,6 +1076,12 @@ namespace HN.Framework.Unity.Level.View.UI
                 kvp.Value?.Close();
             }
             _nonStackPanels.Clear();
+
+            // 清空层内 SubCanvas 记录（其 GameObject 随层根 Canvas 一并销毁）
+            for (int i = 0; i < LayerCount; i++)
+            {
+                _subCanvases[i].Clear();
+            }
 
             // 销毁所有 Canvas GameObject
             for (int i = 0; i < LayerCount; i++)

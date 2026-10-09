@@ -308,5 +308,41 @@ namespace HN.Framework.Core.Tests.Capability.UI
         public void ShowAsync(string panelPath)
         {
         }
+
+        // ───────── 嵌套 SubCanvas 管理 ─────────
+
+        /// <summary>
+        /// 最后创建 Canvas 的层。
+        /// </summary>
+        public UILayer LastCanvasLayer { get; private set; }
+
+        /// <summary>
+        /// 最后创建 Canvas 的层内排序号。
+        /// </summary>
+        public int LastCanvasSubOrder { get; private set; }
+
+        /// <summary>
+        /// 最后创建 Canvas 的名称。
+        /// </summary>
+        public string? LastCanvasName { get; private set; }
+
+        /// <inheritdoc />
+        public IUICanvasHandle? CreateCanvas(UILayer layer, int subOrder, string name, bool interactable = false)
+        {
+            LastCanvasLayer = layer;
+            LastCanvasSubOrder = subOrder;
+            LastCanvasName = name;
+            return null;
+        }
+
+        /// <inheritdoc />
+        public void DestroyCanvas(IUICanvasHandle? handle)
+        {
+        }
+
+        /// <inheritdoc />
+        public void SetCanvasSubOrder(IUICanvasHandle? handle, int subOrder)
+        {
+        }
     }
 }
