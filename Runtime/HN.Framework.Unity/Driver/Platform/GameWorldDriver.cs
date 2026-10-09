@@ -127,6 +127,7 @@ namespace HN.Framework.Unity.Driver.Platform
             (World?.UIManager as IDisposable)?.Dispose();
             (World?.PhysicsWorld as IDisposable)?.Dispose();
             (World?.CameraManager as IDisposable)?.Dispose();
+            (World?.CutsceneManager as IDisposable)?.Dispose();
             _localeManager?.Dispose();
         }
 

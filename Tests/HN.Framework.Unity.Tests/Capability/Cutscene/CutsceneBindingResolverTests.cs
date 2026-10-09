@@ -10,6 +10,7 @@ namespace HN.Framework.Unity.Tests.Capability.Cutscene
     public class CutsceneBindingResolverTests
     {
         private GameObject _lastCreated;
+        private CutsceneActorRegistry _registry;
 
         private GameObject CreateTestGO(string name)
         {
@@ -21,6 +22,9 @@ namespace HN.Framework.Unity.Tests.Capability.Cutscene
         [TearDown]
         public void TearDown()
         {
+            _registry?.Dispose();
+            _registry = null;
+
             if (_lastCreated != null)
             {
                 Object.DestroyImmediate(_lastCreated);
@@ -101,6 +105,41 @@ namespace HN.Framework.Unity.Tests.Capability.Cutscene
             resolver.SetReferenceValue(name, go);
             resolver.GetReferenceValue(name, out var valid);
             Assert.That(valid, Is.True);
+        }
+
+        [Test]
+        public void Resolve_WithInjectedRegistry_UsesRegistryInsteadOfFind()
+        {
+            var go = CreateTestGO("RegistryActor");
+            var actor = go.AddComponent<CutsceneActor>();
+            actor.ActorRole = "Hero";
+
+            _registry = new CutsceneActorRegistry();
+            _registry.Register(actor);
+
+            // targetId 为不存在的场景路径：若无注入注册表，Find 会失败
+            var bindings = new CutsceneBindingMap(BindingResolveMode.ScenePath);
+            bindings.AddBinding("Hero", "NonExistentScenePath__");
+
+            var resolver = new CutsceneBindingResolver(bindings, _registry);
+            var resolved = resolver.GetReferenceValue(new UnityEngine.PropertyName("Hero"), out var valid);
+
+            Assert.That(valid, Is.True, "注入注册表后应按角色名 O(1) 命中");
+            Assert.That(resolved, Is.EqualTo(go));
+        }
+
+        [Test]
+        public void Resolve_NullRegistry_FallsBackToFind()
+        {
+            var go = CreateTestGO("ResolverTest_FallbackNullRegistry");
+            var bindings = new CutsceneBindingMap(BindingResolveMode.ScenePath);
+            bindings.AddBinding("Hero", "ResolverTest_FallbackNullRegistry");
+
+            var resolver = new CutsceneBindingResolver(bindings, null);
+            var resolved = resolver.GetReferenceValue(new UnityEngine.PropertyName("Hero"), out var valid);
+
+            Assert.That(valid, Is.True, "注册表为 null 时应回退到 GameObject.Find");
+            Assert.That(resolved, Is.EqualTo(go));
         }
     }
 }

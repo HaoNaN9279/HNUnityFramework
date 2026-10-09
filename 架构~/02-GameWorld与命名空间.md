@@ -146,7 +146,7 @@ public class GameEntry : GameWorldDriver
 | C11 | AudioEvent, AudioBus, AudioBank, IAudioManager 等 | `HN.Framework.Core.Capability.Audio` | Core |
 | C11 | AudioManager, AudioEmitter, miniaudio bridge | `HN.Framework.Unity.Capability.Audio` | Unity |
 | C12 | CutsceneData, CutsceneRole, ICutsceneManager | `HN.Framework.Core.Capability.Cutscene` | Core |
-| C12 | CutsceneManager, CutsceneActor, CutsceneBindingResolver + Tracks | `HN.Framework.Unity.Capability.Cutscene` | Unity |
+| C12 | CutsceneManager, CutsceneActor, ICutsceneActorRegistry, CutsceneActorRegistry, CutsceneBindingResolver + Tracks | `HN.Framework.Unity.Capability.Cutscene` | Unity |
 | C13 | UILayer, UIPanelState, IUIManager, RedDotNode, GuideStep, DialogResult, ToastConfig | `HN.Framework.Core.Capability.UI` | Core |
 | C13 | UIManager, UIPanel, UIDialog, UIToast, UIGuide, UIAnimation, RedDotManager | `HN.Framework.Unity.Level.View.UI` | Unity |
 | C14 | IInputManager, InputAction, InputContext, IInputBlocker, InputTypes | `HN.Framework.Core.Capability.Input` | Core |

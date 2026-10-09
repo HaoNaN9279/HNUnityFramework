@@ -9,7 +9,7 @@ sidebar_position: 23
 C12 过场动画系统基于 Unity Timeline 构建，提供完整的过场动画播放、管理和编辑器支持。核心创新有两个：
 
 1. **`CutsceneBindingResolver`**（自定义 `IExposedPropertyTable`）：通过角色名而非具体 GameObject 引用进行 Track 绑定，实现 TimelineAsset 与场景解耦。
-2. **`CutsceneActorRegistry`**（主动注册表）：CutsceneActor 在 OnEnable/OnDisable 生命周期中自动注册/注销，实现 O(1) 字典查找替代传统 `GameObject.Find` / `FindObjectsByType` 的 O(n) 全场景扫描，大幅提升运行时性能。
+2. **`CutsceneActorRegistry`（`ICutsceneActorRegistry` 的默认实现，实例注册表）**：CutsceneActor 在 OnEnable/OnDisable 生命周期中自动注册/注销，实现 O(1) 字典查找替代传统 `GameObject.Find` / `FindObjectsByType` 的 O(n) 全场景扫描。注册表实例由 `CutsceneManager` 持有，并通过构造函数注入给 `CutsceneBindingResolver`——不使用全局静态状态，便于测试隔离与实现替换。
 
 ## 快速开始
 
@@ -23,7 +23,7 @@ C12 过场动画系统基于 Unity Timeline 构建，提供完整的过场动画
 ```
 选择 GameObject → Add Component → HN Framework/Cutscene/CutsceneActor
 ```
-在 Inspector 中设置 `Actor Role` 名称。组件启用时会自动向 `CutsceneActorRegistry` 注册，禁用时自动注销。
+在 Inspector 中设置 `Actor Role` 名称。组件启用时经 `GameWorldDriver` → `CutsceneManager.ActorRegistry` 解析出注册表实例并注册，禁用时从同一实例注销。
 
 > **提示**：推荐始终为过场相关的 GameObject 添加 `CutsceneActor` 组件，以获得 O(1) 查找性能。未添加组件的对象仍可通过 fallback 机制解析（`GameObject.Find` 等），但性能较低。
 
@@ -36,10 +36,10 @@ bindingMap.AddBinding("NPC1", "/Game/Characters/Merchant");
 ```
 
 支持四种解析模式：
-- `ScenePath` — 优先通过 `CutsceneActorRegistry.TryResolveByRole()` O(1) 查找，未命中时回退到 `GameObject.Find`
-- `Tag` — 优先通过 `CutsceneActorRegistry.TryResolveByTag()` O(1) 查找，未命中时回退到 `FindWithTag`
-- `EntityId` — 优先通过 `CutsceneActorRegistry.TryResolveByEntity()` O(1) 查找，未命中时回退到 `FindObjectsByType`
-- `ActorComponent` — 优先通过 `CutsceneActorRegistry.TryResolveByTag()` O(1) 查找，未命中时回退到 `FindObjectsByType`
+- `ScenePath` — 优先通过注入的 `ICutsceneActorRegistry.TryResolveByRole()` O(1) 查找，未命中时回退到 `GameObject.Find`
+- `Tag` — 优先通过注入的 `ICutsceneActorRegistry.TryResolveByTag()` O(1) 查找，未命中时回退到 `FindWithTag`
+- `EntityId` — 优先通过注入的 `ICutsceneActorRegistry.TryResolveByEntity()` O(1) 查找，未命中时回退到 `FindObjectsByType`
+- `ActorComponent` — 优先通过注入的 `ICutsceneActorRegistry.TryResolveByTag()` O(1) 查找，未命中时回退到 `FindObjectsByType`
 
 ### 4. 播放过场
 
@@ -98,15 +98,21 @@ cutsceneManager.Enqueue("Assets/Cutscenes/Ending", CutscenePriority.Normal);
 
 ### 注册表机制
 
-`CutsceneActorRegistry` 是一个全局静态注册表，提供 O(1) 的字典查找：
+注册表以**接口 + 实例 + 注入**组织（不再使用全局静态状态）：
+
+- `ICutsceneActorRegistry` — 注册表接口（`Register`/`Unregister`/`TryResolveByRole`/`TryResolveByTag`/`TryResolveByEntity`/`Clear`）。
+- `CutsceneActorRegistry` — 默认实现（实例，实现 `IDisposable`），提供 O(1) 字典查找。
+- `CutsceneManager` 创建并持有注册表实例（`ActorRegistry` 属性），创建 `CutscenePlayer` 时经构造函数注入给 `CutsceneBindingResolver`。也可向 `CutsceneManager` 构造函数传入自定义 `ICutsceneActorRegistry` 以替换实现。
 
 ```
-CutsceneActor.OnEnable()  →  CutsceneActorRegistry.Register(this)
-                                 ├── _roleMap[ActorRole] = gameObject
-                                 ├── _tagMap[ActorTag] = gameObject
-                                 └── _entityMap[EntityId] = gameObject
+CutsceneActor.OnEnable()
+  → 经 GameWorldDriver → CutsceneManager.ActorRegistry 解析出注册表实例
+  → registry.Register(this)
+       ├── _roleMap[ActorRole] = gameObject
+       ├── _tagMap[ActorTag] = gameObject
+       └── _entityMap[EntityId] = gameObject
 
-CutsceneActor.OnDisable() →  CutsceneActorRegistry.Unregister(this)
+CutsceneActor.OnDisable() → registry.Unregister(this)
                                  └── 仅当值匹配时才移除
 
 场景卸载                →  SceneManager.sceneUnloaded 回调

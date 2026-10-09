@@ -8,11 +8,21 @@ namespace HN.Framework.Unity.Capability.Cutscene
     public class CutsceneBindingResolver : IExposedPropertyTable
     {
         private readonly CutsceneBindingMap _bindingMap;
+        private readonly ICutsceneActorRegistry _registry;
         private readonly Dictionary<PropertyName, Object> _resolvedCache = new Dictionary<PropertyName, Object>();
 
-        public CutsceneBindingResolver(CutsceneBindingMap bindingMap)
+        /// <summary>
+        /// 构造绑定解析器。
+        /// </summary>
+        /// <param name="bindingMap">角色名 → 绑定标识映射。</param>
+        /// <param name="registry">
+        /// 演员注册表（O(1) 查找）。注入的实例由 <see cref="CutsceneManager"/> 持有；
+        /// 为 null 时跳过注册表查找，直接走引擎全场景扫描的 fallback 路径。
+        /// </param>
+        public CutsceneBindingResolver(CutsceneBindingMap bindingMap, ICutsceneActorRegistry registry = null)
         {
             _bindingMap = bindingMap;
+            _registry = registry;
         }
 
         public void ClearCache()
@@ -69,10 +79,10 @@ namespace HN.Framework.Unity.Capability.Cutscene
                 case BindingResolveMode.ScenePath:
                 {
                     // 优先通过注册表按角色名 O(1) 查找
-                    if (CutsceneActorRegistry.TryResolveByRole(roleName, out var go))
+                    if (_registry != null && _registry.TryResolveByRole(roleName, out var go))
                         return go;
                     // 尝试按 targetId 查找（targetId 可能恰好与 ActorRole 同名）
-                    if (CutsceneActorRegistry.TryResolveByRole(targetId, out go))
+                    if (_registry != null && _registry.TryResolveByRole(targetId, out go))
                         return go;
                     // Fallback：保留旧方式以兼容未挂 CutsceneActor 组件的对象
                     return GameObject.Find(targetId);
@@ -80,18 +90,18 @@ namespace HN.Framework.Unity.Capability.Cutscene
                 case BindingResolveMode.Tag:
                 {
                     // 优先通过注册表的 Tag 索引 O(1) 查找
-                    if (CutsceneActorRegistry.TryResolveByTag(targetId, out var go))
+                    if (_registry != null && _registry.TryResolveByTag(targetId, out var go))
                         return go;
                     // Fallback：引擎内部的 Tag 索引也是 O(1)
                     return GameObject.FindWithTag(targetId);
                 }
                 case BindingResolveMode.EntityId:
-                    if (CutsceneActorRegistry.TryResolveByEntity(targetId, out var entityGo))
+                    if (_registry != null && _registry.TryResolveByEntity(targetId, out var entityGo))
                         return entityGo;
                     // Fallback
                     return FindActorByEntityId(targetId);
                 case BindingResolveMode.ActorComponent:
-                    if (CutsceneActorRegistry.TryResolveByTag(targetId, out var actorGo))
+                    if (_registry != null && _registry.TryResolveByTag(targetId, out var actorGo))
                         return actorGo;
                     // Fallback
                     return FindActorByTag(targetId);

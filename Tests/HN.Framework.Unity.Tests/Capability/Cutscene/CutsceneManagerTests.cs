@@ -93,5 +93,35 @@ namespace HN.Framework.Unity.Tests.Capability.Cutscene
             manager.Enqueue("cut1");
             Assert.DoesNotThrow(() => manager.StopAll());
         }
+
+        [Test]
+        public void Manager_DefaultActorRegistry_IsNotNull()
+        {
+            var manager = new CutsceneManager();
+            try
+            {
+                Assert.That(manager.ActorRegistry, Is.Not.Null);
+            }
+            finally
+            {
+                manager.Dispose();
+            }
+        }
+
+        [Test]
+        public void Manager_InjectedActorRegistry_IsUsed()
+        {
+            var registry = new CutsceneActorRegistry();
+            var manager = new CutsceneManager(registry);
+            try
+            {
+                Assert.That(manager.ActorRegistry, Is.SameAs(registry));
+            }
+            finally
+            {
+                manager.Dispose();
+                registry.Dispose();
+            }
+        }
     }
 }

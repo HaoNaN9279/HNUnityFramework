@@ -25,11 +25,22 @@ namespace HN.Framework.Unity.Capability.Cutscene
         private AsyncOperationHandle<PlayableAsset> _loadHandle;
         private bool _isLoaded;
 
-        public CutscenePlayer(string cutsceneKey, CutsceneBindingMap? bindingMap, string addressablesKey)
+        /// <summary>
+        /// 构造过场播放器。
+        /// </summary>
+        /// <param name="cutsceneKey">过场资源标识。</param>
+        /// <param name="bindingMap">角色绑定映射，可为 null（使用默认绑定）。</param>
+        /// <param name="addressablesKey">Addressables 资源 key。</param>
+        /// <param name="registry">
+        /// 演员注册表，由 <see cref="CutsceneManager"/> 注入并透传给
+        /// <see cref="CutsceneBindingResolver"/>；可为 null。
+        /// </param>
+        public CutscenePlayer(string cutsceneKey, CutsceneBindingMap? bindingMap, string addressablesKey,
+            ICutsceneActorRegistry registry = null)
         {
             CutsceneKey = cutsceneKey;
             _addressablesKey = addressablesKey;
-            _resolver = new CutsceneBindingResolver(bindingMap ?? new CutsceneBindingMap());
+            _resolver = new CutsceneBindingResolver(bindingMap ?? new CutsceneBindingMap(), registry);
         }
 
         public void Play()

@@ -8,12 +8,33 @@ using UnityEngine;
 
 namespace HN.Framework.Unity.Capability.Cutscene
 {
-    public class CutsceneManager : ICutsceneManager
+    public class CutsceneManager : ICutsceneManager, IDisposable
     {
         /// <summary>
         /// 缓存的过场全局配置。由模块初始化时设置。
         /// </summary>
         internal static CutsceneSettings? s_CachedSettings;
+
+        /// <summary>
+        /// 演员注册表实例。由本管理器创建/持有（或由外部注入），
+        /// 并透传给每个 <see cref="CutscenePlayer"/> → <see cref="CutsceneBindingResolver"/>。
+        /// </summary>
+        public ICutsceneActorRegistry ActorRegistry { get; }
+
+        private readonly bool _ownsRegistry;
+
+        /// <summary>
+        /// 构造过场管理器。
+        /// </summary>
+        /// <param name="actorRegistry">
+        /// 演员注册表；为 null 时内部创建默认的 <see cref="CutsceneActorRegistry"/>（由本管理器负责释放）。
+        /// 传入自定义实现以替换查找来源或便于测试隔离。
+        /// </param>
+        public CutsceneManager(ICutsceneActorRegistry? actorRegistry = null)
+        {
+            _ownsRegistry = actorRegistry == null;
+            ActorRegistry = actorRegistry ?? new CutsceneActorRegistry();
+        }
 
         public IInputBlocker InputBlocker { get; set; }
         public ICameraManager CameraManager { get; set; }
@@ -138,7 +159,7 @@ namespace HN.Framework.Unity.Capability.Cutscene
 
         private ICutscenePlayer CreateAndPlay(string cutsceneKey, CutsceneBindingMap? bindingMap)
         {
-            var player = new CutscenePlayer(cutsceneKey, bindingMap, cutsceneKey);
+            var player = new CutscenePlayer(cutsceneKey, bindingMap, cutsceneKey, ActorRegistry);
             player.OnFinished += OnPlayerFinished;
             player.OnStateChanged += OnPlayerStateChanged;
 
@@ -204,6 +225,17 @@ namespace HN.Framework.Unity.Capability.Cutscene
                 CameraManager.SetActiveCamera(_previousCamera);
                 _previousCamera = null;
             }
+        }
+
+        /// <summary>
+        /// 释放由本管理器持有的资源。
+        /// 仅当注册表由本管理器创建（构造函数未外部注入）时才释放它，
+        /// 避免误释放外部注入的实现。
+        /// </summary>
+        public void Dispose()
+        {
+            if (_ownsRegistry && ActorRegistry is IDisposable disposable)
+                disposable.Dispose();
         }
     }
 }
