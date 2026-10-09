@@ -4,4 +4,4 @@
 **/*.suo
 
 # AI agent workspace artifacts
-.opencode/jobs/
+.opencode
