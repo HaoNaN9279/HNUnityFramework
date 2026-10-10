@@ -1,7 +1,3 @@
----
-sidebar_position: 14
----
-
 # 输入系统 (C14)
 
 Input System 模块提供基于 Unity Input System Package 的框架级封装，支持事件驱动的输入动作注册/注销、基于优先级的输入屏蔽、多设备自动检测、触屏虚拟控件等能力。
@@ -233,5 +229,5 @@ public class GameInputInstaller : MonoBehaviour
 
 ## 架构参考
 
-- 最终架构文档：[C14 输入系统](/dev/architecture/#c14--输入系统)
-- 通用能力层：[CapabilityModule](/guide/capability)
+- 最终架构文档：[C14 输入系统](../dev/architecture.md#c14--输入系统)
+- 通用能力层：[CapabilityModule](./capability.md)

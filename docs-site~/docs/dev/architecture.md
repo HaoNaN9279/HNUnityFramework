@@ -1,7 +1,3 @@
----
-sidebar_position: 2
----
-
 # 项目架构
 
 HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule → Level），

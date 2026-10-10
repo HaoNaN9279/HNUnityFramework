@@ -1,7 +1,3 @@
----
-sidebar_position: 4
----
-
 # 代码规范
 
 本文档定义了 HNUnityFramework 项目的代码编写和注释规范。
@@ -44,7 +40,7 @@ sidebar_position: 4
 
 ## XML 注释规范
 
-所有公共 API **必须**使用 XML 文档注释，用于自动生成 API 文档。
+所有公共 API **必须**使用 XML 文档注释。
 
 ### 必需标签
 

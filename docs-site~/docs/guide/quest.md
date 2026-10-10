@@ -1,7 +1,3 @@
----
-sidebar_position: 23
----
-
 # 任务/成就系统（Quest）
 
 ## 概述

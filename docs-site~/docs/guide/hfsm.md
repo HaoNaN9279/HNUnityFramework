@@ -1,7 +1,3 @@
----
-sidebar_position: 9
----
-
 # HFSM 层次状态机
 
 HFSM（Hierarchical Finite State Machine）模块提供灵活的层次有限状态机实现，支持条件转换、状态嵌套和动态增删。

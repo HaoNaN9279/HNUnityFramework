@@ -1,7 +1,3 @@
----
-sidebar_position: 17
----
-
 # 配置表系统 (Sheet)
 
 ## 概述

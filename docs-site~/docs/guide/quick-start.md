@@ -1,7 +1,3 @@
----
-sidebar_position: 3
----
-
 # 快速入门
 
 本文档将带你快速上手 HNUnityFramework，涵盖框架初始化、流程管理和资源加载。
@@ -158,6 +154,4 @@ pool.Release(obj);
 ## 下一步
 
 - 了解各模块的详细用法：[Core](./core.md) | [MVC](./mvc.md) | [对象池](./object-pool.md) | [HFSM](./hfsm.md)
-- 查看 [架构文档](/dev/architecture) 理解框架设计
-- 查阅 [API 文档](/api/) 获取完整 API 参考
-{/* OMO_INTERNAL_INITIATOR */}
+- 查看 [架构文档](../dev/architecture.md) 理解框架设计

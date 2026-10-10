@@ -1,7 +1,3 @@
----
-sidebar_position: 21
----
-
 # Physics — 物理系统抽象层
 
 ## 概览

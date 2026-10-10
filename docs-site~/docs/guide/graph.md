@@ -1,7 +1,3 @@
----
-sidebar_position: 41
----
-
 # L5 图数据模型
 
 图数据模型位于 **Core 层** 的 `HN.Framework.Core` 程序集，命名空间 `HN.Framework.Core.Level.Logic.Graph`，无 Unity 依赖。它是动画状态机图、行为树图、对话图等领域图的通用底层。
@@ -91,6 +87,5 @@ graph.AddGroup(group);
 
 ## 相关文档
 
-- 可视化编辑：[E2 Graph Editor](./graph-editor)
-- 架构说明：[06 - 关卡层](/dev/architecture)
-- API 参考：[API 索引](/api/)
+- 可视化编辑：[E2 Graph Editor](./graph-editor.md)
+- 架构说明：[06 - 关卡层](../dev/architecture.md)

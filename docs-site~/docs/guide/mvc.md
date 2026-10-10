@@ -1,7 +1,3 @@
----
-sidebar_position: 5
----
-
 # MVC 模块
 
 MVC 模块提供了 Model-View-Controller 分层架构的实现。

@@ -1,7 +1,3 @@
----
-sidebar_position: 22
----
-
 # 物品/背包/装备框架（Inventory）
 
 ## 概述

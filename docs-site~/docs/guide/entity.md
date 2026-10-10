@@ -1,10 +1,6 @@
----
-sidebar_position: 14
----
-
 # Entity 实体系统
 
-Entity 模块位于 **Core 层** 的 `HN.Framework.Core` 程序集中，属于 Level.Logic 逻辑层的核心基础设施。具体位置见 [架构文档](/dev/architecture)。
+Entity 模块位于 **Core 层** 的 `HN.Framework.Core` 程序集中，属于 Level.Logic 逻辑层的核心基础设施。具体位置见 [架构文档](../dev/architecture.md)。
 
 ## 概述
 

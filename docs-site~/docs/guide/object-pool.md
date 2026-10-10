@@ -1,7 +1,3 @@
----
-sidebar_position: 7
----
-
 # 对象池
 
 ObjectPool 模块提供高效的对象复用机制，支持 C# 普通对象池和 Unity GameObject 对象池。

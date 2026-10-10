@@ -1,7 +1,3 @@
----
-sidebar_position: 13
----
-
 # 通用能力层 (CapabilityModule)
 
 CapabilityModule 位于 DriverLayer 与 Level 之间，提供跨关卡复用的通用服务接口和框架级实现。各接口通过 `GameWorld` 属性暴露，由 `GameWorldDriver` 在初始化时注入具体实现。

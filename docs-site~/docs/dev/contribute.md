@@ -1,7 +1,3 @@
----
-sidebar_position: 3
----
-
 # 贡献指南
 
 欢迎为 HNUnityFramework 做出贡献！本文档介绍开发流程和规范。
@@ -11,8 +7,6 @@ sidebar_position: 3
 | 组件 | 版本要求 |
 |------|---------|
 | Unity | 2022.3+ |
-| .NET SDK | 8.0+ （用于生成 API 文档） |
-| Node.js | 20+ （用于文档站点开发） |
 
 ## 分支策略
 
@@ -45,20 +39,19 @@ docs: 更新 Core 模块使用指南
 每次 PR 合并前确认：
 
 - [ ] 公共 API 有完整的 XML 文档注释（`<summary>` 必填）
-- [ ] 新增模块是否已在 `~docs-site/docs/api/index.md` 中索引
+- [ ] 新增模块是否已在 `~docs-site/docs/guide/` 中有对应说明
 - [ ] 架构变更是否已更新 `~docs-site/docs/dev/architecture.md`
 - [ ] 本次变更是否需要更新 `AGENTS.md`
 - [ ] 本次变更是否需要更新 `README.md`
-- [ ] 本地运行 `npm run build`（在 `~docs-site/` 下）是否通过
 
-## 文档更新
+## 文档维护
 
-### 自动更新（CI）
+文档以 Markdown 文件形式维护在 `~docs-site/docs/` 下，分为两类：
 
-推送到 `main` 分支时，GitHub Actions 自动：
-1. 运行 DocFX 从源码 XML 注释生成 API 参考文档
-2. 构建 Docusaurus 站点
-3. 部署到 GitHub Pages
+- `docs/guide/` — 使用指南
+- `docs/dev/` — 开发文档
+
+直接编辑对应的 `.md` 文件即可，无构建或部署流程。文档间链接使用相对路径（如 `./object-pool.md`、`../dev/architecture.md`）。
 
 ## 扩展模块配置（Settings）
 
@@ -162,21 +155,6 @@ HN.Framework.Unity.Capability.MyModule.MySettings.GetOrCreateSettings();
 4. 提交并创建 PR
 5. Code Review 通过后合并到 `main`
 
-## 文档本地开发
+## 文档编辑
 
-```bash
-cd ~docs-site
-
-# 安装依赖
-npm install
-
-# 启动开发服务器（支持热更新）
-npm start
-# → http://localhost:3000/HNUnityFramework/
-
-# 生成 API 文档（需要 .NET 8.0 SDK）
-npm run docs:api
-
-# 完整构建（含 API 文档）
-npm run build:full
-```
+文档为纯 Markdown，直接用任意编辑器编辑 `~docs-site/docs/` 下的 `.md` 文件即可。

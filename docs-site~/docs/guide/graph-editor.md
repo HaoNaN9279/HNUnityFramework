@@ -1,10 +1,6 @@
----
-sidebar_position: 42
----
-
 # E2 Graph Editor
 
-Graph Editor 位于 **Editor 层**，命名空间 `HN.Framework.Editor.Graph`，目录 `Editor/Graph/`。基于 Unity GraphView 构建，与 [L5 图数据模型](./graph) 双向同步，是动画状态机、行为树、决策树、效用曲线与 AI 策略编辑器的通用底层。
+Graph Editor 位于 **Editor 层**，命名空间 `HN.Framework.Editor.Graph`，目录 `Editor/Graph/`。基于 Unity GraphView 构建，与 [L5 图数据模型](./graph.md) 双向同步，是动画状态机、行为树、决策树、效用曲线与 AI 策略编辑器的通用底层。
 
 ## 概述
 
@@ -86,6 +82,5 @@ GraphData imported = GraphSerializationUtility.ImportJson("D:/player-graph.json"
 
 ## 相关文档
 
-- 数据模型：[L5 图数据模型](./graph)
-- 架构说明：[Editor 工具层](/dev/architecture)
-- API 参考：[API 索引](/api/)
+- 数据模型：[L5 图数据模型](./graph.md)
+- 架构说明：[Editor 工具层](../dev/architecture.md)

@@ -1,7 +1,3 @@
----
-sidebar_position: 20
----
-
 # 战斗数值体系（Combat）
 
 ## 概述
@@ -296,4 +292,4 @@ Excel(tb_attribute / tb_buff / tb_ability / ...)
     → Combat 模块消费
 ```
 
-更多配置表集成请参考 [Sheet 系统指南](./sheet)。
+更多配置表集成请参考 [Sheet 系统指南](./sheet.md)。

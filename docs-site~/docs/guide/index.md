@@ -1,7 +1,3 @@
----
-sidebar_position: 1
----
-
 # HNUnityFramework 使用指南
 
 欢迎使用 HNUnityFramework —— 一个轻量级、模块化的 Unity 游戏开发框架。
@@ -21,7 +17,7 @@ HNUnityFramework 采用三层架构设计，自底向上分为**驱动层 (Drive
 
 ## 快速开始
 
-查看 [安装指南](./install) 了解如何将框架集成到你的项目中，然后参考 [快速入门](./quick-start) 开始使用。
+查看 [安装指南](./install.md) 了解如何将框架集成到你的项目中，然后参考 [快速入门](./quick-start.md) 开始使用。
 
 ## 架构导航
 
@@ -29,31 +25,31 @@ HNUnityFramework 采用三层架构设计，自底向上分为**驱动层 (Drive
 
 驱动层是框架的基石，提供全局驱动根节点、基础类库和对象池系统。
 
-- **[GameWorld / GameWorldDriver](./core)** — 框架入口与全局驱动根节点，管理固定步长逻辑帧和全局设置
-- **基础类库** — [参考池 (ReferencePool)](./reference-pool) 零 GC 引用对象管理，[序列化 (Serialize)](./serialize) JSON 工具，HNLogicTime 逻辑时间
-- **[对象池 (ObjectPool)](./object-pool)** — 支持普通 C# 对象和 GameObject 的通用对象池
+- **[GameWorld / GameWorldDriver](./core.md)** — 框架入口与全局驱动根节点，管理固定步长逻辑帧和全局设置
+- **基础类库** — [参考池 (ReferencePool)](./reference-pool.md) 零 GC 引用对象管理，[序列化 (Serialize)](./serialize.md) JSON 工具，HNLogicTime 逻辑时间
+- **[对象池 (ObjectPool)](./object-pool.md)** — 支持普通 C# 对象和 GameObject 的通用对象池
 
 ### 通用能力层 (CapabilityModule)
 
 通用能力层提供跨关卡复用的服务接口和通用实现。
 
-- **[资源管理 (AssetManager)](./asset-manager)** — `IAssetManager` 统一资源接口，`AddressablesOperator` Addressables 加载器
+- **[资源管理 (AssetManager)](./asset-manager.md)** — `IAssetManager` 统一资源接口，`AddressablesOperator` Addressables 加载器
 - **日志** — `ILogProvider` / `UnityLogProvider` 日志接口与 Unity 实现
-- **[本地化 (C3)](./localization)** — 多语言字符串查询、TextLocalizer 自动文本更新、AssetLocalizer 按语言加载资源
-- **网络 (✅)** — `INetworkManager` 网络服务接口（C6.1 状态同步 + 帧同步 + C6.2 客户端预测已完成，详见[网络指南](./network)）
+- **[本地化 (C3)](./localization.md)** — 多语言字符串查询、TextLocalizer 自动文本更新、AssetLocalizer 按语言加载资源
+- **网络 (✅)** — `INetworkManager` 网络服务接口（C6.1 状态同步 + 帧同步 + C6.2 客户端预测已完成，详见[网络指南](./network.md)）
 - **存储** — `IStorageProvider` 持久化存储接口
-- **[物理系统 (Physics)](./physics)** — `IPhysicsWorld` 纯 C# 物理抽象层，统一 2D/3D 物理接口，支持 PhysX 封装、射线检测、碰撞事件
-- **[流程管理 (Procedure)](./procedure)** — `ProcedureManager` 事件驱动的游戏流程控制
+- **[物理系统 (Physics)](./physics.md)** — `IPhysicsWorld` 纯 C# 物理抽象层，统一 2D/3D 物理接口，支持 PhysX 封装、射线检测、碰撞事件
+- **[流程管理 (Procedure)](./procedure.md)** — `ProcedureManager` 事件驱动的游戏流程控制
 - **事件 (🚧 Stub)** — `IEventBus` 事件总线接口
 
 ### 关卡层 (Level)
 
 关卡层是游戏逻辑和表现的核心，包含 MVC 框架和状态机等基础设施。
 
-- **[MVC 框架](./mvc)** — Model-View-Controller 分层架构
-- **[HFSM](./hfsm)** — 层次有限状态机，支持条件转换和状态嵌套
-- **[L5 图数据模型](./graph)** — 通用图数据底层（节点/边/端口/编组），MemoryPack 可序列化，动画/行为树/对话图基础
-- **[Combat 战斗数值体系](./combat)** — 属性/效果/Buff/技能 四模块数值系统（AttributeSet/EffectPipeline/DamagePipeline/BuffSystem/AbilitySystem）
+- **[MVC 框架](./mvc.md)** — Model-View-Controller 分层架构
+- **[HFSM](./hfsm.md)** — 层次有限状态机，支持条件转换和状态嵌套
+- **[L5 图数据模型](./graph.md)** — 通用图数据底层（节点/边/端口/编组），MemoryPack 可序列化，动画/行为树/对话图基础
+- **[Combat 战斗数值体系](./combat.md)** — 属性/效果/Buff/技能 四模块数值系统（AttributeSet/EffectPipeline/DamagePipeline/BuffSystem/AbilitySystem）
 - **Entity 系统 (🚧 Stub)** — Entity 基类与 EntityView 基类
 - **视图工厂 (🚧 Stub)** — ViewFactory 基类与 PropertyBinder
 
@@ -67,8 +63,8 @@ HNUnityFramework 采用三层架构设计，自底向上分为**驱动层 (Drive
 - **Addressables 扩展** — Addressables 分组与构建辅助工具
 - **Editor UI 扩展 ✅** — Odin-like 自定义 Inspector 增强，19 个运行时属性（ReadOnly/Button/ShowIf/HideIf/EnableIf/DisableIf/ShowInInspector/HideInInspector/Required/ValidateInput/OnValueChanged/Title/InfoBox/PropertyOrder/FoldoutGroup/BoxGroup/TabGroup/HorizontalGroup/VerticalGroup）+ 扩展接口体系 + HNSmartInspector
 - **Graph Editor ✅** — 基于 GraphView 的通用图编辑器框架（节点/边/编组双向同步 + `[GraphNodeType]` 节点注册 + `.asset`/JSON 序列化），领域编辑器由各领域继承 `GraphEditorWindow` 自行实现
-- **[资源质检与自动化构建](./build-pipeline) ✅** — 基于规则注册中心的资源质量检测（预设缺失脚本/命名规范/引用完整性/Addressables 4 种通用规则，`IAssetRule` 可扩展）+ 构建管线编排（质检门禁 → Addressables → Player → 后处理）+ 版本管理（语义化版本/自动递增/Git tag）+ 构建报告（JSON/Markdown）+ 引用图冗余清理
+- **[资源质检与自动化构建](./build-pipeline.md) ✅** — 基于规则注册中心的资源质量检测（预设缺失脚本/命名规范/引用完整性/Addressables 4 种通用规则，`IAssetRule` 可扩展）+ 构建管线编排（质检门禁 → Addressables → Player → 后处理）+ 版本管理（语义化版本/自动递增/Git tag）+ 构建报告（JSON/Markdown）+ 引用图冗余清理
 
 ## 工具类
 
-查看[工具类文档](./utils)了解 HNDictionary、SerializableDictionary 等实用工具。
+查看[工具类文档](./utils.md)了解 HNDictionary、SerializableDictionary 等实用工具。

@@ -1,7 +1,3 @@
----
-sidebar_position: 6
----
-
 # 资源管理
 
 > ⚠️ **重要提示：框架原有的 `AssetManager` 调度类已弃用，所有代码已被注释。推荐直接使用 Unity Addressables 原生 API 进行资源管理。**

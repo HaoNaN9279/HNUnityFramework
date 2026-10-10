@@ -1,7 +1,3 @@
----
-sidebar_position: 2
----
-
 # 安装
 
 HNUnityFramework 支持三种安装方式，推荐使用 Unity Package Manager (UPM)。

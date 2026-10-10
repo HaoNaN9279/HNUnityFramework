@@ -1,7 +1,3 @@
----
-sidebar_position: 14
----
-
 # 本地化系统 (C3)
 
 HNUnityFramework 的本地化系统提供端到端的多语言支持，从字符串表管理到 TMP 文本自动更新，覆盖完整的本地化工作流。

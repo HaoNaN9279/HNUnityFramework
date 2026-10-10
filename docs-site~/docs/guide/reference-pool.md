@@ -1,7 +1,3 @@
----
-sidebar_position: 8
----
-
 # 引用池
 
 ReferencePool 模块提供零 GC 压力的引用对象复用机制，是框架内存管理的基石。

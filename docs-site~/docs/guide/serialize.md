@@ -1,7 +1,3 @@
----
-sidebar_position: 11
----
-
 # 序列化
 
 Serialize 模块提供 JSON 序列化/反序列化工具，按依赖拆分为两层。

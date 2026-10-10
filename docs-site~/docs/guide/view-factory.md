@@ -1,7 +1,3 @@
----
-sidebar_position: 15
----
-
 # 视图工厂和 EntityView
 
 ViewModule 位于架构的 Level.View 层，为 Unity 依赖的视图层基础设施。提供 Entity 的视觉表示创建、数据绑定和生命周期管理。

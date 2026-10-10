@@ -81,8 +81,7 @@ Tests/
    - 使用 `run_tests` 工具运行 EditMode 测试
    - 测试未通过则继续排查修复，直到全部通过
 4. 更新相关文档:
-   - 影响公共 API → 更新 `~docs-site/docs/api/index.md`
-   - 新增模块 → 在对应指南文档中添加说明
+   - 新增模块或使用方式变更 → 更新 `~docs-site/docs/guide/` 下对应文档
    - 架构变更 → 更新 `~docs-site/docs/dev/architecture.md`
 5. 提交并创建 PR
 
@@ -115,7 +114,7 @@ vibe_unityMCP_run_tests(mode: "EditMode")
 每次 PR 合并前确认:
 
 - [ ] 公共 API 有完整的 XML 文档注释?
-- [ ] 新增模块已在 `~docs-site/docs/api/index.md` 中索引?
+- [ ] 新增模块已在 `~docs-site/docs/guide/` 中有对应说明?
 - [ ] 架构变更已更新 `~docs-site/docs/dev/architecture.md`?
 - [ ] 本次变更是否需要更新 `AGENTS.md`?
 - [ ] 本次变更是否需要更新 `README.md`?

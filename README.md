@@ -29,11 +29,10 @@
 
 ## 文档
 
-完整文档请访问 **[HNUnityFramework 文档站](https://haonan9279.github.io/HNUnityFramework/)**，包含：
+文档以 Markdown 文件维护在 `~docs-site/docs/` 下，包含：
 
-- **使用指南** — 安装、快速入门、各模块使用说明
-- **开发文档** — 项目架构、贡献指南、代码规范
-- **API 文档** — 由 DocFX 从源代码 XML 注释自动生成
+- **使用指南** — 安装、快速入门、各模块使用说明（`docs/guide/`）
+- **开发文档** — 项目架构、贡献指南、代码规范（`docs/dev/`）
 
 ## 快速开始
 
@@ -57,24 +56,13 @@ using HN.Framework;
 // 通过 HNUnityFramework.Instance 访问框架实例
 ```
 
-更多内容请参阅 [使用指南](https://haonan9279.github.io/HNUnityFramework/guide/intro)。
+更多内容请参阅 [使用指南](./docs-site~/docs/guide/index.md)。
 
 ## 开发
 
 ### 环境要求
 
 - Unity 2022.3+
-- .NET 8.0 SDK（用于生成 API 文档）
-- Node.js 20+（用于文档站点）
-
-### 本地开发
-
-```bash
-# 文档站点
-cd ~docs-site
-npm install
-npm start
-```
 
 详细开发流程请参阅 [AGENTS.md](./AGENTS.md)。
 

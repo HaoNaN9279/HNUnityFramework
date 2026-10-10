@@ -1,10 +1,6 @@
----
-sidebar_position: 23
----
-
 # GameplayTag 层级标签系统
 
-GameplayTag 模块位于 **Core 层** 的 `HN.Framework.Core` 程序集中，属于 Level 层共享基础设施。具体位置见 [架构文档](/dev/architecture)。
+GameplayTag 模块位于 **Core 层** 的 `HN.Framework.Core` 程序集中，属于 Level 层共享基础设施。具体位置见 [架构文档](../dev/architecture.md)。
 
 ## 概述
 
