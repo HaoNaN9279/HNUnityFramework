@@ -199,8 +199,6 @@ Unity 平台层，依赖 UnityEngine。
 - **JsonData** — 可序列化 JSON 数据容器，实现 ISerializationCallbackReceiver
 - **HNUnityFrameworkGlobalSettings** — 框架全局资源配置（LogicRate 等核心参数）
 - **HNModuleSettingsUtility** — 模块配置 ScriptableObject 通用工厂工具类。封装 `GetOrCreateSettings<T>()` / `GetSerializedSettings<T>()` / `EnsureDirectoryExists`，消除各模块配置的重复样板代码。`#if UNITY_EDITOR` 包裹，Runtime 只读
-- **HNRenderPipeline** 🚧 — 自定义渲染管线（待实现）
-- **HNRenderPipelineAsset** 🚧 — 渲染管线资源（待实现）
 
 **Capability — 能力模块（Unity 实现）**
 

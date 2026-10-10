@@ -127,7 +127,6 @@ public class GameEntry : GameWorldDriver
 | D4 | UnityLogProvider | `HN.Framework.Unity.Driver.Platform.Log` | Unity |
 | D4 | UnityTimeProvider | `HN.Framework.Unity.Driver.Platform.Time` | Unity |
 | D4 | UnityCoroutineProvider | `HN.Framework.Unity.Driver.Platform.Coroutine` | Unity |
-| D4 | HNRenderPipeline, HNRenderPipelineAsset, ShaderLibrary | `HN.Framework.Unity.Driver.Platform.Rendering` | Unity |
 | D4 | GlobalSettings | `HN.Framework.Unity.Driver.Platform.Settings` | Unity |
 | C1 | ISerializer, MemoryPackFormatter (Core) | `HN.Framework.Core.Capability.Serialization` | Core |
 | C1 | UnityFormatters, FishNetSerializerAdapter | `HN.Framework.Unity.Capability.Serialization` | Unity |

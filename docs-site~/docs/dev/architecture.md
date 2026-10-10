@@ -196,7 +196,6 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 | D4 | AssetManager + AssetCacheItem | ✅ | 资源管理 + 弱引用缓存 |
 | D4 | GameObjectPool / PooledObject | ✅ | Unity 对象池 |
 | D4 | UnityLogProvider / UnityTimeProvider / UnityCoroutineProvider | ✅ | 平台适配 |
-| D4 | HNRenderPipeline + ShaderLibrary | ✅ | 渲染管线 + Shader 库 |
 | D4 | GlobalSettings (HNUnityFrameworkGlobalSettings) | ✅ | 框架核心配置（LogicRate 等），ScriptableObject |
 | D4 | ModuleSettings (HNModuleSettingsUtility) | ✅ | 模块级配置扩展体系：通用工厂工具类 + 去中心化模块自包含模式 |
 | D4 | AudioSettings | ✅ | 音频模块配置（MasterVolume / MaxConcurrentSounds / EnableSpatialAudio） |
@@ -259,4 +258,4 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 
 ---
 
-完整架构详情（含完整模块设计、命名空间映射、Vendor 策略、Luban 协作模式、SRP 渲染管线分工、Art 仓库组织原则等）请参阅 [`架构~/` 目录下的模块化文档](../../../架构~/README.md)。
+完整架构详情（含完整模块设计、命名空间映射、Vendor 策略、Luban 协作模式、Art 仓库组织原则等）请参阅 [`架构~/` 目录下的模块化文档](../../../架构~/README.md)。
