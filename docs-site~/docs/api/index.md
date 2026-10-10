@@ -340,4 +340,19 @@ Unity 平台层，依赖 UnityEngine。
 - **内置 Descriptors（9 个）**：TitleDescriptor, InfoBoxDescriptor, PropertyOrderDescriptor, ShowInInspectorDescriptor, FoldoutGroupDescriptor, BoxGroupDescriptor, TabGroupDescriptor, HorizontalGroupDescriptor, VerticalGroupDescriptor
 - **工具类**：ReflectionCache（反射缓存）、EditorLayout（布局辅助）、HNSmartInspectorStyles（样式常量）
 
+**Graph — 图编辑器 ✅**
+
+- **GraphEditorWindow** — 图编辑器窗口基类，提供工具栏（New/Open/Save/Save As/Export JSON/Import JSON/Validate/Frame All），领域编辑器继承并设置 `GraphDisplayName` / `CategoryFilter`
+- **GraphEditorView** — `GraphView` 子类，与 `GraphData` 双向同步，处理节点创建、连线、删除、编组与移动
+- **GraphNodeView** — 节点可视化元素，按 `GraphNode.Ports` 生成端口，位置/标题回写数据
+- **GraphNodeTypeAttribute** — 节点类型标注，路径（如 `"Animation/State"`）首段用于领域过滤
+- **IGraphNodeFactory** — 节点工厂接口（TypeId / DisplayName / Create）
+- **GraphNodeRegistry** / **GraphNodeTypeEntry** — 基于 `TypeCache` 的节点类型注册中心，自动发现并缓存 `[GraphNodeType]` 工厂
+- **GraphNodeSearchProvider** — 节点搜索提供器（`ISearchWindowProvider`），按分类路径分组
+- **GraphEdgeConnectorListener** / **GraphEdgeConnectors** — 可自定义边连接器监听器与端口连接器工具
+- **GraphPortReference** — 端口数据映射（`Port.userData`）
+- **GraphAsset** — ScriptableObject，以 MemoryPack 二进制负载持久化 `GraphData`（支持领域派生图类型）
+- **GraphSerializationUtility** — `.asset` 保存/加载 + JSON 导入/导出 + 一致性校验
+- **说明**：E2 仅提供通用图编辑器框架，不含领域编辑器。领域编辑器（动画状态机 / 行为树 / 决策树 / 效用曲线 / AI 策略等）由对应领域继承 `GraphEditorWindow` 并注册 `[GraphNodeType]` 节点工厂实现。
+
 > 💡 **提示**：API 参考文档由 DocFX 从代码 XML 注释自动更新。如需修改 API 描述，请直接修改源代码中的 `<summary>` 注释，然后运行 `npm run docs:api` 重新生成。

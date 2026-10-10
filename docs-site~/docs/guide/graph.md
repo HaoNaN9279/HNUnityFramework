@@ -91,5 +91,6 @@ graph.AddGroup(group);
 
 ## 相关文档
 
+- 可视化编辑：[E2 Graph Editor](./graph-editor)
 - 架构说明：[06 - 关卡层](/dev/architecture)
 - API 参考：[API 索引](/api/)

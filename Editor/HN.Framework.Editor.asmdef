@@ -17,7 +17,8 @@
     "overrideReferences":  false,
     "precompiledReferences":  [
                                     "ClosedXML.dll",
-                                    "DocumentFormat.OpenXml.dll"
+                                    "DocumentFormat.OpenXml.dll",
+                                    "Newtonsoft.Json.dll"
                                 ],
     "autoReferenced":  true,
     "defineConstraints":  [

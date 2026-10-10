@@ -244,7 +244,7 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 | V4 | 动画 Playable 运行时 | 📋 | 规划中 |
 | V5 | 音频播放组件 | 📋 | 规划中 |
 | E1 | Editor UI 扩展 | ✅ | 19 属性 + 扩展接口 + HNSmartInspector |
-| E2 | Graph Editor | 📋 | 规划中 |
+| E2 | Graph Editor | ✅ | 通用图编辑器框架：GraphEditorWindow 基类 + GraphView 双向同步 + `[GraphNodeType]` 节点注册 + `.asset`(MemoryPack)/JSON 序列化（领域编辑器由各领域自实现） |
 | E3 | Debug Hub Editor | 📋 | 规划中 |
 | E4 | Localization Editor | 📋 | 规划中 |
 | E5 | Audio Editor | 📋 | 规划中 |

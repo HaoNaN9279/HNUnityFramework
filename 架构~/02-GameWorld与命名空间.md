@@ -180,14 +180,14 @@ public class GameEntry : GameWorldDriver
 | L10 | AIAgent, DecisionPipeline, KnowledgePool, Blackboard, IDecisionStrategy, StrategyRegistry, IActionCommand, BehaviorTreeStrategy, FSMStrategy, UtilityStrategy, GOAPStrategy, HTNStrategy, DecisionTreeStrategy, FuzzyLogicStrategy, ScriptedStrategy | `HN.Framework.Core.Level.Logic.AI` | Core |
 | L10 | AISystem（GameWorld 内置 AI Agent 管理器） | `HN.Framework.Core.Level.Logic.AI` | Core |
 | L10 | AIAgentComponent, VisionSensor, AudioSensor, NavMeshAgentAdapter, DefaultActionExecutor | `HN.Framework.Unity.Level.Logic.AI` | Unity |
-| L10 | AIStrategyEditorWindow, BehaviorTreeEditor, DecisionTreeEditor, UtilityCurveEditor | `HN.Framework.Editor.Graph` | Editor |
+| L10 | AI 策略编辑器（后续由 L10 基于 E2 Graph Editor 通用框架实现） | `HN.Framework.Editor.Graph` | Editor |
 | V1 | UIManager, UIPanel, UIDialog, UIToast, UIGuide, UIAnimation, RedDotManager | `HN.Framework.Unity.Level.View.UI` | Unity |
 | V2 | ViewFactory, EntityView | `HN.Framework.Unity.Level.View` | Unity |
 | V3 | PropertyBinder, DefaultPropertyBinder | `HN.Framework.Unity.Level.View.Binding` | Unity |
 | V4 | AnimationPlayableRuntime | `HN.Framework.Unity.Level.View.Animation` | Unity |
 | V5 | AudioEmitter, AudioListener | `HN.Framework.Unity.Level.View.Audio` | Unity |
 | E1 | ShowInInspector, ReadOnly, Button, FoldoutGroup 等 + CustomEditorRenderer | `HN.Framework.Editor.EditorUI` | Editor |
-| E2 | GraphEditorWindow, AnimationGraphEditor, BehaviorTreeEditor, DecisionTreeEditor, UtilityCurveEditor | `HN.Framework.Editor.Graph` | Editor |
+| E2 | GraphEditorWindow, GraphEditorView, GraphNodeRegistry, GraphNodeView, GraphNodeSearchProvider, GraphAsset, GraphSerializationUtility（通用框架，领域编辑器由各领域自实现） | `HN.Framework.Editor.Graph` | Editor |
 | E3 | DebugHubWindow, LogViewer, RuntimeStateInspector | `HN.Framework.Editor.Debug` | Editor |
 | E4 | LocalizationEditorWindow, AssetLocaleTagger | `HN.Framework.Editor.Localization` | Editor |
 | E5 | AudioBankEditor, AudioEventEditor, AudioProfiler | `HN.Framework.Editor.Audio` | Editor |
