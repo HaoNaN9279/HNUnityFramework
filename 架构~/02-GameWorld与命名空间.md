@@ -172,7 +172,7 @@ public class GameEntry : GameWorldDriver
 | L4 | ISheetManager, IConfigTable, ConfigTable, ConfigLoader, AssetRef\<T\> | `HN.Framework.Core.Level.Logic.Sheet` | Core |
 | L4 | SheetManager, ISheetRegistrar, AssetRefExtensions | `HN.Framework.Unity.Capability.Sheet` | Unity |
 | L0 | GameplayTag, GameplayTagContainer, TagQuery | `HN.Framework.Core.Level` | Core |
-| L5 | GraphData, GraphNode, GraphEdge, GraphPort, GraphGroup | `HN.Framework.Core.Level.Logic.Graph` | Core |
+| L5 | GraphData, GraphNode, GraphEdge, GraphPort, GraphGroup, GraphVector2, GraphPortDirection | `HN.Framework.Core.Level.Logic.Graph` | Core |
 | L6 | AnimationGraph, AnimState, BlendSpace1D/2D, SkeletonMask, IKConfig 等 | `HN.Framework.Core.Level.Logic.Animation` | Core |
 | L7 | AttributeDefinition, AbilityDefinition, EffectDefinition, Modifier, IAttributeSet, IAbilitySystem, IEffectPipeline, DamagePipeline, BuffSystem, EffectSpec | `HN.Framework.Core.Level.Logic.Combat` | Core |
 | L8 | IQuestManager, QuestCondition (Single/And/Or/Not), QuestLine | `HN.Framework.Core.Level.Logic.Quest` | Core |

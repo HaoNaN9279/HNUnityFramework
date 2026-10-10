@@ -99,6 +99,14 @@ HNUnityFramework 的完整 API 参考文档由 [DocFX](https://dotnet.github.io/
   - `ConfigTable<TKey, TRow>` — 默认实现，O(1) 字典查表
   - `AssetRef<T>` — MemoryPack 可序列化的资产引用，存 Addressables Label
   - `ConfigLoader` — MemoryPack 反序列化工具类
+- **Graph** ✅ — 图数据模型（纯 C#，无 Unity 依赖，MemoryPack 源生成序列化）
+  - `GraphData` — 图（Id/Name + 节点/边/编组集合），含增删查与 `Validate(out error)` 一致性校验
+  - `GraphNode` — 节点（Id/Type/Title/Position/Ports/Properties），含端口与属性增删查
+  - `GraphEdge` — 边（SourceNodeId.SourcePort → TargetNodeId.TargetPort）
+  - `GraphPort` — 端口（Name/Direction/Type）
+  - `GraphGroup` — 节点编组（Id/Title + NodeIds + Position/Size，编辑器视觉分组）
+  - `GraphVector2` — 二维坐标值类型（X/Y）
+  - `GraphPortDirection` — 端口方向枚举（Input/Output）
 - **Combat（战斗数值体系）** ✅ — 基于 GAS 模式的六模块数值体系：
   - `AttributeType` / `AttributeTypeManager` / `AttributeSet<TId>` — 属性类型标识与管理、泛型属性集合、Modifier 修正系统（Add/Multiply/Override/MinCap/MaxCap）
   - `EffectSpec<TId>` / `EffectPipeline<TId>` — 效果规格定义与效果管线（Instant/Duration/Infinite）

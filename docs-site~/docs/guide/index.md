@@ -52,6 +52,7 @@ HNUnityFramework 采用三层架构设计，自底向上分为**驱动层 (Drive
 
 - **[MVC 框架](./mvc)** — Model-View-Controller 分层架构
 - **[HFSM](./hfsm)** — 层次有限状态机，支持条件转换和状态嵌套
+- **[L5 图数据模型](./graph)** — 通用图数据底层（节点/边/端口/编组），MemoryPack 可序列化，动画/行为树/对话图基础
 - **[Combat 战斗数值体系](./combat)** — 属性/效果/Buff/技能 四模块数值系统（AttributeSet/EffectPipeline/DamagePipeline/BuffSystem/AbilitySystem）
 - **Entity 系统 (🚧 Stub)** — Entity 基类与 EntityView 基类
 - **视图工厂 (🚧 Stub)** — ViewFactory 基类与 PropertyBinder

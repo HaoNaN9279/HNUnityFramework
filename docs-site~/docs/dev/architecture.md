@@ -51,7 +51,7 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 |--------|---------|-------------|
 | **DriverLayer** | GameWorld、基础类库（HNLogicTime、ReferencePool、ITickable 等）、平台抽象层 | — |
 | **CapabilityModule** | 服务接口定义 + 通用实现（ProcedureManager、ObjectPoolManager、DebugHub、EventBus 等） | 游戏特定实现（GameNetworkService 等）→ Scripts |
-| **Level.LogicModule** | MVC 框架、HFSM、Entity 基类、Sheet/Config 系统 | 具体玩法逻辑（Task/Battle/Shop）→ Scripts |
+| **Level.LogicModule** | MVC 框架、HFSM、Entity 基类、Sheet/Config 系统、Graph 图数据模型 | 具体玩法逻辑（Task/Battle/Shop）→ Scripts |
 | **Level.ViewModule** | ViewFactory、EntityView、PropertyBinder、UI 系统全套 | 视图代码 → Scripts；Prefab 装配 → Design |
 
 ## 四仓库菱形依赖
@@ -232,7 +232,7 @@ HNUnityFramework 采用三层驱动架构（DriverLayer → CapabilityModule →
 | L2 | HFSM | ✅ | 完整层次状态机（复合状态/死循环检测） |
 | L3 | Entity 系统 | ✅ | Entity + EntityManager + EntityView + ViewFactory |
 | L4 | Sheet/Config 系统 | ✅ | ISheetManager + ConfigTable + AssetRef + SheetManager |
-| L5 | 图数据模型 | 📋 | 规划中 |
+| L5 | 图数据模型 | ✅ | GraphData/GraphNode/GraphEdge/GraphPort/GraphGroup，MemoryPack 可序列化 + Validate 校验 |
 | L6 | 动画数据模型 | 📋 | 规划中 |
 | L7 | 战斗数值体系 | ✅ | Attribute+Effect+Buff+Ability 实现 |
 | L8 | 任务成就系统 | ✅ | 事件驱动任务/成就框架（QuestManager + Condition/Reward/QuestChain） |
