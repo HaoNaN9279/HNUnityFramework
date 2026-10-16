@@ -184,6 +184,7 @@ public class GameEntry : GameWorldDriver
 | V2 | ViewFactory, EntityView | `HN.Framework.Unity.Level.View` | Unity |
 | V3 | PropertyBinder, DefaultPropertyBinder | `HN.Framework.Unity.Level.View.Binding` | Unity |
 | V4 | AnimationPlayableRuntime | `HN.Framework.Unity.Level.View.Animation` | Unity |
+| V4.1 | AnimationRepresentation / AnimationRepresentationLod（LOD + 可见性中枢） | `HN.Framework.Unity.Level.View.Animation.Lod` | Unity |
 | V5 | AudioEmitter, AudioListener | `HN.Framework.Unity.Level.View.Audio` | Unity |
 | E1 | ShowInInspector, ReadOnly, Button, FoldoutGroup 等 + CustomEditorRenderer | `HN.Framework.Editor.EditorUI` | Editor |
 | E2 | GraphEditorWindow, GraphEditorView, GraphNodeRegistry, GraphNodeView, GraphNodeSearchProvider, GraphAsset, GraphSerializationUtility（通用框架，领域编辑器由各领域自实现） | `HN.Framework.Editor.Graph` | Editor |
